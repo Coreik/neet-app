@@ -13,7 +13,7 @@ cd corespace-website
 python3 -m http.server 8080   # then open http://localhost:8080
 ```
 
-Pages are hash routes: `#home`, `#bathroom`, `#kitchen`, `#flooring`, `#ceiling`, `#wardrobe`, `#more`, `#living`, `#painting`, `#fullhome`, `#shop`, `#kits`, `#photo`, `#process`, `#projects`, `#about`, `#book`, `#terms`, `#admin`.
+Pages are hash routes: `#home`, `#bathroom`, `#kitchen`, `#flooring`, `#ceiling`, `#wardrobe`, `#more`, `#living`, `#painting`, `#fullhome`, `#shop`, `#kits`, `#photo`, `#process`, `#projects`, `#about`, `#book`, `#terms`, `#account`, `#admin`.
 
 ## What is real and what is a prototype stand-in
 
@@ -21,12 +21,16 @@ The prototype ran inside claude.ai and used its built-in runtime (`window.claude
 
 | Prototype feature | Used for | Production replacement |
 | --- | --- | --- |
-| `claude.use("db")` | Saving leads and order requests; prices and "bookings paused" set from the dashboard | A real backend and database (e.g. Supabase or Firebase, free tier). Collections: `leads`, `config/site` |
-| `claude.use("user")` | Who can open `#admin` | Real owner login (email or phone OTP) |
+| `claude.use("db")` | Saving leads and order requests; prices and "bookings paused" set from the dashboard | A real backend and database (e.g. Supabase or Firebase, free tier). Collections: `leads/<customer>/items`, `config/site`, and per-customer private `data/users/<customer>/profile` and `/cart` |
+| `claude.use("user")` | Who the visitor is: customer accounts (`#account`) and who can open `#admin` | Customer sign-in with mobile number + one-time code (OTP); separate owner login for the dashboard |
 | `claude.use("sample")` with images | Photo quote: reads an uploaded photo and picks job, package and add-ons | Server-side call to the Claude API (Messages API with an image). Reuse the prompt in `handlePhoto()`. Keep the API key on the server |
 | `claude.use("downloads")` | Estimate PDF and leads CSV | Normal browser download (`a[download]` / Blob URL) |
 | none | New-lead alerts | Email and/or WhatsApp alert to the owner on every new lead (not built) |
 | none | Analytics | Google Analytics 4 + Search Console; track estimator use, WhatsApp clicks, bookings, order requests |
+
+## Customer accounts
+
+`#account` lets a customer create a profile (name, mobile, email, contact preference, area, apartment, flat, home type, notes), edit or delete it, see every booking and order they've sent with its live status, and keep a cart saved across devices. Saved details pre-fill every booking and order form; after a first booking without a profile, the confirmation offers "Create my profile". The dashboard has a **Customers** tab grouping requests by mobile number. In production: OTP sign-in, each customer can read only their own profile, cart and requests; the owner reads all requests but not private profiles unless the customer shares them; profile deletion must actually delete (DPDP Act).
 
 ## Data to replace before launch
 
@@ -51,6 +55,7 @@ Business rules: the ₹999 site-visit fee is adjusted against the first payment 
 ## Before launch checklist
 
 - [ ] Backend and database for leads, orders, prices and bookings toggle
+- [ ] Customer sign-in (mobile OTP), profile, saved cart, My requests
 - [ ] Owner login for the dashboard
 - [ ] New-lead alerts (email/WhatsApp)
 - [ ] Photo quote via server-side Claude API call
