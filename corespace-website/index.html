@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light">
 <link rel="icon" href="img/corespace-logo.png">
 <style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -21,12 +22,8 @@
   --display:"Archivo","Arial Narrow",Arial,sans-serif;
   --body:"IBM Plex Sans","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
-  --r:6px; --wrap:1200px;
+  --r:6px; --wrap:1200px; color-scheme:light;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){ --paper:#0A0C0B; --surface:#131715; --ink:#F2F5F3; --ink-2:#A8AFAA; --line:#29302C; --soft:#0F2A18; --ok:#5BD583; --warn:#F2C25C; --warn-bg:#2B2108; --err:#FF9A8C; --err-bg:#2D1310; color-scheme:dark }
-}
-:root[data-theme="dark"]{ --paper:#0A0C0B; --surface:#131715; --ink:#F2F5F3; --ink-2:#A8AFAA; --line:#29302C; --soft:#0F2A18; --ok:#5BD583; --warn:#F2C25C; --warn-bg:#2B2108; --err:#FF9A8C; --err-bg:#2D1310; color-scheme:dark }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
@@ -127,19 +124,19 @@ nav.main>a[aria-current="page"],.ddbtn.cur{color:var(--ink);background:var(--sof
 .paybar .narrow b{font-size:22px}
 @media (max-width:520px){.paybar{grid-template-columns:1fr 1fr}.paybar div:nth-child(3){border-left:0;border-top:1px solid var(--line)}.paybar div:nth-child(4){border-top:1px solid var(--line)}}
 
-.band{background:#000;color:#fff;padding:80px 0}
-.band h2{color:#fff}
-.band .lede{color:#B6BCB8}
+.band{background:var(--surface);color:var(--ink);padding:80px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.band h2{color:var(--ink)}
+.band .lede{color:var(--ink-2)}
 .head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:40px}
 .head>*{min-width:0}
 @media (max-width:860px){.head{grid-template-columns:1fr;gap:14px}}
-.rows{border-top:1px solid #333}
-.row{display:grid;grid-template-columns:minmax(0,280px) minmax(0,1fr) 220px 160px;gap:24px;align-items:center;padding:22px 16px;border-bottom:1px solid #333;text-decoration:none;color:#fff;transition:background .15s}
+.rows{border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:minmax(0,280px) minmax(0,1fr) 220px 160px;gap:24px;align-items:center;padding:22px 16px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink);transition:background .15s}
 .row:hover,.row:focus-visible{background:#34C363;color:#000}
 .row:hover .rdesc,.row:hover .rgate,.row:focus-visible .rdesc,.row:focus-visible .rgate{color:#000}
 .rname{font-family:var(--display);font-stretch:66%;font-weight:900;font-size:clamp(34px,5vw,56px);line-height:.95}
-.rdesc{color:#B6BCB8;font-size:15.5px}
-.rgate{color:#B6BCB8;font-size:14px}
+.rdesc{color:var(--ink-2);font-size:15.5px}
+.rgate{color:var(--ink-2);font-size:14px}
 .rgate b{display:block;color:inherit;font-weight:600}
 .rprice{font-family:var(--display);font-stretch:74%;font-weight:800;font-size:26px;text-align:right;white-space:nowrap}
 .rprice small{display:block;font:400 13px var(--body)}
@@ -328,10 +325,10 @@ td select{font:500 14px var(--body);color:var(--ink);background:var(--paper);bor
 .shophero{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:end}
 .shophero>*{min-width:0}
 @media (max-width:860px){.shophero{grid-template-columns:1fr}}
-.promo{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;padding:18px;border-radius:16px;background:var(--ink);color:var(--paper);text-decoration:none}
-.promo svg{width:44px;height:44px;color:#34C363}
+.promo{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;padding:18px;border-radius:16px;background:var(--soft);color:var(--ink);border:1.5px solid var(--green);text-decoration:none}
+.promo svg{width:44px;height:44px;color:var(--ok)}
 .promo b{display:block;font-family:var(--display);font-stretch:76%;font-weight:900;font-size:26px;line-height:1.05}
-.promo span{font-size:14.5px;opacity:.8}
+.promo span{font-size:14.5px;color:var(--ink-2)}
 .shopbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
 .search{flex:1 1 260px;display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:999px;padding:0 16px;background:var(--paper);min-width:0}
 .search:focus-within{border-color:var(--ink)}
@@ -911,7 +908,7 @@ function pageHome(){
 <section class="band" id="jobs"><div class="wrap">
   <div class="head"><h2>What we renovate</h2><p class="lede">Each job has three fixed-price packages. Pick one, enter your sizes, and see the price before anyone visits.</p></div>
   <div class="rows">${Object.entries(JOBS).map(([id,j])=>`<a class="row" href="#${id}"><span class="rname">${j.short}</span><span class="rdesc">${j.tagline}</span><span class="rgate"><b>${j.gate.name}</b>${j.gate.short}</span><span class="rprice">${inr(startPrice(id))}<small>starting price</small></span></a>`).join("")}</div>
-  <p class="fine" style="color:#B6BCB8">Also: <a href="#living" style="color:#fff">living and TV units</a>, <a href="#painting" style="color:#fff">painting</a> and <a href="#fullhome" style="color:#fff">full home interiors</a>, quoted after a visit.</p>
+  <p class="fine">Also: <a href="#living">living and TV units</a>, <a href="#painting">painting</a> and <a href="#fullhome">full home interiors</a>, quoted after a visit.</p>
 </div></section>
 <section class="block"><div class="wrap">
   <div class="head"><h2>One crew. One contract. Fixed price.</h2><p class="lede">Every job, from a bathroom to a wardrobe, runs on the same four rules.</p></div>
