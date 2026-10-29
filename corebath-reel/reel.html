@@ -1,0 +1,487 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="fonts/all.css">
+<style>
+:root{--bg:#F4EFE8;--ink:#1E1E1E;--terra:#FF5A36;--sage:#8FB89A}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+body{font-family:Manrope,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+#stage{position:absolute;inset:0;overflow:hidden}
+.scene{position:absolute;inset:0;overflow:hidden;display:none}
+.serif{font-family:Fraunces,serif}
+i,.it{font-style:italic}
+.m{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .06em .16em;margin:0 -.06em -.16em}
+.w,.c{display:inline-block;transform-origin:50% 90%}
+.abs{position:absolute}
+.center{left:0;right:0;text-align:center}
+.card{position:absolute;left:540px;top:1010px;width:660px;height:820px;border-radius:24px;overflow:hidden;
+  box-shadow:0 34px 70px rgba(30,30,30,.20),0 8px 20px rgba(30,30,30,.10);background:#ddd}
+.card .img{position:absolute;top:0;bottom:0;left:-12%;width:124%;background-size:cover;background-position:center}
+.card .dim{position:absolute;inset:0;background:#1E1E1E;opacity:0}
+.pill{position:absolute;left:26px;bottom:26px;background:#fff;border-radius:999px;padding:12px 24px 12px 20px;
+  font:700 26px Manrope;color:var(--ink);display:flex;align-items:center;gap:12px;transform-origin:0 100%;
+  box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.pill b{width:12px;height:12px;border-radius:50%;background:var(--ink);display:inline-block}
+.dot{height:12px;border-radius:6px;background:rgba(30,30,30,.22)}
+.strip{display:flex;flex-direction:column}
+.odo{display:inline-block;overflow:hidden;vertical-align:top}
+.tagp{display:inline-flex;align-items:center;gap:12px;border-radius:999px;padding:14px 28px;font:800 26px Manrope;letter-spacing:.18em}
+.hl{background:var(--bg);padding:0 22px;border-radius:14px;display:inline-block}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="mbA" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur id="mbA_g" stdDeviation="0 0"/></filter>
+    <filter id="mbB" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur id="mbB_g" stdDeviation="0 0"/></filter>
+    <filter id="mbC" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur id="mbC_g" stdDeviation="0 0"/></filter>
+    <filter id="mbD" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur id="mbD_g" stdDeviation="0 0"/></filter>
+  </defs>
+</svg>
+<div id="stage">
+
+<!-- A: BYOB hook -->
+<div id="A" class="scene" style="background:var(--terra)">
+  <div id="Arings"></div>
+  <div id="Alogo" class="abs center" style="top:150px;font:800 34px Manrope;letter-spacing:.34em;color:var(--bg)"><span class="w">COREBATH</span></div>
+  <div id="Abyob" class="abs center serif kl" style="top:620px;font-size:340px;font-weight:800;color:var(--bg);line-height:1;letter-spacing:-.02em">BYOB</div>
+  <div id="Asub" class="abs center serif" style="top:1030px;font-size:78px;font-style:italic;font-weight:400;color:var(--bg);line-height:1.1">
+    <span class="w"><u style="text-decoration:none;color:var(--ink)">B</u>uild</span> <span class="w"><u style="text-decoration:none;color:var(--ink)">Y</u>our</span> <span class="w"><u style="text-decoration:none;color:var(--ink)">O</u>wn</span><br><span class="w"><u style="text-decoration:none;color:var(--ink)">B</u>athroom</span>
+  </div>
+</div>
+
+<!-- B: Saw a bathroom you love? -->
+<div id="B" class="scene" style="background:var(--bg)">
+  <div id="Bminis"></div>
+  <div id="Btxt" class="abs serif" style="left:96px;top:660px;font-size:156px;font-weight:500;line-height:1.02;letter-spacing:-.02em">
+    <span class="w">Saw</span> <span class="w">a</span><br><span class="w">bathroom</span><br><span class="w">you</span> <span class="w" style="color:var(--terra);font-style:italic;font-weight:400">love?</span>
+  </div>
+  <svg id="Bscrib" class="abs" style="left:440px;top:1120px" width="420" height="70" viewBox="0 0 420 70">
+    <path id="BscribP" d="M8 40 C 90 20, 200 18, 300 28 S 400 48, 412 30" fill="none" stroke="#FF5A36" stroke-width="12" stroke-linecap="round"/>
+  </svg>
+</div>
+<div id="wipe1" class="abs" style="left:540px;top:960px;width:10px;height:10px;border-radius:50%;background:var(--terra);display:none"></div>
+
+<!-- C: The bath board carousel -->
+<div id="C" class="scene" style="background:var(--bg)">
+  <div id="Chead">
+    <div id="Ceye" class="abs center" style="top:282px;font:700 26px Manrope;letter-spacing:.42em;color:rgba(30,30,30,.55)"><span class="w">SAVED</span> <span class="w">INSPIRATION</span></div>
+    <div id="Ctitle" class="abs center serif" style="top:336px;font-size:132px;font-weight:400;letter-spacing:-.02em;line-height:1.05">
+      <span class="w">The</span> <span class="w" style="font-style:italic;color:var(--terra)">bath</span> <span class="w">board</span></div>
+  </div>
+  <div id="track" class="abs" style="inset:0"></div>
+  <div id="dots" class="abs center" style="top:1500px;display:flex;justify-content:center;gap:12px"></div>
+  <div id="ctr" class="abs center" style="top:1550px;font:700 44px Manrope;letter-spacing:.08em;color:rgba(30,30,30,.75);line-height:56px">
+    <span class="odo" style="height:56px"><span id="ctrT" class="strip"></span></span><span class="odo" style="height:56px"><span id="ctrO" class="strip"></span></span>
+    <span style="opacity:.45">&nbsp;—&nbsp;13</span>
+  </div>
+</div>
+
+<!-- hero (zoomed card), selection -->
+<div id="hero" class="abs" style="display:none;overflow:hidden">
+  <div id="heroImg" class="abs" style="inset:0;background:url(img/h12.jpg) center/cover"></div>
+  <div id="heroShade" class="abs" style="inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(20,14,10,.65) 100%);opacity:0"></div>
+  <div id="heroPill" class="pill" style="left:26px;bottom:26px"><b style="background:var(--terra)"></b>12 / Terracotta Floor</div>
+</div>
+<div id="sel" class="scene" style="display:none">
+  <div id="shock" class="abs" style="left:540px;top:860px;width:240px;height:240px;margin:-120px;border-radius:50%;border:8px solid #fff"></div>
+  <div id="stamp" class="abs" style="left:540px;top:860px;width:250px;height:250px;margin:-125px;border-radius:50%;background:var(--terra);box-shadow:0 20px 50px rgba(0,0,0,.3)">
+    <svg width="250" height="250" viewBox="0 0 250 250"><path id="stampP" d="M70 130 L108 168 L182 88" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div id="selTxt" class="abs center serif" style="top:1440px;font-size:150px;font-style:italic;color:#fff;font-weight:400;text-shadow:0 6px 30px rgba(0,0,0,.35)">
+    <span class="w">This</span> <span class="w">one.</span></div>
+</div>
+<div id="finger" class="abs" style="left:0;top:0;width:300px;height:640px;display:none;transform-origin:150px 40px">
+  <svg width="300" height="640" viewBox="0 0 300 640">
+    <defs><linearGradient id="sk" x1="0" x2="1"><stop offset="0" stop-color="#E9B892"/><stop offset=".55" stop-color="#F3C9A6"/><stop offset="1" stop-color="#D9A27E"/></linearGradient></defs>
+    <g filter="drop-shadow(0 18px 24px rgba(0,0,0,.28))">
+      <path d="M100 60 C100 25 200 25 200 60 L205 330 C250 335 290 360 292 420 L292 640 L40 640 L30 470 C 20 420 40 380 98 352 Z" fill="url(#sk)"/>
+      <path d="M118 48 C118 32 182 32 182 48 L182 98 C182 112 118 112 118 98 Z" fill="#F7DCC6" opacity=".9"/>
+      <path d="M205 330 C 230 352 240 380 236 410" fill="none" stroke="#C98E6B" stroke-width="5" opacity=".6"/>
+      <path d="M115 210 Q150 220 185 210" fill="none" stroke="#C98E6B" stroke-width="4" opacity=".5"/>
+      <path d="M118 150 Q150 158 182 150" fill="none" stroke="#C98E6B" stroke-width="3" opacity=".35"/>
+    </g>
+  </svg>
+</div>
+<div id="ripple" class="abs" style="display:none">
+  <div id="rip1" class="abs" style="width:200px;height:200px;margin:-100px;border-radius:50%;border:8px solid var(--terra)"></div>
+  <div id="rip2" class="abs" style="width:200px;height:200px;margin:-100px;border-radius:50%;background:rgba(255,255,255,.7)"></div>
+</div>
+
+<!-- E: drawing -> built -->
+<div id="E" class="scene" style="background:var(--bg)">
+  <div id="Ebp" class="abs" style="inset:-2%;background:url(img/bp12.jpg) center/cover"></div>
+  <div id="Egrid" class="abs" style="inset:0;background-image:linear-gradient(rgba(30,30,30,.06) 2px,transparent 2px),linear-gradient(90deg,rgba(30,30,30,.06) 2px,transparent 2px);background-size:60px 60px"></div>
+  <svg id="Edim" class="abs" style="inset:0" width="1080" height="1920">
+    <g stroke="#FF5A36" stroke-width="5" fill="none" stroke-linecap="round">
+      <path id="dimH" d="M90 300 L990 300 M90 280 L90 320 M990 280 L990 320"/>
+      <path id="dimV" d="M70 330 L70 1580 M50 330 L90 330 M50 1580 L90 1580"/>
+    </g>
+    <g font-family="Manrope" font-weight="800" font-size="34" fill="#FF5A36">
+      <text id="dimHt" x="540" y="270" text-anchor="middle">2.4 m</text>
+      <text id="dimVt" x="110" y="960" transform="rotate(-90 110 960)" text-anchor="middle" dy="0">2.7 m</text>
+    </g>
+  </svg>
+  <div id="Ephoto" class="abs" style="inset:0;background:url(img/h12.jpg) center/cover"></div>
+  <div id="Eband" class="abs" style="inset:0;background:var(--terra)"></div>
+  <div id="Etag1" class="abs" style="left:96px;top:150px"><span class="tagp" style="background:var(--ink);color:var(--bg)">✎&nbsp;DRAWN</span></div>
+  <div id="Etag2" class="abs" style="left:96px;top:150px"><span class="tagp" style="background:var(--sage);color:var(--ink)">✓&nbsp;BUILT</span></div>
+  <div id="Etxt1" class="abs serif" style="left:72px;top:1350px;font-size:118px;font-weight:500;line-height:1.18;letter-spacing:-.02em">
+    <span class="hl"><span class="w">We</span> <span class="w">build</span> <span class="w" style="font-style:italic;color:var(--terra);font-weight:400">that</span></span><br>
+    <span class="hl" style="margin-top:14px"><span class="w">exact</span> <span class="w">bathroom.</span></span></div>
+  <div id="Etxt2" class="abs serif" style="left:72px;top:1500px;font-size:140px;font-weight:500;line-height:1.1;letter-spacing:-.02em">
+    <span class="hl"><span class="w">In</span> <span class="w" style="font-style:italic;color:var(--terra);font-weight:400">your</span> <span class="w">home.</span></span></div>
+</div>
+
+<!-- F: Fixed price -->
+<div id="F" class="scene" style="background:var(--terra)">
+  <div id="Fg" class="abs" style="inset:0">
+    <div id="F1" class="abs center serif kl" style="top:640px;font-size:250px;font-weight:700;color:var(--bg);line-height:1;letter-spacing:-.03em">Fixed</div>
+    <div id="F2" class="abs center serif kl" style="top:880px;font-size:250px;font-weight:400;font-style:italic;color:var(--ink);line-height:1;letter-spacing:-.02em">price.</div>
+  </div>
+  <div id="Fsub" class="abs center" style="top:1240px;font:800 32px Manrope;letter-spacing:.34em;color:var(--bg)"><span class="w">NO</span> <span class="w">HIDDEN</span> <span class="w">COSTS</span></div>
+</div>
+
+<!-- G: One order -->
+<div id="G" class="scene" style="background:var(--ink)">
+  <div id="Gtoast" class="abs" style="left:540px;top:360px">
+    <div style="transform:translateX(-50%);display:flex;align-items:center;gap:20px;background:#fff;border-radius:999px;padding:20px 40px 20px 22px;box-shadow:0 20px 40px rgba(0,0,0,.35);font:800 36px Manrope;white-space:nowrap">
+      <span style="width:58px;height:58px;border-radius:50%;background:var(--sage);display:flex;align-items:center;justify-content:center;font-size:34px">✓</span>Order placed</div>
+  </div>
+  <div id="Gg" class="abs" style="inset:0">
+    <div id="G1" class="abs center serif kl" style="top:700px;font-size:260px;font-weight:700;color:var(--bg);line-height:1;letter-spacing:-.03em">One</div>
+    <div id="G2" class="abs center serif kl" style="top:960px;font-size:260px;font-weight:400;font-style:italic;color:var(--terra);line-height:1;letter-spacing:-.02em">order.</div>
+  </div>
+</div>
+
+<!-- H: 21 days -->
+<div id="H" class="scene" style="background:var(--bg)">
+  <div id="H1" class="abs center serif" style="top:440px;font-size:100px;font-weight:500;letter-spacing:-.02em"><span class="w">Handed</span> <span class="w">over</span> <span class="w">in</span></div>
+  <div id="Hnum" class="abs center serif" style="top:600px;font-size:600px;font-weight:600;color:var(--terra);line-height:640px;height:640px;letter-spacing:-.04em">
+    <span class="odo" style="height:640px"><span id="HT" class="strip"></span></span><span class="odo" style="height:640px"><span id="HO" class="strip"></span></span></div>
+  <div id="H2" class="abs center serif" style="top:1250px;font-size:170px;font-style:italic;font-weight:400;line-height:1.1"><span class="w">days.</span></div>
+  <div id="Hbar" class="abs" style="left:110px;right:110px;top:1560px;display:flex;gap:10px"></div>
+</div>
+<div id="wipe2" class="abs" style="left:0;right:0;height:1920px;background:var(--ink);display:none"></div>
+
+<!-- I: No chaos list -->
+<div id="I" class="scene" style="background:var(--ink)"></div>
+
+<!-- J: BYOB punch -->
+<div id="J" class="scene" style="background:var(--terra)">
+  <div id="Jechoes"></div>
+  <div id="Jt" class="abs center serif" style="top:720px;font-size:360px;font-weight:800;color:var(--bg);line-height:1;letter-spacing:-.03em">BYOB<span style="color:var(--ink)">.</span></div>
+</div>
+
+<!-- K: end card -->
+<div id="K" class="scene" style="background:var(--bg)">
+  <div id="Kfan"></div>
+  <div id="Klogo" class="abs center serif" style="top:880px;font-size:180px;font-weight:600;letter-spacing:-.03em;line-height:1">
+    <span class="w">Core</span><span class="w" style="font-style:italic;font-weight:400;color:var(--terra)">bath</span></div>
+  <div id="Ktag" class="abs center" style="top:1100px;font:600 46px Manrope;color:rgba(30,30,30,.72)">
+    <span class="w">Build</span> <span class="w">your</span> <span class="w">own</span> <span class="w">bathroom.</span></div>
+  <div id="Kcta" class="abs" style="left:540px;top:1300px;width:760px;height:140px;margin-left:-380px;border-radius:999px;background:var(--terra);
+     box-shadow:0 22px 40px rgba(255,90,54,.35);display:flex;align-items:center;justify-content:center;gap:22px;font:800 46px Manrope;color:#fff;overflow:hidden">
+     <div id="Kshine" class="abs" style="top:-20px;bottom:-20px;width:120px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg)"></div>
+     <span style="position:relative">Order your bathroom</span><span style="position:relative;font-size:52px">→</span></div>
+  <div id="Kfoot" class="abs center" style="top:1700px;font:800 28px Manrope;letter-spacing:.34em;color:rgba(30,30,30,.5)"><span class="w">BENGALURU</span></div>
+</div>
+<div id="wipe3" class="abs" style="left:540px;top:960px;width:10px;height:10px;border-radius:50%;background:var(--bg);display:none"></div>
+
+<div id="flash" class="abs" style="inset:0;background:#fff;opacity:0;pointer-events:none"></div>
+</div>
+
+<script>
+// ---------- helpers ----------
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const prog=(t,a,b)=>clamp((t-a)/(b-a));
+const eOutC=p=>1-Math.pow(1-p,3), eInC=p=>p*p*p, eIOC=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+const eOutX=p=>p>=1?1:1-Math.pow(2,-10*p);
+const eIOQ=p=>p<.5?8*p*p*p*p:1-Math.pow(-2*p+2,4)/2;
+const eOutB=(p,s=1.4)=>{const c3=s+1;return 1+c3*Math.pow(p-1,3)+s*Math.pow(p-1,2)};
+const elastic=p=>p<=0?0:p>=1?1:1-Math.exp(-7*p)*Math.cos(15*p);
+const bump=(t,a,d)=>{const x=(t-a)/d;return x<0||x>1?0:Math.sin(Math.PI*x)};
+const show=(el,on)=>{el.style.display=on?'block':'none';return on};
+function blur(id,el,px){ if(px<0.4){el.style.filter='none';return} $(id+'_g').setAttribute('stdDeviation',px.toFixed(1)+' 0'); el.style.filter=`url(#${id})`; }
+
+// wrap .w spans in masks
+document.querySelectorAll('.w').forEach(w=>{const m=document.createElement('span');m.className='m';w.parentNode.insertBefore(m,w);m.appendChild(w)});
+// split .kl into letters
+document.querySelectorAll('.kl').forEach(el=>{const t=el.textContent;el.innerHTML='';for(const ch of t){const s=document.createElement('span');s.className='c';s.textContent=ch;el.appendChild(s)}});
+
+function reveal(el,t,t0,st=.07,d=.45,out=null){
+  el.querySelectorAll('.w').forEach((w,i)=>{
+    let y=(1-eOutX(prog(t,t0+i*st,t0+i*st+d)))*115;
+    if(out!==null) y-=eInC(prog(t,out+i*.03,out+i*.03+.22))*115;
+    w.style.transform=`translateY(${y}%)`;
+  });
+}
+function pop(el,t,t0,st=.06,d=.7){
+  el.querySelectorAll('.c').forEach((c,i)=>{
+    const p=prog(t,t0+i*st,t0+i*st+d), e=elastic(p), k=clamp(1-e,-1,1);
+    const sy=1+0.7*k, sx=1-0.35*k, sc=clamp(p*6)*Math.min(1.2,e+0.0001);
+    c.style.transform=`translateY(${k*60}px) scale(${(sc*sx).toFixed(4)},${(sc*sy).toFixed(4)})`;
+    c.style.opacity=p>0?1:0;
+  });
+}
+
+// ---------- content setup ----------
+const NAMES=['Warm Plaster','Rattan & Lime','Skyline Marble','Skylight Shower','Oak & Stone','Matte Black','Anchored Beige','Curved Oak','Fluted Glow','Sage Kit-Kat','Walnut & Green','Terracotta Floor','Microcement'];
+const cards=[];
+NAMES.forEach((n,i)=>{
+  const c=document.createElement('div');c.className='card';
+  const num=String(i+1).padStart(2,'0');
+  c.innerHTML=`<div class="img" style="background-image:url(img/b${num}.jpg)"></div><div class="dim"></div><div class="pill"><b></b>${num} / ${n}</div>`;
+  $('track').appendChild(c);cards.push(c);
+  const d=document.createElement('div');d.className='dot';$('dots').appendChild(d);
+});
+const dots=[...$('dots').children];
+for(let k=0;k<11;k++){$('ctrO').insertAdjacentHTML('beforeend',`<span style="height:56px">${k%10}</span>`)}
+for(let k=0;k<3;k++){$('ctrT').insertAdjacentHTML('beforeend',`<span style="height:56px">${k}</span>`)}
+for(let k=0;k<=21;k++){$('HO').insertAdjacentHTML('beforeend',`<span style="height:640px">${k%10}</span>`)}
+for(let k=0;k<3;k++){$('HT').insertAdjacentHTML('beforeend',`<span style="height:640px">${k}</span>`)}
+for(let k=0;k<21;k++){$('Hbar').insertAdjacentHTML('beforeend',`<div style="flex:1;height:26px;border-radius:13px;background:rgba(30,30,30,.12)"></div>`)}
+const hbars=[...$('Hbar').children];
+
+// A rings
+for(let k=0;k<3;k++){$('Arings').insertAdjacentHTML('beforeend',`<div class="abs" style="left:540px;top:800px;width:600px;height:600px;margin:-300px;border-radius:50%;border:6px solid rgba(244,239,232,.5)"></div>`)}
+const rings=[...$('Arings').children];
+// B mini saved cards
+const MINI=[{im:'b05',x:690,y:250,r:9,t:2.0},{im:'b10',x:80,y:1340,r:-8,t:2.25},{im:'b06',x:700,y:1290,r:6,t:2.5}];
+MINI.forEach(m=>{$('Bminis').insertAdjacentHTML('beforeend',`<div class="abs" style="left:${m.x}px;top:${m.y}px;width:270px;height:330px;border-radius:20px;overflow:hidden;box-shadow:0 20px 40px rgba(30,30,30,.2);background:url(img/${m.im}.jpg) center/cover">
+  <div style="position:absolute;right:16px;top:16px;width:58px;height:58px;border-radius:50%;background:var(--terra);display:flex;align-items:center;justify-content:center"><svg width="26" height="30" viewBox="0 0 26 30"><path d="M3 2h20v26l-10-7-10 7z" fill="#fff"/></svg></div></div>`)});
+const minis=[...$('Bminis').children];
+// I items
+const IT=[['No','contractor','chasing.'],['No','surprise','bills.'],['No','site','chaos.']];
+IT.forEach((w,k)=>{$('I').insertAdjacentHTML('beforeend',`<div class="abs center" style="top:0;bottom:0">
+  <div class="tick abs" style="left:540px;top:640px;width:170px;height:170px;margin-left:-85px;border-radius:50%;background:var(--sage)">
+   <svg width="170" height="170" viewBox="0 0 170 170"><path d="M48 88 L74 114 L124 60" fill="none" stroke="#1E1E1E" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" /></svg></div>
+  <div class="itx abs center serif" style="top:900px;font-size:140px;font-weight:500;color:var(--bg);line-height:1.08;letter-spacing:-.02em">
+   <span class="w">${w[0]}</span> <span class="w">${w[1]}</span><br><span class="w" style="font-style:italic;font-weight:400;color:var(--sage)">${w[2]}</span></div></div>`)});
+const items=[...$('I').children];
+items.forEach(it=>it.querySelectorAll('.w').forEach(w=>{const m=document.createElement('span');m.className='m';w.parentNode.insertBefore(m,w);m.appendChild(w)}));
+// J echoes
+for(let k=0;k<3;k++){$('Jechoes').insertAdjacentHTML('beforeend',`<div class="abs center serif" style="top:720px;font-size:360px;font-weight:800;color:transparent;-webkit-text-stroke:3px rgba(244,239,232,.7);line-height:1;letter-spacing:-.03em">BYOB.</div>`)}
+const echoes=[...$('Jechoes').children];
+// K fan
+[['b05',-250,-11],['b10',250,11],['b12',0,0]].forEach(([im,x,r])=>{$('Kfan').insertAdjacentHTML('beforeend',`<div class="abs" style="left:${540+x-150}px;top:330px;width:300px;height:370px;border-radius:22px;overflow:hidden;box-shadow:0 26px 50px rgba(30,30,30,.22);background:url(img/${im}.jpg) center/cover" data-r="${r}" data-x="${x}"></div>`)});
+const fan=[...$('Kfan').children];
+$('stampP').setAttribute('pathLength','1');$('stampP').setAttribute('stroke-dasharray','1');
+['dimH','dimV'].forEach(id=>{$(id).setAttribute('pathLength','1');$(id).setAttribute('stroke-dasharray','1')});
+$('BscribP').setAttribute('pathLength','1');$('BscribP').setAttribute('stroke-dasharray','1');
+
+// ---------- carousel motion p(t) ----------
+const SEG=[[3.05,3.5,-3,0],[4.0,4.33,0,1],[4.5,4.8,1,2],[4.95,5.23,2,3],[5.35,5.6,3,4],[5.7,5.92,4,5],[6.0,6.2,5,6]];
+function hermite(x0,v0,x1,v1,d,u){const h00=2*u*u*u-3*u*u+1,h10=u*u*u-2*u*u+u,h01=-2*u*u*u+3*u*u,h11=u*u*u-u*u;return h00*x0+h10*d*v0+h01*x1+h11*d*v1}
+function P(t){
+  if(t<SEG[0][0]) return -3;
+  for(let k=0;k<SEG.length;k++){const [a,b,f,to]=SEG[k];
+    if(t<a) return SEG[k-1][3];
+    if(t<=b) return lerp(f,to,eOutB((t-a)/(b-a),1.35));
+  }
+  // accelerate run
+  if(t<6.25) return 6;
+  if(t<6.72) return lerp(6,9.3,eInC((t-6.25)/.47));
+  const v0=3*3.3/.47;
+  if(t<6.92) return hermite(9.3,v0,11.075,0,.2,(t-6.72)/.2);
+  if(t<7.12) return lerp(11.075,10.975,Math.sin(Math.PI/2*(t-6.92)/.2)**2);
+  if(t<7.28) return lerp(10.975,11,Math.sin(Math.PI/2*(t-7.12)/.16)**2);
+  return 11;
+}
+const ARR=SEG.map(s=>s[1]).concat([6.92]);
+function popAmt(t){let a=0;for(const e of ARR){const x=t-e;if(x>0&&x<.5)a+=Math.exp(-x*9)*Math.sin(x*22)*.045}return a}
+
+function cardTf(i,p,t,extra=1){
+  const d=i-p, ad=Math.abs(d), sg=Math.sign(d);
+  const x=sg*(ad<=1?ad*600:600+(ad-1)*470);
+  let s=ad<=1?1-.2*ad:Math.max(.6,.8-.06*(ad-1));
+  if(ad<.5) s*=1+popAmt(t)*(1-ad*2);
+  s*=extra;
+  const ry=-clamp(d,-1.6,1.6)*16;
+  return {x,s,ry,ad,d};
+}
+
+// ---------- render ----------
+function render(t){
+  // ===== A =====
+  if(show($('A'),t<1.78)){
+    pop($('Abyob'),t,-0.1,.075,.75);
+    reveal($('Asub'),t,.5,.07,.45);
+    reveal($('Alogo'),t,.15,0,.4);
+    rings.forEach((r,k)=>{const p=prog(t,k*.5,k*.5+.6);r.style.transform=`scale(${.3+p*2.2})`;r.style.opacity=(p>0&&p<1)?(1-p)*.9:0});
+    const punch=1+.07*Math.exp(-Math.max(0,t-1.0)*14)*(t>=1?1:0)+.05*Math.exp(-Math.max(0,t-.5)*14)*(t>=.5?1:0);
+    $('Abyob').style.transform=`scale(${punch})`;
+    const w=eInC(prog(t,1.5,1.75));
+    $('A').style.transform=`translateX(${-w*1080}px)`;blur('mbA',$('A'),w*60*(1-w)*4);
+  }
+  // ===== B =====
+  if(show($('B'),t>=1.5&&t<3.4)){
+    const w=1-eOutC(prog(t,1.5,1.78));
+    $('B').style.transform=`translateX(${w*1080}px)`;blur('mbB',$('B'),w*60);
+    reveal($('Btxt'),t,1.62,.08,.5);
+    $('BscribP').style.strokeDashoffset=1-eOutC(prog(t,2.3,2.6));
+    minis.forEach((m,k)=>{const p=prog(t,MINI[k].t,MINI[k].t+.7),e=elastic(p);m.style.transform=`rotate(${MINI[k].r*e}deg) scale(${e})`;m.style.opacity=p>0?1:0});
+    // zoom punch out before wipe
+    const z=eInC(prog(t,2.8,3.1));$('Btxt').style.transform=`scale(${1+z*.5})`;$('Btxt').style.transformOrigin='40% 40%';
+  }
+  const wp=prog(t,2.82,3.1);
+  if(show($('wipe1'),t>=2.82&&t<3.4)){$('wipe1').style.transform=`scale(${eInC(wp)*240})`}
+  // ===== C =====
+  const zoomP=eIOQ(prog(t,8.1,8.5));
+  if(show($('C'),t>=3.04&&t<8.6)){
+    $('C').style.clipPath=t<3.4?`circle(${eOutC(prog(t,3.04,3.36))*1150}px at 540px 960px)`:'none';
+    reveal($('Ceye'),t,3.15,.06,.45);reveal($('Ctitle'),t,3.2,.07,.5);
+    const p=P(t), v=(P(t+1/120)-P(t-1/120))*60;
+    blur('mbC',$('track'),Math.min(Math.abs(v)*4.2,60));
+    const press=1-.05*bump(t,7.97,.16);
+    cards.forEach((c,i)=>{
+      const {x,s,ry,ad}=cardTf(i,p,t,i===11?press:1);
+      const out=zoomP*(i<11?-1:1)*500;
+      c.style.transform=`translate(-50%,-50%) translateX(${x+out}px) perspective(1400px) rotateY(${ry}deg) scale(${s})`;
+      c.style.zIndex=100-Math.round(ad*10);
+      c.style.display=(ad>3.2||(i===11&&t>=8.1))?'none':'block';
+      c.children[0].style.transform=`translateX(${-clamp(i-p,-2,2)*45}px)`;
+      c.children[1].style.opacity=Math.min(ad,1)*.3;
+      const act=clamp(1-ad*2);
+      c.children[2].children[0].style.background=act>.5?'#FF5A36':'#1E1E1E';
+      const lp=i===11?1+.18*Math.exp(-Math.max(0,t-6.95)*8)*Math.sin(Math.max(0,t-6.95)*20)*(t>6.95?1:0):1;
+      c.children[2].style.transform=`scale(${lp})`;
+    });
+    dots.forEach((d,i)=>{const a=clamp(1-Math.abs(i-clamp(p,0,12)));d.style.width=(12+34*a)+'px';d.style.background=a>.5?'#FF5A36':`rgba(30,30,30,${.22+a*.5})`});
+    const dIn=eOutC(prog(t,3.3,3.7));
+    $('dots').style.opacity=dIn*(1-zoomP);$('ctr').style.opacity=dIn*(1-zoomP);
+    $('dots').style.transform=`translateY(${(1-dIn)*40+zoomP*200}px)`;$('ctr').style.transform=`translateY(${(1-dIn)*40+zoomP*200}px)`;
+    $('Chead').style.transform=`translateY(${-zoomP*300}px)`;$('Chead').style.opacity=1-zoomP;
+    const val=clamp(p,0,12)+1, ones=val-10*Math.floor(val/10), tens=Math.floor(val/10)+Math.max(0,ones-9);
+    $('ctrO').style.transform=`translateY(${-ones*56}px)`;$('ctrT').style.transform=`translateY(${-tens*56}px)`;
+  }
+  // finger + ripple
+  if(show($('finger'),t>=7.4&&t<8.45)){
+    const pin=eOutC(prog(t,7.4,7.88)), pout=eInC(prog(t,8.08,8.42)), pr=bump(t,7.9,.18);
+    const tx=lerp(860,600,pin)+pout*360, ty=lerp(2000,1060,pin)+pout*900;
+    $('finger').style.transform=`translate(${tx-150}px,${ty-40}px) rotate(${-16+pout*10}deg) scale(${1-pr*.07})`;
+    $('finger').style.zIndex=50;
+  }
+  if(show($('ripple'),t>=7.98&&t<8.6)){
+    const r=prog(t,7.98,8.5);$('ripple').style.left='600px';$('ripple').style.top='1060px';
+    $('rip1').style.transform=`scale(${.2+eOutC(r)*2.4})`;$('rip1').style.opacity=1-r;
+    $('rip2').style.transform=`scale(${.2+eOutC(r)*1.2})`;$('rip2').style.opacity=(1-r)*.8;
+  }
+  // hero zoom
+  if(show($('hero'),t>=8.1&&t<9.55)){
+    const z=zoomP, s=0.95+0.05*z; // starting from press scale
+    const w=lerp(660*.95,1080,z), h=lerp(820*.95,1920,z), cx=540, cy=lerp(1010,960,z);
+    const kb=1+prog(t,8.5,9.55)*.06;
+    Object.assign($('hero').style,{left:(cx-w/2)+'px',top:(cy-h/2)+'px',width:w+'px',height:h+'px',borderRadius:(24*(1-z))+'px',zIndex:40});
+    $('heroImg').style.transform=`scale(${kb})`;
+    $('heroShade').style.opacity=prog(t,8.4,8.7);
+    $('heroPill').style.opacity=1-prog(t,8.1,8.3);
+  }
+  if(show($('sel'),t>=8.48&&t<9.55)){
+    $('sel').style.zIndex=45;
+    const sp=prog(t,8.5,8.78), e=eOutB(sp,2.2);
+    $('stamp').style.transform=`scale(${lerp(2.6,1,e)}) rotate(${lerp(-25,0,eOutC(sp))}deg)`;$('stamp').style.opacity=clamp(sp*4);
+    $('stampP').style.strokeDashoffset=1-eOutC(prog(t,8.6,8.85));
+    const sh=prog(t,8.62,9.0);$('shock').style.transform=`scale(${1+eOutC(sh)*1.6})`;$('shock').style.opacity=sh>0?(1-sh):0;
+    reveal($('selTxt'),t,8.68,.08,.45);
+  }
+  // shake on stamp
+  const sk=Math.exp(-Math.max(0,t-8.6)*14)*(t>8.6&&t<9?1:0);
+  $('stage').style.transform=sk?`translate(${Math.sin(t*130)*14*sk}px,${Math.cos(t*170)*12*sk}px)`:'none';
+  // ===== E =====
+  if(show($('E'),t>=9.5&&t<12.0)){
+    $('E').style.zIndex=46;
+    const bpS=1+prog(t,9.5,10.6)*.05;$('Ebp').style.transform=`scale(${bpS})`;
+    $('dimH').style.strokeDashoffset=1-eOutC(prog(t,9.6,9.95));$('dimV').style.strokeDashoffset=1-eOutC(prog(t,9.7,10.05));
+    $('dimHt').style.opacity=prog(t,9.85,9.95);$('dimVt').style.opacity=prog(t,9.95,10.05);
+    const wx=lerp(-600,1700,eIOC(prog(t,10.4,10.78)));
+    $('Ephoto').style.clipPath=`polygon(-10px -10px, ${wx+200}px -10px, ${wx-200}px 1930px, -10px 1930px)`;
+    $('Ephoto').style.transform=`scale(${1.05+prog(t,10.5,12)*.06})`;
+    $('Eband').style.clipPath=`polygon(${wx+200}px -10px, ${wx+380}px -10px, ${wx-20}px 1930px, ${wx-200}px 1930px)`;
+    const t1=eOutB(prog(t,9.55,9.9),1.6), t1o=eInC(prog(t,10.45,10.6));
+    $('Etag1').style.transform=`scale(${t1*(1-t1o)})`;$('Etag1').style.transformOrigin='0 50%';
+    const t2=elastic(prog(t,10.75,11.4));$('Etag2').style.transform=`scale(${t2})`;$('Etag2').style.transformOrigin='0 50%';$('Etag2').style.opacity=t>=10.75?1:0;
+    reveal($('Etxt1'),t,9.62,.09,.45,10.85);
+    $('Etxt1').querySelectorAll('.hl').forEach((h,k)=>{const q=eOutX(prog(t,9.58+k*.18,9.95+k*.18))*(1-eOutC(prog(t,10.86,10.98)));h.style.clipPath=`inset(0 ${(1-q)*100}% 0 0 round 14px)`});
+    reveal($('Etxt2'),t,11.05,.09,.45);
+    $('Etxt2').querySelectorAll('.hl').forEach(h=>{const q=eOutX(prog(t,11.0,11.35));h.style.clipPath=`inset(0 ${(1-q)*100}% 0 0 round 14px)`});
+  }
+  // ===== F =====
+  if(show($('F'),t>=12.0&&t<13.0)){
+    const zp=1+.35*Math.exp(-(t-12)*14)+.06*Math.exp(-Math.max(0,t-12.5)*16)*(t>=12.5?1:0);
+    $('Fg').style.transform=`scale(${zp})`;
+    pop($('F1'),t,12.0,.045,.6);pop($('F2'),t,12.15,.045,.6);
+    reveal($('Fsub'),t,12.4,.07,.4);
+  }
+  // ===== G =====
+  if(show($('G'),t>=13.0&&t<14.25)){
+    const zp=1+.3*Math.exp(-(t-13)*14)+.05*Math.exp(-Math.max(0,t-13.5)*16)*(t>=13.5?1:0);
+    const w=eInC(prog(t,14.0,14.22));
+    $('G').style.transform=`translateX(${-w*1080}px)`;blur('mbA',$('G'),w*60*(1-w)*4);
+    $('Gg').style.transform=`scale(${zp})`;
+    pop($('G1'),t,13.0,.06,.6);pop($('G2'),t,13.12,.05,.6);
+    const tp=eOutB(prog(t,13.45,13.8),1.8);$('Gtoast').style.transform=`translateY(${(1-tp)*-260}px)`;
+  }
+  // ===== H =====
+  if(show($('H'),t>=14.0&&t<16.1)){
+    const w=1-eOutC(prog(t,14.0,14.25));
+    $('H').style.transform=`translateX(${w*1080}px)`;blur('mbD',$('H'),w*60);
+    reveal($('H1'),t,14.1,.08,.45);
+    const v=21*eOutC(prog(t,14.25,15.0)), ones=v, tens=Math.floor(v/10)+Math.max(0,(v%10)-9);
+    $('HO').style.transform=`translateY(${-ones*640}px)`;$('HT').style.transform=`translateY(${-tens*640}px)`;
+    const pv=Math.abs((21*eOutC(prog(t+1/60,14.25,15.0))-21*eOutC(prog(t-1/60,14.25,15.0)))*30);
+    $('Hnum').style.filter=pv>2?`blur(${Math.min(pv*.25,8)}px)`:'none';
+    const nb=1+.12*Math.exp(-Math.max(0,t-15.0)*12)*Math.sin(Math.max(0,t-15)*18)*(t>=15?1:0);
+    $('Hnum').style.transform=`scale(${nb})`;
+    reveal($('H2'),t,14.75,.08,.45);
+    hbars.forEach((b,k)=>{const on=v>=k+1;b.style.background=on?'#8FB89A':'rgba(30,30,30,.12)';b.style.transform=`scaleY(${on?1+.5*Math.exp(-Math.max(0,(t-14.25)-(k+1)/21*.3)*8):1})`});
+  }
+  if(show($('wipe2'),t>=15.82&&t<16.1)){$('wipe2').style.top=(1920*(1-eIOC(prog(t,15.82,16.0))))+'px';$('wipe2').style.zIndex=48;}
+  // ===== I =====
+  if(show($('I'),t>=16.0&&t<18.0)){
+    $('I').style.zIndex=49;
+    items.forEach((it,k)=>{const t0=16.0+k*.667, t1=t0+.6;
+      it.style.display=(t>=t0-.01&&t<t0+.75)?'block':'none';
+      reveal(it.querySelector('.itx'),t,t0+.04,.06,.4,k<2?t1:null);
+      const tk=it.querySelector('.tick'), e=elastic(prog(t,t0,t0+.6)), o=eInC(prog(t,t1,t1+.12));
+      tk.style.transform=`scale(${e*(1-o)}) rotate(${(1-e)*-40}deg)`;
+      tk.querySelector('path').style.strokeDashoffset=1-eOutC(prog(t,t0+.12,t0+.35));
+    });
+  }
+  // ===== J =====
+  if(show($('J'),t>=18.0&&t<19.35)){
+    $('J').style.zIndex=50;
+    const z=eOutX(prog(t,18.0,18.3));$('Jt').style.transform=`scale(${lerp(2.4,1,z)*(1+.06*Math.exp(-Math.max(0,t-18.5)*14)*(t>=18.5?1:0))})`;
+    blur('mbB',$('Jt'),(1-z)*40);
+    echoes.forEach((e,k)=>{const p=prog(t,18.0+k*.25,18.0+k*.25+.75);e.style.transform=`scale(${1+eOutC(p)*1.2})`;e.style.opacity=p>0&&p<1?(1-p):0});
+  }
+  if(show($('wipe3'),t>=18.95&&t<19.35)){$('wipe3').style.zIndex=51;$('wipe3').style.transform=`scale(${eInC(prog(t,18.95,19.2))*240})`}
+  // ===== K =====
+  if(show($('K'),t>=19.2)){
+    $('K').style.zIndex=52;
+    fan.forEach((f,k)=>{const p=prog(t,19.25+k*.1,19.95+k*.1),e=elastic(p);const fl=Math.sin((t-19)*2+k)*8;
+      f.style.transform=`translateX(${-(+f.dataset.x)*(1-e)}px) translateY(${(1-e)*200+fl}px) rotate(${f.dataset.r*e}deg) scale(${.4+.6*e})`;f.style.opacity=p>0?1:0});
+    reveal($('Klogo'),t,19.45,.1,.5);reveal($('Ktag'),t,19.85,.06,.45);reveal($('Kfoot'),t,20.4,0,.45);
+    const c=elastic(prog(t,20.3,21.0)), press=1-.06*bump(t,21.95,.18);
+    $('Kcta').style.transform=`scale(${c*press})`;$('Kcta').style.opacity=t>=20.3?1:0;
+    $('Kshine').style.left=lerp(-200,900,prog((t-21.0)%1.6,0,.7))+'px';
+  }
+  // end-card finger tap on CTA
+  if(t>=21.4&&t<22.6){ show($('finger'),true);
+    const pin=eOutC(prog(t,21.4,21.88)), pout=eInC(prog(t,22.1,22.5)), pr=bump(t,21.9,.18);
+    const tx=lerp(900,700,pin)+pout*300, ty=lerp(2050,1385,pin)+pout*800;
+    $('finger').style.transform=`translate(${tx-150}px,${ty-40}px) rotate(${-14+pout*10}deg) scale(${1-pr*.07})`;$('finger').style.zIndex=60;
+  }
+  if(t>=21.95&&t<22.5){show($('ripple'),true);$('ripple').style.zIndex=59;const r=prog(t,21.95,22.45);$('ripple').style.left='700px';$('ripple').style.top='1385px';
+    $('rip1').style.transform=`scale(${.2+eOutC(r)*2.2})`;$('rip1').style.opacity=1-r;$('rip2').style.transform=`scale(${.2+eOutC(r)*1.1})`;$('rip2').style.opacity=(1-r)*.8;}
+  else if(t>=8.6) $('ripple').style.display='none';
+  // beat flashes
+  let fl=0;for(const b of [9.5,12.0,13.0,18.0]){const x=t-b;if(x>=0&&x<.12)fl=Math.max(fl,(1-x/.12)*.55)}
+  $('flash').style.opacity=fl;$('flash').style.zIndex=99;
+}
+window.render=render;
+window.ready=Promise.all([document.fonts.ready,...[...new Set([...document.querySelectorAll('[style*="url("]')].map(e=>e.style.backgroundImage.match(/url\("?([^")]+)/)?.[1]).filter(Boolean))].map(u=>new Promise(r=>{const im=new Image();im.onload=im.onerror=r;im.src=u;im.decode&&im.decode().catch(()=>{})}))]);
+render(0);
+</script>
+</body></html>
