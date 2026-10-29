@@ -1,0 +1,84 @@
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  src: url(g1.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: url(g2.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: italic;
+  font-weight: 300;
+  src: url(g3.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: italic;
+  font-weight: 400;
+  src: url(g4.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: italic;
+  font-weight: 500;
+  src: url(g5.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: italic;
+  font-weight: 600;
+  src: url(g6.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: italic;
+  font-weight: 700;
+  src: url(g7.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: italic;
+  font-weight: 800;
+  src: url(g8.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 300;
+  src: url(g9.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 400;
+  src: url(g10.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 500;
+  src: url(g11.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 600;
+  src: url(g12.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 700;
+  src: url(g13.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 800;
+  src: url(g14.ttf) format('truetype');
+}

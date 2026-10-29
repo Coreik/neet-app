@@ -1,0 +1,607 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="fonts2/f.css">
+<style>
+:root{--paper:#FFFFFF;--ink:#16212C;--sky:#B7D6EC;--aqua:#8EC1E3;--deep:#2B6A9E;--navy:#0F2639}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--paper)}
+body{font-family:'Inter Tight',sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+#stage{position:absolute;inset:0;overflow:hidden}
+.scene{position:absolute;inset:0;overflow:hidden;display:none}
+.serif{font-family:'Inter Tight',sans-serif;font-weight:600!important;letter-spacing:-.028em!important}
+#Abyob,#F1,#G1,#Jt,#Hnum,#Klogo{letter-spacing:-.055em!important}
+#Btxt,#Ctitle,#BRtitle,.itx{letter-spacing:-.04em!important}
+.serif[style*="italic"],.serif [style*="italic"],.serif i{font-family:'Instrument Serif',serif;font-weight:400!important;letter-spacing:-.015em!important}
+.serif .w[style*="italic"],.serif i{font-size:1.12em;line-height:.9}
+.caus,.aurora,#grain,#vig{display:none!important}
+.m{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .06em .18em;margin:0 -.06em -.18em}
+.w,.c{display:inline-block;transform-origin:50% 90%}
+.abs{position:absolute}
+.center{left:0;right:0;text-align:center}
+.caus{position:absolute;left:-160px;top:-240px;width:1400px;height:2400px;background-size:1400px 2400px;mix-blend-mode:soft-light;pointer-events:none}
+.aurora{position:absolute;border-radius:50%;pointer-events:none}
+.card{position:absolute;left:540px;top:990px;width:640px;height:800px;border-radius:26px;overflow:hidden;background:#ddd;
+  box-shadow:0 2px 4px rgba(15,38,57,.06),0 14px 28px rgba(15,38,57,.10),0 44px 90px rgba(15,38,57,.18);
+  -webkit-box-reflect:below 22px linear-gradient(transparent 74%,rgba(0,0,0,.16))}
+.card .img{position:absolute;top:0;bottom:0;left:-7%;width:114%;background-size:cover;background-position:center}
+.card .dim{position:absolute;inset:0;background:linear-gradient(180deg,#0F2639,#16212C);opacity:0}
+.card .edge{position:absolute;inset:0;border-radius:26px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35)}
+.glass{background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5);
+  border:1px solid rgba(22,33,44,.07);box-shadow:0 2px 4px rgba(15,38,57,.05),0 14px 34px rgba(15,38,57,.12)}
+.pill{position:absolute;left:24px;bottom:24px;border-radius:999px;padding:13px 26px 13px 18px;
+  font:700 25px 'Inter Tight';letter-spacing:.01em;color:var(--ink);display:flex;align-items:center;gap:12px;transform-origin:0 100%}
+.pill b{width:11px;height:11px;border-radius:50%;background:var(--ink);display:inline-block}
+.dot{height:10px;border-radius:5px;background:rgba(22,33,44,.18)}
+.strip{display:flex;flex-direction:column}
+.odo{display:inline-block;overflow:hidden;vertical-align:top}
+.tagp{display:inline-flex;align-items:center;gap:14px;border-radius:999px;padding:16px 30px 16px 18px;font:800 25px 'Inter Tight';letter-spacing:.2em}
+.ico{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.hl{display:inline-block;padding:4px 26px 10px;border-radius:22px;background:rgba(245,242,237,.80);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
+  border:1px solid rgba(255,255,255,.7);box-shadow:0 12px 30px rgba(15,38,57,.18)}
+.eyebrow{font:700 24px 'Inter Tight';letter-spacing:.44em}
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="mbA" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur id="mbA_g" stdDeviation="0 0"/></filter>
+    <filter id="mbB" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur id="mbB_g" stdDeviation="0 0"/></filter>
+    <filter id="mbC" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur id="mbC_g" stdDeviation="0 0"/></filter>
+    <filter id="mbD" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur id="mbD_g" stdDeviation="0 0"/></filter>
+    <filter id="vbH" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur id="vbH_g" stdDeviation="0 0"/></filter>
+    <linearGradient id="gDeep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5FA3D6"/><stop offset="1" stop-color="#255E8E"/></linearGradient>
+  </defs>
+</svg>
+<div id="stage">
+
+<!-- A: hook -->
+<div id="A" class="scene" style="background:#fff">
+  <div class="caus" style="background-image:url(img/caustic0.png);opacity:.9"></div><div class="caus" style="background-image:url(img/caustic1.png);opacity:.6"></div>
+  <div id="Arings"></div>
+  <div id="Alogo" class="abs center eyebrow" style="top:150px;color:var(--ink);opacity:.8"><span class="w">COREBATH</span></div>
+  <div id="Abyob" class="abs center serif kl" style="top:640px;font-size:330px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.035em">BYOB</div>
+  <div id="Asub" class="abs center serif" style="top:1030px;font-size:76px;font-style:italic;font-weight:300;color:var(--ink);line-height:1.15">
+    <span class="w"><b style="font-weight:600;color:var(--deep)">B</b>uild</span> <span class="w"><b style="font-weight:600;color:var(--deep)">Y</b>our</span> <span class="w"><b style="font-weight:600;color:var(--deep)">O</b>wn</span><br><span class="w"><b style="font-weight:600;color:var(--deep)">B</b>athroom</span>
+  </div>
+  <div id="Arule" class="abs" style="left:440px;width:200px;top:990px;height:2px;background:var(--ink);opacity:.35;transform-origin:50% 50%"></div>
+</div>
+
+<!-- B: Saw a bathroom you love? -->
+<div id="B" class="scene" style="background:#fff">
+  <div id="Baur" class="aurora" style="left:-200px;top:300px;width:1100px;height:1100px;background:radial-gradient(closest-side,rgba(142,193,227,.55),rgba(142,193,227,0))"></div>
+  <div id="Bminis"></div>
+  <div id="Btxt" class="abs serif" style="left:96px;top:650px;font-size:158px;font-weight:400;line-height:1.0;letter-spacing:-.035em">
+    <span class="w">Saw</span> <span class="w">a</span><br><span class="w">bathroom</span><br><span class="w">you</span> <span class="w" style="color:var(--deep);font-style:italic;font-weight:300">love?</span>
+  </div>
+  <svg id="Bscrib" class="abs" style="left:450px;top:1118px" width="420" height="60" viewBox="0 0 420 60">
+    <path id="BscribP" d="M6 30 Q 46 6 86 30 T 166 30 T 246 30 T 326 30 T 406 30" fill="none" stroke="#2B6A9E" stroke-width="9" stroke-linecap="round"/>
+  </svg>
+</div>
+
+<!-- C: The bath board -->
+<div id="C" class="scene" style="background:#fff">
+  <div id="Caur" class="aurora" style="left:-110px;top:420px;width:1300px;height:1300px;background:radial-gradient(closest-side,rgba(183,214,236,.85),rgba(183,214,236,0))"></div>
+  <div id="Chead">
+    <div id="Ceye" class="abs center eyebrow" style="top:262px;color:rgba(22,33,44,.55)"><span class="w">SAVED</span> <span class="w">INSPIRATION</span></div>
+    <div id="Ctitle" class="abs center serif" style="top:314px;font-size:136px;font-weight:400;letter-spacing:-.035em;line-height:1.05">
+      <span class="w">The</span> <span class="w" style="font-style:italic;font-weight:300;color:var(--deep)">bath</span> <span class="w">board</span></div>
+  </div>
+  <div id="track" class="abs" style="inset:0"></div>
+  <div id="dots" class="abs center" style="top:1640px;display:flex;justify-content:center;gap:12px"></div>
+  <div id="ctr" class="abs center" style="top:1684px;font:700 40px 'Inter Tight';letter-spacing:.1em;color:rgba(22,33,44,.8);line-height:52px">
+    <span class="odo" style="height:52px"><span id="ctrT" class="strip"></span></span><span class="odo" style="height:52px"><span id="ctrO" class="strip"></span></span>
+    <span style="opacity:.4">&nbsp;—&nbsp;10</span>
+  </div>
+</div>
+
+<!-- hero + selection -->
+<div id="hero" class="abs" style="display:none;overflow:hidden">
+  <div id="heroImg" class="abs" style="inset:0;background:url(img/h09.jpg) center/cover"></div>
+  <div id="heroShade" class="abs" style="inset:0;background:linear-gradient(180deg,rgba(15,38,57,0) 40%,rgba(15,38,57,.7) 100%);opacity:0"></div>
+  <div id="heroPill" class="pill glass"><b style="background:var(--deep)"></b>09 / Terracotta Floor</div>
+</div>
+<div id="sel" class="scene" style="display:none">
+  <div id="shock" class="abs" style="left:540px;top:860px;width:260px;height:260px;margin:-130px;border-radius:50%;border:3px solid rgba(255,255,255,.9)"></div>
+  <div id="shock2" class="abs" style="left:540px;top:860px;width:260px;height:260px;margin:-130px;border-radius:50%;border:2px solid rgba(183,214,236,.9)"></div>
+  <div id="stamp" class="abs" style="left:540px;top:860px;width:250px;height:250px;margin:-125px">
+    <div class="abs glass" style="inset:-22px;border-radius:50%;background:rgba(255,255,255,.28)"></div>
+    <svg class="abs" width="250" height="250" viewBox="0 0 250 250" style="filter:drop-shadow(0 18px 30px rgba(15,38,57,.35))">
+      <circle cx="125" cy="125" r="125" fill="url(#gDeep)"/>
+      <path id="stampP" d="M76 128 L110 162 L178 92" fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div id="selTxt" class="abs center serif" style="top:1430px;font-size:156px;font-style:italic;color:#fff;font-weight:300;letter-spacing:-.02em;text-shadow:0 6px 30px rgba(15,38,57,.35)">
+    <span class="w">This</span> <span class="w">one.</span></div>
+</div>
+
+<!-- E: drawn -> built -->
+<div id="E" class="scene" style="background:#fff">
+  <div id="Ebp" class="abs" style="inset:0;background:url(img/bp09.jpg) center/cover"></div>
+  <div id="Egrid" class="abs" style="inset:0;background-image:linear-gradient(rgba(43,106,158,.10) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(43,106,158,.10) 1.5px,transparent 1.5px);background-size:54px 54px"></div>
+  <svg id="Edim" class="abs" style="inset:0" width="1080" height="1920">
+    <g stroke="#2B6A9E" stroke-width="3" fill="none" stroke-linecap="round">
+      <path id="dimH" d="M90 300 L990 300 M90 284 L90 316 M990 284 L990 316"/>
+      <path id="dimV" d="M66 340 L66 1300 M50 340 L82 340 M50 1300 L82 1300"/>
+    </g>
+    <g font-family="Inter Tight" font-weight="700" font-size="28" fill="#2B6A9E" letter-spacing="3">
+      <text id="dimHt" x="540" y="276" text-anchor="middle">2400 MM</text>
+      <text id="dimVt" x="104" y="820" transform="rotate(-90 104 820)" text-anchor="middle">2700 MM</text>
+    </g>
+  </svg>
+  <div id="Ephoto" class="abs" style="inset:0;background:url(img/h09.jpg) center/cover"></div>
+  <div id="Eband" class="abs" style="inset:0;background:linear-gradient(100deg,rgba(183,214,236,0),#CFE5F4 35%,#8EC1E3 65%,rgba(142,193,227,0))"></div>
+  <div id="Etag1" class="abs" style="left:96px;top:140px"><span class="tagp glass"><span class="ico" style="background:var(--ink)">
+    <svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4z" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"/></svg></span>DRAWN</span></div>
+  <div id="Etag2" class="abs" style="left:96px;top:140px"><span class="tagp glass"><span class="ico" style="background:var(--deep)">
+    <svg width="22" height="22" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>BUILT</span></div>
+  <div id="Etxt1" class="abs serif" style="left:64px;top:1330px;font-size:112px;font-weight:400;line-height:1.16;letter-spacing:-.03em">
+    <span class="hl"><span class="w">We</span> <span class="w">build</span> <span class="w" style="font-style:italic;color:var(--deep);font-weight:300">that</span></span><br>
+    <span class="hl" style="margin-top:16px"><span class="w">exact</span> <span class="w">bathroom.</span></span></div>
+  <div id="Etxt2" class="abs serif" style="left:64px;top:1490px;font-size:136px;font-weight:400;line-height:1.1;letter-spacing:-.03em">
+    <span class="hl"><span class="w">In</span> <span class="w" style="font-style:italic;color:var(--deep);font-weight:300">your</span> <span class="w">home.</span></span></div>
+</div>
+
+<!-- F: Fixed price -->
+<div id="F" class="scene" style="background:#fff">
+  <div class="caus" style="background-image:url(img/caustic1.png);opacity:.9"></div><div class="caus" style="background-image:url(img/caustic0.png);opacity:.5"></div>
+  <div id="Fg" class="abs" style="inset:0">
+    <div id="F1" class="abs center serif kl" style="top:640px;font-size:250px;font-weight:600;color:var(--ink);line-height:1;letter-spacing:-.04em">Fixed</div>
+    <div id="F2" class="abs center serif kl" style="top:880px;font-size:250px;font-weight:300;font-style:italic;color:var(--deep);line-height:1;letter-spacing:-.03em">price.</div>
+  </div>
+  <div id="Fsub" class="abs center eyebrow" style="top:1240px;color:var(--ink);opacity:.75"><span class="w">NO</span> <span class="w">HIDDEN</span> <span class="w">COSTS</span></div>
+</div>
+
+<!-- G: One order -->
+<div id="G" class="scene" style="background:#fff">
+  <div class="caus" style="background-image:url(img/caustic0.png);opacity:.22;mix-blend-mode:screen"></div>
+  <div id="Gtoast" class="abs" style="left:540px;top:330px">
+    <div class="glass" style="transform:translateX(-50%);width:820px;display:flex;align-items:center;gap:26px;border-radius:40px;padding:26px 30px;background:#fff;border-color:rgba(22,33,44,.06);box-shadow:0 2px 4px rgba(15,38,57,.06),0 24px 50px rgba(15,38,57,.16)">
+      <div style="width:96px;height:96px;border-radius:24px;background:linear-gradient(135deg,#8EC1E3,#2B6A9E);display:flex;align-items:center;justify-content:center;font:italic 400 72px 'Instrument Serif';color:#fff">c</div>
+      <div style="flex:1;color:var(--ink)"><div style="font:700 24px 'Inter Tight';letter-spacing:.16em;opacity:.65">COREBATH · NOW</div><div style="font:800 40px 'Inter Tight';margin-top:6px">Order confirmed</div></div>
+      <div class="ico" style="width:60px;height:60px;background:var(--sky)"><svg width="30" height="30" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#0F2639" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+  </div>
+  <div id="Gg" class="abs" style="inset:0">
+    <div id="G1" class="abs center serif kl" style="top:720px;font-size:270px;font-weight:600;color:var(--ink);line-height:1;letter-spacing:-.04em">One</div>
+    <div id="G2" class="abs center serif kl" style="top:980px;font-size:270px;font-weight:300;font-style:italic;color:var(--deep);line-height:1;letter-spacing:-.03em">order.</div>
+  </div>
+</div>
+
+<!-- H: 21 days -->
+<div id="H" class="scene" style="background:#fff">
+  <div id="Haur" class="aurora" style="left:-100px;top:420px;width:1280px;height:1100px;background:radial-gradient(closest-side,rgba(183,214,236,.75),rgba(183,214,236,0))"></div>
+  <div id="H1" class="abs center serif" style="top:430px;font-size:100px;font-weight:400;letter-spacing:-.03em"><span class="w">Handed</span> <span class="w">over</span> <span class="w">in</span></div>
+  <div id="Hnum" class="abs center serif" style="top:590px;font-size:620px;font-weight:500;color:var(--deep);line-height:660px;height:660px;letter-spacing:-.05em">
+    <span class="odo" style="height:660px"><span id="HT" class="strip"></span></span><span class="odo" style="height:660px"><span id="HO" class="strip"></span></span></div>
+  <div id="H2" class="abs center serif" style="top:1250px;font-size:170px;font-style:italic;font-weight:300;line-height:1.1;letter-spacing:-.02em"><span class="w">days.</span></div>
+  <div id="Hbar" class="abs" style="left:110px;right:110px;top:1580px;display:flex;gap:9px"></div>
+</div>
+
+<!-- I: No ... -->
+<div id="I" class="scene" style="background:#fff">
+  <div class="caus" style="background-image:url(img/caustic1.png);opacity:.18;mix-blend-mode:screen"></div>
+</div>
+
+<!-- J: BYOB punch -->
+<div id="J" class="scene" style="background:#fff">
+  <div class="caus" style="background-image:url(img/caustic0.png);opacity:.9"></div><div class="caus" style="background-image:url(img/caustic1.png);opacity:.6"></div>
+  <div id="Jechoes"></div>
+  <div id="Jt" class="abs center serif" style="top:730px;font-size:350px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.04em">BYOB<span style="color:var(--deep)">.</span></div>
+</div>
+
+<!-- K: end card -->
+<div id="K" class="scene" style="background:#fff">
+  <div id="Kaur" class="aurora" style="left:-160px;top:120px;width:1400px;height:1100px;background:radial-gradient(closest-side,rgba(183,214,236,.85),rgba(183,214,236,0))"></div>
+  <div id="Kfan"></div>
+  <div id="Klogo" class="abs center serif" style="top:880px;font-size:184px;font-weight:500;letter-spacing:-.045em;line-height:1">
+    <span class="w">Core</span><span class="w" style="font-style:italic;font-weight:300;color:var(--deep)">bath</span></div>
+  <div id="Ktag" class="abs center" style="top:1100px;font:600 44px 'Inter Tight';color:rgba(22,33,44,.7);letter-spacing:.005em">
+    <span class="w">Build</span> <span class="w">your</span> <span class="w">own</span> <span class="w">bathroom.</span></div>
+  <div id="Kcta" class="abs" style="left:540px;top:1290px;width:760px;height:140px;margin-left:-380px;border-radius:999px;background:linear-gradient(135deg,#4F95CC,#2B6A9E 60%,#225886);
+     box-shadow:0 2px 0 rgba(255,255,255,.35) inset,0 22px 44px rgba(43,106,158,.35);display:flex;align-items:center;justify-content:center;gap:22px;font:800 44px 'Inter Tight';color:#fff;overflow:hidden">
+     <div id="Kshine" class="abs" style="top:-20px;bottom:-20px;width:140px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg)"></div>
+     <span style="position:relative">Order your bathroom</span>
+     <svg style="position:relative" width="40" height="40" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div id="Kfoot" class="abs center eyebrow" style="top:1700px;color:rgba(22,33,44,.45)"><span class="w">BENGALURU</span></div>
+</div>
+
+<!-- BR: brand picker -->
+<div id="BR" class="scene" style="background:#fff">
+  <div id="BRaur" class="aurora" style="left:-200px;top:500px;width:1400px;height:1300px;background:radial-gradient(closest-side,rgba(183,214,236,.7),rgba(183,214,236,0))"></div>
+  <div id="BRsum" class="abs glass" style="left:64px;right:64px;top:170px;height:214px;border-radius:38px;background:rgba(255,255,255,.62)">
+    <div class="abs" style="left:206px;top:52px;font:700 22px 'Inter Tight';letter-spacing:.32em;color:rgba(22,33,44,.5)">YOUR BATHROOM</div>
+    <div class="abs serif" style="left:204px;top:88px;font-size:62px;font-weight:400;letter-spacing:-.03em">Terracotta <i style="font-weight:300;color:var(--deep)">Floor</i></div>
+    <div class="abs ico" style="right:36px;top:73px;width:68px;height:68px;background:linear-gradient(135deg,#5FA3D6,#255E8E)"><svg width="32" height="32" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  </div>
+  <div id="BRphoto" class="abs" style="background:url(img/h09.jpg) center/cover;box-shadow:0 10px 30px rgba(15,38,57,.2)"></div>
+  <div id="BReye" class="abs eyebrow" style="left:68px;top:468px;color:rgba(22,33,44,.5)"><span class="w">STEP</span> <span class="w">02</span></div>
+  <div id="BRtitle" class="abs serif" style="left:60px;top:510px;font-size:132px;font-weight:400;letter-spacing:-.04em;line-height:1.05">
+    <span class="w">Pick</span> <span class="w">your</span> <span class="w" style="font-style:italic;font-weight:300;color:var(--deep)">brands.</span></div>
+  <div id="BRgrid"></div>
+  <div id="BRfoot" class="abs glass" style="left:64px;right:64px;top:1500px;height:150px;border-radius:75px;background:rgba(255,255,255,.62);display:flex;align-items:center;justify-content:space-between;padding:0 30px 0 52px">
+    <span style="font:700 26px 'Inter Tight';letter-spacing:.3em;color:rgba(22,33,44,.6)">BRANDS SELECTED</span>
+    <span style="display:flex;align-items:center;gap:20px"><span class="serif" style="font-size:96px;font-weight:500;color:var(--deep);line-height:110px;height:110px;overflow:hidden;display:inline-block"><span id="BRn" class="strip"></span></span>
+    <span id="BRgo" style="width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#4F95CC,#255E8E);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px rgba(43,106,158,.35)"><svg width="40" height="40" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+  </div>
+</div>
+
+<!-- water wipe -->
+<svg id="ww" class="abs" style="left:0;top:0;display:none" width="1080" height="1920"><path id="wwB"/><path id="wwF"/></svg>
+
+<!-- cursor + click ripple -->
+<div id="ripple" class="abs" style="display:none">
+  <div id="rip1" class="abs" style="width:200px;height:200px;margin:-100px;border-radius:50%;border:4px solid rgba(255,255,255,.95);box-shadow:0 0 0 2px rgba(43,106,158,.25)"></div>
+  <div id="rip3" class="abs" style="width:200px;height:200px;margin:-100px;border-radius:50%;border:3px solid rgba(142,193,227,.95)"></div>
+  <div id="rip2" class="abs" style="width:200px;height:200px;margin:-100px;border-radius:50%;background:radial-gradient(closest-side,rgba(183,214,236,.75),rgba(183,214,236,0))"></div>
+</div>
+<div id="cursor" class="abs" style="left:0;top:0;width:90px;height:120px;display:none;transform-origin:6px 4px">
+  <svg width="90" height="120" viewBox="0 0 60 80" style="filter:drop-shadow(0 10px 14px rgba(15,38,57,.35)) drop-shadow(0 2px 3px rgba(15,38,57,.3))">
+    <path d="M6 4 L6 62 L19.5 49.5 L28.5 70.5 L38 66.5 L29 46 L47 46 Z" fill="#16212C" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>
+  </svg>
+</div>
+
+<div id="flash" class="abs" style="inset:0;background:#fff;opacity:0;pointer-events:none"></div>
+<div id="vig" class="abs" style="inset:0;pointer-events:none;background:radial-gradient(130% 90% at 50% 45%,rgba(0,0,0,0) 60%,rgba(10,27,41,.14) 100%)"></div>
+<div id="grain" class="abs" style="inset:0;pointer-events:none;background:url(img/grain.png);mix-blend-mode:overlay;opacity:.09"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const prog=(t,a,b)=>clamp((t-a)/(b-a));
+const eOutC=p=>1-Math.pow(1-p,3), eInC=p=>p*p*p, eIOC=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+const eOutX=p=>p>=1?1:1-Math.pow(2,-10*p);
+const eIOQ=p=>p<.5?8*p*p*p*p:1-Math.pow(-2*p+2,4)/2;
+const eOutB=(p,s=1.4)=>{const c3=s+1;return 1+c3*Math.pow(p-1,3)+s*Math.pow(p-1,2)};
+const elastic=p=>p<=0?0:p>=1?1:1-Math.exp(-9*p)*Math.cos(10.5*p);
+const bump=(t,a,d)=>{const x=(t-a)/d;return x<0||x>1?0:Math.sin(Math.PI*x)};
+const show=(el,on)=>{el.style.display=on?'block':'none';return on};
+function blur(id,el,px,vert=false){ if(px<0.4){el.style.filter='none';return} $(id+'_g').setAttribute('stdDeviation',vert?('0 '+px.toFixed(1)):(px.toFixed(1)+' 0')); el.style.filter=`url(#${id})`; }
+
+document.querySelectorAll('.w').forEach(w=>{const m=document.createElement('span');m.className='m';w.parentNode.insertBefore(m,w);m.appendChild(w)});
+document.querySelectorAll('.kl').forEach(el=>{const t=el.textContent;el.innerHTML='';for(const ch of t){const s=document.createElement('span');s.className='c';s.textContent=ch;el.appendChild(s)}});
+
+function reveal(el,t,t0,st=.07,d=.5,out=null){
+  el.querySelectorAll('.w').forEach((w,i)=>{
+    const p=eOutX(prog(t,t0+i*st,t0+i*st+d));
+    let y=(1-p)*115, r=(1-p)*6;
+    if(out!==null){const q=eInC(prog(t,out+i*.03,out+i*.03+.22));y-=q*115;}
+    w.style.transform=`translateY(${y}%) rotate(${r}deg)`;
+  });
+}
+function pop(el,t,t0,st=.06,d=.7){
+  el.querySelectorAll('.c').forEach((c,i)=>{
+    const p=prog(t,t0+i*st,t0+i*st+d), e=elastic(p), k=clamp(1-e,-1,1);
+    const sy=1+0.6*k, sx=1-0.3*k, sc=clamp(p*6)*Math.min(1.2,e+0.0001);
+    c.style.transform=`translateY(${k*60}px) scale(${(sc*sx).toFixed(4)},${(sc*sy).toFixed(4)})`;
+    c.style.opacity=p>0?1:0;
+  });
+}
+// caustics drift
+function caus(scene,t){scene.querySelectorAll('.caus').forEach((c,k)=>{const d=k?-1:1;c.style.transform=`translate(${Math.sin(t*.6+k)*60*d}px,${(t*38*d)%600}px) rotate(${k*4}deg)`})}
+function aur(el,t,k=0){el.style.transform=`translate(${Math.sin(t*.9+k)*70}px,${Math.cos(t*.7+k)*50}px) scale(${1+Math.sin(t*1.1+k)*.05})`}
+
+// water wipe: top edge rises over [t0,t0+d], bottom edge follows; returns coverage state
+function water(t,t0,d,cF,cB){return;
+  const on=t>=t0&&t<t0+d*2; if(!on) return; show($('ww'),true);
+  $('ww').style.zIndex=90;
+  const Lt=lerp(2050,-160,eIOC(prog(t,t0,t0+d))), Lb=lerp(2050,-160,eIOC(prog(t,t0+d*.95,t0+d*1.95)));
+  const wave=(x,L,ph,a)=>L+a*Math.sin(x*.008+ph)+a*.45*Math.sin(x*.019-ph*1.6);
+  const path=(off,a,ph)=>{let s=`M-10 ${wave(-10,Lt+off,ph,a)}`;for(let x=0;x<=1100;x+=30)s+=` L${x} ${wave(x,Lt+off,ph,a)}`;
+    for(let x=1100;x>=-10;x-=30)s+=` L${x} ${wave(x,Lb+off,ph+1.3,a)}`;return s+'Z'};
+  const ph=t*7;
+  $('wwB').setAttribute('d',path(-70,46,ph+2));$('wwB').setAttribute('fill',cB);
+  $('wwF').setAttribute('d',path(0,40,ph));$('wwF').setAttribute('fill',cF);
+}
+
+// content
+const NAMES=['Warm Plaster','Rattan & Lime','Skyline Marble','Skylight Shower','Curved Oak','Matte Black','Walnut & Green','Sage Kit-Kat','Terracotta Floor','Microcement'];
+const SELI=8;
+const cards=[];
+NAMES.forEach((n,i)=>{
+  const c=document.createElement('div');c.className='card';
+  const num=String(i+1).padStart(2,'0');
+  c.innerHTML=`<div class="img" style="background-image:url(img/b${num}.jpg)"></div><div class="dim"></div><div class="edge"></div><div class="pill glass"><b></b>${num} / ${n}</div>`;
+  $('track').appendChild(c);cards.push(c);
+  const d=document.createElement('div');d.className='dot';$('dots').appendChild(d);
+});
+const dots=[...$('dots').children];
+for(let k=0;k<11;k++)$('ctrO').insertAdjacentHTML('beforeend',`<span style="height:52px">${k%10}</span>`);
+for(let k=0;k<2;k++)$('ctrT').insertAdjacentHTML('beforeend',`<span style="height:52px">${k}</span>`);
+for(let k=0;k<=21;k++)$('HO').insertAdjacentHTML('beforeend',`<span style="height:660px">${k%10}</span>`);
+for(let k=0;k<3;k++)$('HT').insertAdjacentHTML('beforeend',`<span style="height:660px">${k}</span>`);
+for(let k=0;k<21;k++)$('Hbar').insertAdjacentHTML('beforeend',`<div style="flex:1;height:22px;border-radius:11px;background:rgba(43,106,158,.14)"></div>`);
+const hbars=[...$('Hbar').children];
+for(let k=0;k<4;k++)$('Arings').insertAdjacentHTML('beforeend',`<div class="abs" style="left:540px;top:800px;width:700px;height:700px;margin:-350px;border-radius:50%;border:${k%2?2:3}px solid rgba(43,106,158,.28)"></div>`);
+const rings=[...$('Arings').children];
+const MINI=[{im:'b04',x:700,y:250,r:8,t:2.0},{im:'b08',x:70,y:1330,r:-8,t:2.25},{im:'b06',x:710,y:1280,r:6,t:2.5}];
+MINI.forEach(m=>$('Bminis').insertAdjacentHTML('beforeend',`<div class="abs" style="left:${m.x}px;top:${m.y}px;width:270px;height:336px;border-radius:22px;overflow:hidden;box-shadow:0 2px 4px rgba(15,38,57,.08),0 24px 48px rgba(15,38,57,.18);background:url(img/${m.im}.jpg) center/cover">
+  <div style="position:absolute;inset:0;border-radius:22px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4)"></div>
+  <div class="glass" style="position:absolute;right:14px;top:14px;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center"><svg width="24" height="28" viewBox="0 0 26 30"><path d="M3 2h20v26l-10-7-10 7z" fill="#2B6A9E"/></svg></div></div>`));
+const minis=[...$('Bminis').children];
+const IT=[['No','contractor','chasing.'],['No','surprise','bills.'],['No','site','chaos.']];
+IT.forEach(w=>$('I').insertAdjacentHTML('beforeend',`<div class="abs" style="inset:0">
+  <div class="tick abs" style="left:540px;top:620px;width:180px;height:180px;margin-left:-90px">
+   <div class="abs" style="inset:-18px;border-radius:50%;border:2px solid rgba(43,106,158,.18)"></div>
+   <svg class="abs" width="180" height="180" viewBox="0 0 180 180"><circle cx="90" cy="90" r="90" fill="#B7D6EC"/><path d="M52 93 L79 120 L130 66" fill="none" stroke="#0F2639" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1"/></svg></div>
+  <div class="itx abs center serif" style="top:890px;font-size:140px;font-weight:400;color:var(--ink);line-height:1.06;letter-spacing:-.035em">
+   <span class="w">${w[0]}</span> <span class="w">${w[1]}</span><br><span class="w" style="font-style:italic;font-weight:300;color:var(--deep)">${w[2]}</span></div></div>`));
+const items=[...$('I').children].filter(e=>!e.classList.contains('caus'));
+items.forEach(it=>it.querySelectorAll('.w').forEach(w=>{const m=document.createElement('span');m.className='m';w.parentNode.insertBefore(m,w);m.appendChild(w)}));
+for(let k=0;k<3;k++)$('Jechoes').insertAdjacentHTML('beforeend',`<div class="abs center serif" style="top:730px;font-size:350px;font-weight:700;color:transparent;-webkit-text-stroke:2px rgba(43,106,158,.45);line-height:1;letter-spacing:-.04em">BYOB.</div>`);
+const echoes=[...$('Jechoes').children];
+[['b04',-250,-10],['b08',250,10],['b09',0,0]].forEach(([im,x,r])=>$('Kfan').insertAdjacentHTML('beforeend',`<div class="abs" style="left:${540+x-150}px;top:330px;width:300px;height:372px;border-radius:24px;overflow:hidden;box-shadow:0 2px 4px rgba(15,38,57,.08),0 30px 60px rgba(15,38,57,.2);background:url(img/${im}.jpg) center/cover" data-r="${r}" data-x="${x}"><div style="position:absolute;inset:0;border-radius:24px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4)"></div></div>`));
+const fan=[...$('Kfan').children];
+['stampP','dimH','dimV','BscribP'].forEach(id=>{$(id).setAttribute('pathLength','1');$(id).setAttribute('stroke-dasharray','1')});
+
+// carousel motion
+const SEG=[[3.1,3.55,-3,0],[4.0,4.32,0,1],[4.5,4.8,1,2],[4.95,5.23,2,3],[5.35,5.6,3,4]];
+function hermite(x0,v0,x1,v1,d,u){const h00=2*u*u*u-3*u*u+1,h10=u*u*u-2*u*u+u,h01=-2*u*u*u+3*u*u,h11=u*u*u-u*u;return h00*x0+h10*d*v0+h01*x1+h11*d*v1}
+const RUN0=5.72,RUN1=6.72,RX=7.3;
+function P(t){
+  if(t<SEG[0][0]) return -3;
+  for(let k=0;k<SEG.length;k++){const [a,b,f,to]=SEG[k];
+    if(t<a) return SEG[k-1][3];
+    if(t<=b) return lerp(f,to,eOutB((t-a)/(b-a),1.35));
+  }
+  if(t<RUN0) return 4;
+  if(t<RUN1){const u=(t-RUN0)/(RUN1-RUN0);return lerp(4,RX,u*u);}
+  const v0=2*(RX-4)/(RUN1-RUN0);
+  if(t<6.92) return hermite(RX,v0,8.07,0,.2,(t-RUN1)/.2);
+  if(t<7.12) return lerp(8.07,7.975,Math.sin(Math.PI/2*(t-6.92)/.2)**2);
+  if(t<7.28) return lerp(7.975,8,Math.sin(Math.PI/2*(t-7.12)/.16)**2);
+  return 8;
+}
+const ARR=SEG.map(s=>s[1]).concat([6.92]);
+function popAmt(t){let a=0;for(const e of ARR){const x=t-e;if(x>0&&x<.5)a+=Math.exp(-x*9)*Math.sin(x*22)*.045}return a}
+
+// cursor helper: bezier path from p0 via c to p1
+function cursorAt(t,tIn,tTap,tOut,p0,c,p1,pOut){
+  const u=eIOC(prog(t,tIn,tTap-.08)), o=eInC(prog(t,tOut,tOut+.35));
+  let x=(1-u)*(1-u)*p0[0]+2*(1-u)*u*c[0]+u*u*p1[0], y=(1-u)*(1-u)*p0[1]+2*(1-u)*u*c[1]+u*u*p1[1];
+  x=lerp(x,pOut[0],o);y=lerp(y,pOut[1],o);
+  const pr=bump(t,tTap-.04,.16);
+  $('cursor').style.transform=`translate(${x-6}px,${y-4}px) scale(${1-pr*.18})`;
+  $('cursor').style.zIndex=95;
+}
+function rippleAt(t,t0,x,y){
+  if(!(t>=t0&&t<t0+.6)) return false;
+  show($('ripple'),true);$('ripple').style.zIndex=94;$('ripple').style.left=x+'px';$('ripple').style.top=y+'px';
+  const r=prog(t,t0,t0+.55),r2=prog(t,t0+.08,t0+.6);
+  $('rip1').style.transform=`scale(${.15+eOutC(r)*1.6})`;$('rip1').style.opacity=1-r;
+  $('rip3').style.transform=`scale(${.15+eOutC(r2)*2.4})`;$('rip3').style.opacity=1-r2;
+  $('rip2').style.transform=`scale(${.2+eOutC(r)*1.3})`;$('rip2').style.opacity=(1-r);
+  return true;
+}
+
+function renderOrig(t,noflash){
+  show($('ww'),false);
+  // ===== A =====
+  if(show($('A'),t<1.78)){
+    caus($('A'),t);
+    pop($('Abyob'),t,-0.1,.075,.75);
+    reveal($('Asub'),t,.5,.07,.5);
+    reveal($('Alogo'),t,.12,0,.45);
+    $('Arule').style.transform=`scaleX(${eOutX(prog(t,.4,.9))})`;
+    rings.forEach((r,k)=>{const b=Math.floor(k/2)*.5+(k%2)*.12;const p=prog(t,b,b+.9);r.style.transform=`scale(${.25+eOutC(p)*1.9})`;r.style.opacity=(p>0&&p<1)?(1-p):0});
+    const punch=1+.06*Math.exp(-Math.max(0,t-1.0)*14)*(t>=1?1:0)+.04*Math.exp(-Math.max(0,t-.5)*14)*(t>=.5?1:0);
+    $('Abyob').style.transform=`scale(${punch})`;
+    const w=eInC(prog(t,1.5,1.75));
+    $('A').style.transform=`translateX(${-w*1080}px)`;blur('mbA',$('A'),w*60*(1-w)*4);
+  }
+  // ===== B =====
+  if(show($('B'),t>=1.5&&t<3.14)){
+    const w=1-eOutC(prog(t,1.5,1.78));
+    $('B').style.transform=`translateX(${w*1080}px)`;blur('mbB',$('B'),w*60);
+    aur($('Baur'),t);
+    reveal($('Btxt'),t,1.62,.08,.55);
+    $('BscribP').style.strokeDashoffset=1-eOutC(prog(t,2.3,2.65));
+    minis.forEach((m,k)=>{const p=prog(t,MINI[k].t,MINI[k].t+.7),e=elastic(p);m.style.transform=`translateY(${(1-e)*80+Math.sin(t*2+k)*6}px) rotate(${MINI[k].r*e}deg) scale(${.6+.4*e})`;m.style.opacity=clamp(p*5)});
+    $('B').style.opacity=1;exitFx($('B'),t,2.9,3.14);
+  }
+  water(t,2.72,.42,'#B7D6EC','#DCECF7');
+  // ===== C =====
+  const zoomP=eIOQ(prog(t,8.1,8.5));
+  if(show($('C'),t>=3.14&&t<8.6)){
+    aur($('Caur'),t,1);$('C').style.zIndex=1;
+    reveal($('Ceye'),t,3.22,.06,.5);reveal($('Ctitle'),t,3.28,.07,.55);
+    const p=P(t), v=(P(t+1/120)-P(t-1/120))*60;
+    blur('mbC',$('track'),Math.min(Math.abs(v)*4.2,60));
+    const press=1-.04*bump(t,7.96,.16);
+    const hover=eOutC(prog(t,7.62,7.9))*(1-prog(t,8.1,8.2));
+    cards.forEach((c,i)=>{
+      const d=i-p, ad=Math.abs(d), sg=Math.sign(d);
+      const x=sg*(ad<=1?ad*590:590+(ad-1)*460);
+      let s=ad<=1?1-.2*ad:Math.max(.6,.8-.06*(ad-1));
+      if(ad<.5) s*=1+popAmt(t)*(1-ad*2);
+      if(i===SELI) s*=press*(1+.025*hover);
+      const ry=-clamp(d,-1.6,1.6)*15;
+      const out=zoomP*(i<SELI?-1:1)*520;
+      c.style.transform=`translate(-50%,-50%) translateX(${x+out}px) translateY(${i===SELI?-hover*14:0}px) perspective(1500px) rotateY(${ry}deg) scale(${s})`;
+      c.style.zIndex=100-Math.round(ad*10);
+      c.style.display=(ad>3.2||(i===SELI&&t>=8.1))?'none':'block';
+      c.children[0].style.transform=`translateX(${-clamp(d,-2,2)*40}px)`;
+      c.children[1].style.opacity=Math.min(ad,1)*.32;
+      c.children[3].children[0].style.background=ad<.5?'#2B6A9E':'#16212C';
+      const lp=i===SELI&&t>6.92?1+.16*Math.exp(-(t-6.92)*8)*Math.sin((t-6.92)*20):1;
+      c.children[3].style.transform=`scale(${lp})`;
+    });
+    dots.forEach((d,i)=>{const a=clamp(1-Math.abs(i-clamp(p,0,9)));d.style.width=(10+36*a)+'px';d.style.background=a>.5?'#2B6A9E':`rgba(22,33,44,${.18+a*.4})`});
+    const dIn=eOutC(prog(t,3.3,3.75));
+    for(const el of [$('dots'),$('ctr')]){el.style.opacity=dIn*(1-zoomP);el.style.transform=`translateY(${(1-dIn)*40+zoomP*200}px)`}
+    $('Chead').style.transform=`translateY(${-zoomP*300}px)`;$('Chead').style.opacity=1-zoomP;
+    const val=clamp(p,0,9)+1, ones=val-10*Math.floor(val/10), tens=Math.floor(val/10)+Math.max(0,ones-9);
+    $('ctrO').style.transform=`translateY(${-ones*52}px)`;$('ctrT').style.transform=`translateY(${-tens*52}px)`;
+  }
+  // cursor: carousel tap, then end-card CTA
+  if(t>=7.3&&t<8.5){show($('cursor'),true);cursorAt(t,7.3,8.0,8.12,[980,1960],[900,1300],[600,1080],[1000,2100]);}
+  else if(t>=20.95&&t<22.2){show($('cursor'),true);cursorAt(t,20.95,21.6,21.8,[1000,1980],[960,1500],[700,1372],[1050,2050]);}
+  else show($('cursor'),false);
+  if(!rippleAt(t,7.98,600,1080) && !rippleAt(t,21.58,700,1372)) show($('ripple'),false);
+  // hero zoom
+  if(show($('hero'),t>=8.1&&t<9.55)){
+    const z=zoomP;
+    const w=lerp(640*.96,1080,z), h=lerp(800*.96,1920,z), cx=540, cy=lerp(990,960,z);
+    Object.assign($('hero').style,{left:(cx-w/2)+'px',top:(cy-h/2)+'px',width:w+'px',height:h+'px',borderRadius:(26*(1-z))+'px',zIndex:40,
+      boxShadow:`0 40px 90px rgba(15,38,57,${.25*(1-z)})`});
+    $('heroImg').style.transform=`scale(${1+prog(t,8.5,9.55)*.06})`;
+    $('heroShade').style.opacity=prog(t,8.4,8.75);
+    $('heroPill').style.opacity=1-prog(t,8.1,8.28);
+  }
+  if(show($('sel'),t>=8.48&&t<9.55)){
+    $('sel').style.zIndex=45;
+    const sp=prog(t,8.5,8.8), e=eOutB(sp,2.0);
+    $('stamp').style.transform=`scale(${lerp(2.4,1,e)}) rotate(${lerp(-20,0,eOutC(sp))}deg)`;$('stamp').style.opacity=clamp(sp*4);
+    $('stampP').style.strokeDashoffset=1-eOutC(prog(t,8.6,8.86));
+    const sh=prog(t,8.6,9.05),sh2=prog(t,8.68,9.2);
+    $('shock').style.transform=`scale(${1+eOutC(sh)*1.5})`;$('shock').style.opacity=sh>0?(1-sh):0;
+    $('shock2').style.transform=`scale(${1+eOutC(sh2)*2.2})`;$('shock2').style.opacity=sh2>0?(1-sh2):0;
+    reveal($('selTxt'),t,8.68,.08,.5);
+  }
+  const sk=Math.exp(-Math.max(0,t-8.6)*14)*(t>8.6&&t<9?1:0);
+  $('stage').style.transform=sk?`translate(${Math.sin(t*130)*10*sk}px,${Math.cos(t*170)*9*sk}px)`:'none';
+  // ===== E =====
+  if(show($('E'),t>=9.5&&t<12.0)){
+    $('E').style.zIndex=46;
+    $('Ebp').style.transform=`scale(${1+prog(t,9.5,10.6)*.05})`;
+    $('dimH').style.strokeDashoffset=1-eOutC(prog(t,9.6,9.95));$('dimV').style.strokeDashoffset=1-eOutC(prog(t,9.7,10.05));
+    $('dimHt').style.opacity=prog(t,9.85,9.95);$('dimVt').style.opacity=prog(t,9.95,10.05);
+    const wx=lerp(-600,1700,eIOC(prog(t,10.4,10.8)));
+    $('Ephoto').style.clipPath=`polygon(-10px -10px, ${wx+200}px -10px, ${wx-200}px 1930px, -10px 1930px)`;
+    $('Ephoto').style.transform=`scale(${1.05+prog(t,10.5,12)*.06})`;
+    $('Eband').style.clipPath=`polygon(${wx+120}px -10px, ${wx+460}px -10px, ${wx+60}px 1930px, ${wx-280}px 1930px)`;
+    $('Eband').style.opacity=prog(t,10.38,10.45)*(1-prog(t,10.75,10.82));
+    const t1=eOutB(prog(t,9.55,9.9),1.6), t1o=eInC(prog(t,10.45,10.6));
+    $('Etag1').style.transform=`scale(${t1*(1-t1o)})`;$('Etag1').style.transformOrigin='0 50%';
+    const t2=elastic(prog(t,10.75,11.4));$('Etag2').style.transform=`scale(${t2})`;$('Etag2').style.transformOrigin='0 50%';$('Etag2').style.opacity=t>=10.75?1:0;
+    reveal($('Etxt1'),t,9.66,.09,.5,10.85);
+    $('Etxt1').querySelectorAll('.hl').forEach((h,k)=>{const q=eOutX(prog(t,9.58+k*.18,9.95+k*.18))*(1-eOutC(prog(t,10.86,10.98)));h.style.clipPath=`inset(0 ${(1-q)*100}% 0 0 round 22px)`});
+    reveal($('Etxt2'),t,11.05,.09,.5);
+    $('Etxt2').querySelectorAll('.hl').forEach(h=>{const q=eOutX(prog(t,11.0,11.35));h.style.clipPath=`inset(0 ${(1-q)*100}% 0 0 round 22px)`});
+  }
+  // ===== F =====
+  if(show($('F'),t>=12.0&&t<13.0)){
+    caus($('F'),t);
+    const zp=1+.3*Math.exp(-(t-12)*14)+.05*Math.exp(-Math.max(0,t-12.5)*16)*(t>=12.5?1:0);
+    $('Fg').style.transform=`scale(${zp})`;
+    pop($('F1'),t,12.0,.045,.6);pop($('F2'),t,12.15,.045,.6);
+    reveal($('Fsub'),t,12.4,.07,.45);
+  }
+  // ===== G =====
+  if(show($('G'),t>=13.0&&t<14.25)){
+    caus($('G'),t);
+    const zp=1+.28*Math.exp(-(t-13)*14)+.05*Math.exp(-Math.max(0,t-13.5)*16)*(t>=13.5?1:0);
+    const w=eInC(prog(t,14.0,14.22));
+    $('G').style.transform=`translateX(${-w*1080}px)`;blur('mbA',$('G'),w*60*(1-w)*4);
+    $('Gg').style.transform=`scale(${zp})`;
+    pop($('G1'),t,13.0,.06,.6);pop($('G2'),t,13.12,.05,.6);
+    const tp=eOutB(prog(t,13.4,13.8),1.6);$('Gtoast').style.transform=`translateY(${(1-tp)*-300}px)`;$('Gtoast').style.opacity=clamp(prog(t,13.4,13.55));
+  }
+  // ===== H =====
+  if(show($('H'),t>=14.0&&t<16.02)){
+    const w=1-eOutC(prog(t,14.0,14.25));
+    $('H').style.transform=`translateX(${w*1080}px)`;blur('mbD',$('H'),w*60);
+    aur($('Haur'),t,2);
+    reveal($('H1'),t,14.1,.08,.5);
+    const f=u=>21*eOutC(prog(u,14.25,15.0)), v=f(t);
+    const tens=Math.floor(v/10)+Math.max(0,(v%10)-9);
+    $('HO').style.transform=`translateY(${-v*660}px)`;$('HT').style.transform=`translateY(${-tens*660}px)`;
+    const pv=Math.abs((f(t+1/60)-f(t-1/60))*30);
+    blur('vbH',$('Hnum'),Math.min(pv*1.6,30),true);
+    const nb=t>=15?1+.1*Math.exp(-(t-15)*12)*Math.sin((t-15)*18):1;
+    $('Hnum').style.transform=`scale(${nb})`;
+    reveal($('H2'),t,14.75,.08,.5);if(t>=15.78){$('H').style.opacity=1;exitFx($('H'),t,15.78,16.02);}else $('H').style.opacity=1;
+    hbars.forEach((b,k)=>{const on=v>=k+1;b.style.background=on?'#2B6A9E':'rgba(43,106,158,.14)';b.style.transform=`scaleY(${on?1+.5*Math.exp(-Math.max(0,(t-14.25)-(k+1)/21*.3)*8):1})`});
+  }
+  water(t,15.62,.4,'#2B6A9E','#8EC1E3');
+  // ===== I =====
+  if(show($('I'),t>=16.02&&t<18.2)){
+    caus($('I'),t);
+    items.forEach((it,k)=>{const t0=16.02+k*.667, t1=t0+.6;
+      it.style.display=(t>=t0-.04&&t<t0+.75)||(k==2&&t>=t0)?'block':'none';
+      reveal(it.querySelector('.itx'),t,t0+.04,.06,.45,k<2?t1:null);
+      const tk=it.querySelector('.tick'), e=elastic(prog(t,t0,t0+.6)), o=eInC(prog(t,t1,t1+.12))*(k<2?1:0);
+      tk.style.transform=`scale(${e*(1-o)}) rotate(${(1-e)*-40}deg)`;
+      tk.querySelector('path').style.strokeDashoffset=1-eOutC(prog(t,t0+.12,t0+.36));
+    });
+  }
+  // ===== J =====
+  if(show($('J'),t>=18.0&&t<19.24)){
+    $('J').style.zIndex=50;caus($('J'),t);
+    const z=eOutX(prog(t,18.0,18.3));$('Jt').style.transform=`scale(${lerp(2.2,1,z)*(1+.05*Math.exp(-Math.max(0,t-18.5)*14)*(t>=18.5?1:0))})`;
+    blur('mbB',$('Jt'),(1-z)*40);
+    $('J').style.opacity=1;$('J').style.transform='none';exitFx($('J'),t,19.0,19.24);
+    echoes.forEach((e,k)=>{const p=prog(t,18.0+k*.25,18.0+k*.25+.8);e.style.transform=`scale(${1+eOutC(p)*1.1})`;e.style.opacity=p>0&&p<1?(1-p):0});
+  }
+  water(t,18.82,.42,'#F5F2ED','#B7D6EC');
+  // ===== K =====
+  if(show($('K'),t>=19.24)){
+    $('K').style.zIndex=52;aur($('Kaur'),t,3);
+    fan.forEach((f,k)=>{const p=prog(t,19.25+k*.1,19.95+k*.1),e=elastic(p);const fl=Math.sin((t-19)*2+k)*7;
+      f.style.transform=`translateX(${-(+f.dataset.x)*(1-e)}px) translateY(${(1-e)*200+fl}px) rotate(${f.dataset.r*e}deg) scale(${.4+.6*e})`;f.style.opacity=clamp(p*5)});
+    reveal($('Klogo'),t,19.45,.1,.55);reveal($('Ktag'),t,19.85,.06,.5);reveal($('Kfoot'),t,20.4,0,.5);
+    const c=elastic(prog(t,20.3,21.0)), press=1-.05*bump(t,21.55,.18);
+    $('Kcta').style.transform=`scale(${c*press})`;$('Kcta').style.opacity=t>=20.3?1:0;
+    $('Kshine').style.left=lerp(-220,920,eIOC(prog((t-21.0)%1.6,0,.7)))+'px';
+  }
+  let fl=0;if(!noflash)for(const b of [9.5,12.0,13.0,18.0]){const x=t-b;if(x>=0&&x<.12)fl=Math.max(fl,(1-x/.12)*.35)}
+  $('flash').style.opacity=fl;$('flash').style.zIndex=97;
+  $('vig').style.zIndex=98;$('grain').style.zIndex=99;
+}
+
+// ---------- brand picker (inserted 9.5–12.0 of output time) ----------
+const BRANDS=[['JAQUAR','Fittings'],['CERA','Sanitaryware'],['KOHLER','Fittings'],['HINDWARE','Sanitaryware'],['GROHE','Fittings'],['KAJARIA','Tiles']];
+const TW=464,TH=200,GX=64,GY=760,GAP=24;
+const tiles=BRANDS.map(([b,c],k)=>{const x=GX+(k%2)*(TW+GAP),y=GY+Math.floor(k/2)*(TH+GAP);
+  const inner=`<div class="abs" style="left:40px;top:44px;font:800 54px 'Inter Tight';letter-spacing:.08em">${b}</div><div class="abs" style="left:42px;top:118px;font:700 21px 'Inter Tight';letter-spacing:.26em;opacity:.55">${c.toUpperCase()}</div>`;
+  $('BRgrid').insertAdjacentHTML('beforeend',`<div class="abs glass" style="left:${x}px;top:${y}px;width:${TW}px;height:${TH}px;border-radius:30px;background:rgba(255,255,255,.66);overflow:hidden;color:var(--ink)">
+    ${inner}<div class="fill abs" style="inset:0;background:linear-gradient(135deg,#4F95CC,#2B6A9E 60%,#225886);color:#fff;clip-path:circle(0px at 50% 50%)">${inner}</div>
+    <div class="chk abs" style="right:26px;top:26px;width:52px;height:52px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;transform:scale(0)"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#2B6A9E" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>`);
+  return {el:$('BRgrid').lastElementChild,x,y};});
+for(let k=0;k<5;k++)$('BRn').insertAdjacentHTML('beforeend',`<span style="height:110px">${k}</span>`);
+const PICK=[[0,10.5],[1,11.0],[5,11.5]];
+const tapPt=k=>[tiles[k].x+TW/2+40,tiles[k].y+TH/2+20];
+function brand(T){
+  if(!show($('BR'),T>=9.5&&T<12.0)) return;
+  $('BR').style.zIndex=80;aur($('BRaur'),T,4);
+  // photo shrinks from full screen into the summary thumbnail
+  const z=eIOQ(prog(T,9.5,9.95));
+  const r={x:lerp(0,84,z),y:lerp(0,192,z),w:lerp(1080,150,z),h:lerp(1920,170,z)};
+  Object.assign($('BRphoto').style,{left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',borderRadius:(22*z)+'px'});
+  const sIn=eOutX(prog(T,9.78,10.2));
+  $('BRsum').style.opacity=sIn;$('BRsum').style.transform=`translateY(${(1-sIn)*30}px)`;
+  reveal($('BReye'),T,9.82,.05,.55);reveal($('BRtitle'),T,9.86,.07,.6);
+  tiles.forEach((t,k)=>{const p=eOutX(prog(T,9.98+k*.05,9.98+k*.05+.6));t.el.style.opacity=p;t.el.style.transform=`translateY(${(1-p)*60}px) scale(${.96+.04*p})`});
+  const f=eOutX(prog(T,10.2,10.7));$('BRfoot').style.opacity=f;$('BRfoot').style.transform=`translateY(${(1-f)*50}px)`;
+  let n=0;
+  PICK.forEach(([k,tt])=>{const el=tiles[k].el,[px,py]=tapPt(k);
+    const q=eOutC(prog(T,tt,tt+.38));el.querySelector('.fill').style.clipPath=`circle(${q*560}px at ${px-tiles[k].x}px ${py-tiles[k].y}px)`;
+    const press=1-.035*bump(T,tt-.04,.18);el.style.transform=(el.style.transform||'')+` scale(${press})`;
+    el.querySelector('.chk').style.transform=`scale(${eOutB(prog(T,tt+.12,tt+.42),1.6)})`;
+    n+=eIOC(prog(T,tt+.05,tt+.3));});
+  $('BRn').style.transform=`translateY(${-n*110}px)`;
+  // cursor glides tile to tile
+  if(T>=10.05&&T<11.95){show($('cursor'),true);$('cursor').style.zIndex=95;
+    const pts=[[1000,1980],...PICK.map(([k])=>tapPt(k))];let x,y;
+    if(T<10.46){const u=eIOC(prog(T,10.05,10.46));x=lerp(pts[0][0],pts[1][0],u);y=lerp(pts[0][1],pts[1][1],u)-Math.sin(Math.PI*u)*80;}
+    else if(T<11.6){const seg=T<10.96?0:1,a=PICK[seg][1]+.1,b=PICK[seg+1][1]-.04,u=eIOC(prog(T,a,b));x=lerp(pts[seg+1][0],pts[seg+2][0],u);y=lerp(pts[seg+1][1],pts[seg+2][1],u)-Math.sin(Math.PI*u)*40;}
+    else{const u=eInC(prog(T,11.6,11.9));x=lerp(pts[3][0],1060,u);y=lerp(pts[3][1],2050,u);}
+    const pr=PICK.reduce((a,[,tt])=>Math.max(a,bump(T,tt-.04,.16)),0);
+    $('cursor').style.transform=`translate(${x-6}px,${y-4}px) scale(${1-pr*.18})`;}
+  for(const [k,tt] of PICK){const [px,py]=tapPt(k);if(T<11.75&&rippleAt(T,tt-.02,px,py))break;}
+  if(T>=11.75)show($('ripple'),false);
+  // clean vertical push out to the drawing
+  const o=eInC(prog(T,11.75,12.0));$('BR').style.transform=`translateY(${-o*1920}px)`;blur('vbH',$('BR'),o*(1-o)*4*50,true);
+}
+function exitFx(el,t,a,b){const p=eInC(prog(t,a,b));if(p<=0)return;el.style.transform=`translateY(${-p*140}px) scale(${1-p*.04})`;el.style.opacity=1-p;}
+function render(T){
+  let t,nf=false;
+  if(T<9.5)t=T; else if(T<11.75)t=9.49; else if(T<12.0){t=9.5;nf=true} else t=T-2.5;
+  renderOrig(t,nf);brand(T);
+  if(T>=9.5&&T<12)show($('ww'),false);
+  const gi=Math.floor(T*30);$('grain').style.backgroundPosition=`${(gi*137)%512}px ${(gi*271)%512}px`;
+}
+window.render=render;
+window.ready=Promise.all([document.fonts.ready,...[...new Set([...document.querySelectorAll('[style*="url("]')].map(e=>e.style.backgroundImage.match(/url\("?([^")]+)/)?.[1]).filter(Boolean))].map(u=>new Promise(r=>{const im=new Image();im.onload=im.onerror=r;im.src=u}))]);
+render(0);
+</script>
+</body></html>
