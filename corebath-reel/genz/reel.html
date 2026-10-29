@@ -43,7 +43,7 @@ body{font-family:T,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiase
 
 <!-- 1. montage -->
 <div id="M" class="scene">
-  <div id="Mlogo" class="abs c" style="top:150px;font:700 40px D,'Noto Color Emoji';letter-spacing:-.01em"><span style="background:#111;color:#fff;padding:16px 34px;border-radius:999px;box-shadow:6px 6px 0 #C6FF3D">pov: u saved 47 bathroom reels 📲</span></div>
+  <div id="Mlogo" class="abs c" style="top:200px;font:700 40px D,'Noto Color Emoji';letter-spacing:-.01em"><span style="background:#111;color:#fff;padding:16px 34px;border-radius:999px;box-shadow:6px 6px 0 #C6FF3D">pov: u saved 47 bathroom reels 📲</span></div>
   <div id="Mf" class="frame" style="left:70px;top:270px;width:940px;height:1380px"><div id="Mimg" class="cover"></div></div>
 </div>
 
@@ -170,8 +170,8 @@ body{font-family:T,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiase
     <div id="etouch" class="abs" style="left:640px;top:90px;width:110px;height:110px;margin:-55px;border-radius:50%;background:rgba(255,255,255,.35);border:3px solid rgba(255,255,255,.8);opacity:0"></div>
   </div>
   <div id="e4" class="abs c" style="top:1240px;font:600 38px T;color:var(--grey);letter-spacing:-.005em">fixed price · top brands · 21-day handover</div>
-  <div id="e5" class="abs c" style="top:1640px;font:600 34px T;color:var(--ink)">tap below. trust 🫶</div>
-  <div id="e6" class="abs c" style="top:1700px;font:500 28px T;color:var(--grey)">bengaluru 📍</div>
+  <div id="e5" class="abs c" style="top:1335px;font:600 34px T;color:var(--ink)">tap below. trust 🫶</div>
+  <div id="e6" class="abs c" style="top:1400px;font:500 28px T;color:var(--grey)">bengaluru 📍</div>
 </div>
 </div>
 <div id="stks" class="abs" style="inset:0;z-index:70"></div>
@@ -236,7 +236,7 @@ function touch(t){
 
 const STK=[['POV 📲',0.15,1.3,620,260,8,'#C6FF3D'],['no cap 🧢',3.95,4.9,640,1380,-7,'#C6FF3D'],['it\'s giving ✨',5.7,7.0,80,500,-6,'#FF8AC8'],['slay 💅',8.05,8.9,690,560,9,'#C6FF3D'],
  ['W 🏆',10.55,11.3,90,520,-8,'#D9CCFF'],['fr fr 🔥',13.4,14.3,640,500,7,'#C6FF3D'],['that\'s the tweet',15.05,15.9,250,1460,-5,'#fff'],['no drama 🙅',17.85,18.85,560,1500,6,'#fff'],
- ['main character energy',19.35,20.8,170,180,-4,'#FF8AC8'],['trust 🫶',22.6,25,660,1500,8,'#C6FF3D']];
+ ['main character energy',19.35,20.8,170,180,-4,'#FF8AC8'],['trust 🫶',22.6,25,400,1480,8,'#C6FF3D']];
 STK.forEach(([txt,,,x,y,r,c])=>$('stks').insertAdjacentHTML('beforeend',`<div class="stk" style="left:${x}px;top:${y}px;background:${c};transform-origin:50% 50%">${txt}</div>`));
 const stks=[...$('stks').children];
 function stickers(t){stks.forEach((el,k)=>{const [,a,b,,,r]=STK[k];if(t<a||t>b+.2){el.style.display='none';return}
