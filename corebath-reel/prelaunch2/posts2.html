@@ -1,0 +1,92 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:D;src:url(fonts/InterDisplay-SemiBold.otf);font-weight:600}
+@font-face{font-family:D;src:url(fonts/InterDisplay-Bold.otf);font-weight:700}
+@font-face{font-family:T;src:url(fonts/Inter-Medium.otf);font-weight:500}
+@font-face{font-family:T;src:url(fonts/Inter-SemiBold.otf);font-weight:600}
+@font-face{font-family:T;src:url(fonts/Inter-Bold.otf);font-weight:700}
+:root{--ink:#1D1D1F;--grey:#86868B;--tile:#F5F5F7;--blue:#2B6A9E}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#fff;overflow:hidden}
+body{font-family:T,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+#c{position:relative;overflow:hidden;background:#fff}
+.abs{position:absolute}
+.h{font-family:D;font-weight:700;letter-spacing:-.035em;line-height:1.04}
+.g{background:linear-gradient(100deg,#9CCBEA 0%,#5A9BD0 45%,#2B6A9E 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 .04em;margin:0 -.04em}
+.logo{position:absolute;left:72px;top:64px;font:600 34px D;letter-spacing:-.01em}
+.pg{position:absolute;right:72px;top:68px;font:600 26px T;color:var(--grey)}
+.foot{position:absolute;left:72px;right:72px;bottom:60px;display:flex;justify-content:space-between;font:600 26px T;color:var(--grey)}
+.cover{position:absolute;inset:0;background-size:cover;background-position:center}
+.frame{position:absolute;overflow:hidden;border-radius:40px;box-shadow:0 2px 6px rgba(0,0,0,.05),0 24px 50px rgba(0,0,0,.10),0 50px 100px rgba(0,0,0,.08)}
+.tag{position:absolute;background:rgba(255,255,255,.92);border-radius:999px;padding:12px 24px;font:600 26px T;color:var(--ink)}
+.insp{position:absolute;right:28px;bottom:28px;background:rgba(0,0,0,.45);color:#fff;border-radius:999px;padding:9px 18px;font:600 20px T}
+.ab{position:absolute;width:96px;height:96px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font:700 48px D;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+</style></head><body><div id="c"></div>
+<script>
+const W=1080,H=1350, logo='<div class="logo">Corebath</div>';
+const img=n=>`url(img2/${n}.jpg)`;
+const P={};
+// ---------- A · Bath board vol. 2 ----------
+const V2=[['n01','Soft Minimal'],['n02','Oak & Stone'],['n03','Navy Grid'],['n05','Fluted Oak'],['n06','Slate & Timber'],['n07','Spa Beige'],['n09','Mint Terrazzo'],['n10','Concrete & Oak'],['n11','Monochrome'],['n12','Seaside'],['n13','Blue Kit-Kat'],['n14','Terrazzo & Forest']];
+const NA=V2.length+2;
+P['A-00']=`${logo}<div class="pg">1/${NA}</div>
+ <div class="abs h" style="left:72px;right:60px;top:240px;font-size:116px">The bath board.<br><span class="g">Vol. 2</span></div>
+ <div class="abs" style="left:74px;top:510px;font:600 44px D;color:var(--grey);letter-spacing:-.02em">12 bathrooms. Pick your vibe 👇</div>
+ ${[['n05',-7,60],['n13',0,380],['n06',7,700]].map(([n,r,x],k)=>`<div class="frame" style="left:${x}px;top:${k==1?640:670}px;width:310px;height:420px;transform:rotate(${r}deg)"><div class="cover" style="background-image:${img(n)}"></div></div>`).join('')}
+ <div class="foot"><span>Swipe →</span><span>Inspiration board</span></div>`;
+V2.forEach(([n,name],i)=>{const num=String(i+11);P[`A-${String(i+1).padStart(2,'0')}`]=`<div class="cover" style="background-image:${img(n)}"></div>
+ <div class="abs" style="left:0;right:0;bottom:0;height:440px;background:linear-gradient(transparent,rgba(0,0,0,.5))"></div>
+ <div class="tag" style="left:56px;top:56px;font:600 30px D">Corebath</div>
+ <div class="abs" style="right:56px;top:56px;background:rgba(0,0,0,.45);color:#fff;border-radius:999px;padding:12px 24px;font:600 26px T">${i+2}/${NA}</div>
+ <div class="abs h" style="left:62px;bottom:150px;font-size:200px;color:#fff;letter-spacing:-.06em">${num}</div>
+ <div class="abs" style="left:70px;bottom:90px;font:600 52px D;color:#fff;letter-spacing:-.02em">${name}</div>
+ <div class="insp" style="bottom:96px;right:56px">Inspiration</div>`});
+P[`A-${String(NA-1).padStart(2,'0')}`]=`${logo}<div class="pg">${NA}/${NA}</div>
+ <div class="abs h" style="left:72px;right:60px;top:300px;font-size:110px">Found the one?</div>
+ <div class="abs h" style="left:72px;right:60px;top:450px;font-size:110px"><span class="g">We'll build that look</span> in your home.</div>
+ <div class="abs" style="left:74px;right:72px;top:830px;font:600 44px D;color:var(--grey);letter-spacing:-.02em;line-height:1.35">Comment your number (11–22) 👇<br>Fixed price · 21-day handover · Bengaluru</div>`;
+// ---------- B · This or that ----------
+const TT=[['B-1','Matte black<br>or <span class="g">brushed gold?</span>','n11','n05'],['B-2','Terrazzo<br>or <span class="g">clean & plain?</span>','n09','n10'],['B-3','Moody<br>or <span class="g">bright?</span>','n06','n01']];
+TT.forEach(([k,q,a,b])=>{P[k]=`${logo}<div class="pg">This or that</div>
+ <div class="abs h" style="left:72px;right:60px;top:170px;font-size:92px">${q}</div>
+ <div class="frame" style="left:60px;top:470px;width:465px;height:690px"><div class="cover" style="background-image:${img(a)}"></div><div class="insp">Inspiration</div></div>
+ <div class="frame" style="left:555px;top:470px;width:465px;height:690px"><div class="cover" style="background-image:${img(b)}"></div></div>
+ <div class="ab" style="left:244px;top:1112px">A</div><div class="ab" style="left:739px;top:1112px">B</div>
+ <div class="foot" style="justify-content:center"><span>Comment A or B 👇</span></div>`});
+// ---------- C · Bathroom personality ----------
+const PER=[['The Minimalist','Clean lines. Nothing extra.','n01','n10'],['The Naturalist','Wood, stone, warm light.','n05','n02'],['The Colour Lover','Bold tiles. Zero apologies.','n03','n13'],['The Playful One','Terrazzo, texture, a little fun.','n09','n14']];
+P['C-0']=`${logo}<div class="pg">1/6</div>
+ <div class="abs h" style="left:72px;right:60px;top:250px;font-size:104px">What's your<br><span class="g">bathroom<br>personality?</span></div>
+ <div class="abs" style="left:74px;top:600px;font:600 46px D;color:var(--grey);letter-spacing:-.02em;display:none">Swipe and find yours →</div>
+ ${PER.map((p,k)=>`<div class="frame" style="left:${72+k*240}px;top:760px;width:220px;height:330px;border-radius:28px"><div class="cover" style="background-image:${img(p[2])}"></div></div>`).join('')}
+ <div class="foot"><span>Swipe and find yours →</span><span>Save for your renovation 🔖</span></div>`;
+PER.forEach(([t,d,a,b],k)=>{P[`C-${k+1}`]=`${logo}<div class="pg">${k+2}/6</div>
+ <div class="abs h" style="left:72px;right:60px;top:170px;font-size:100px">${t.replace('The ','The <span class="g">')}</span></div>
+ <div class="abs" style="left:74px;top:300px;font:600 44px D;color:var(--grey);letter-spacing:-.02em">${d}</div>
+ <div class="frame" style="left:60px;top:420px;width:465px;height:760px"><div class="cover" style="background-image:${img(a)}"></div></div>
+ <div class="frame" style="left:555px;top:420px;width:465px;height:760px"><div class="cover" style="background-image:${img(b)}"></div><div class="insp">Inspiration</div></div>`});
+P['C-5']=`${logo}<div class="pg">6/6</div>
+ <div class="abs h" style="left:72px;right:60px;top:300px;font-size:110px">Which one<br>are <span class="g">you?</span></div>
+ <div class="abs" style="left:74px;right:72px;top:600px;font:600 46px D;color:var(--grey);letter-spacing:-.02em;line-height:1.4">Minimalist · Naturalist<br>Colour Lover · Playful One</div>
+ <div class="abs" style="left:74px;top:820px;font:600 46px D;letter-spacing:-.02em">Tell us in the comments 👇</div>`;
+// ---------- D · 6 details ----------
+const DET=[['d1','Lit niches.','Storage that glows. Nothing cluttering the floor.'],['d2','Backlit mirrors.','Soft light exactly where you need it.'],['d3','Wall-hung WC.','Concealed cistern. Mopping underneath takes seconds.'],['d4','One metal finish.','Matte black everywhere. Instantly put-together.'],['d5','Fluted textures.','Texture beats ornament, every time.'],['d6','One statement wall.','Go bold on one wall. Keep the rest calm.']];
+P['D-0']=`${logo}<div class="pg">1/8</div>
+ <div class="abs h" style="left:72px;right:60px;top:250px;font-size:104px">6 details that<br>make a bathroom<br>look <span class="g">expensive.</span></div>
+ <div class="abs" style="left:74px;top:640px;font:600 46px D;color:var(--grey);letter-spacing:-.02em">None of them need a bigger room.</div>
+ ${['d2','d3','d5'].map((d,k)=>`<div class="frame" style="left:${72+k*318}px;top:780px;width:300px;height:340px;border-radius:28px"><div class="cover" style="background-image:${img(d)}"></div></div>`).join('')}
+ <div class="foot"><span>Swipe →</span><span>Save this 🔖</span></div>`;
+DET.forEach(([d,t,s],k)=>{P[`D-${k+1}`]=`${logo}<div class="pg">${k+2}/8</div>
+ <div class="frame" style="left:72px;top:170px;width:936px;height:800px"><div class="cover" style="background-image:${img(d)}"></div><div class="insp">Inspiration</div></div>
+ <div class="abs h g" style="left:70px;top:1010px;font-size:110px;letter-spacing:-.05em">0${k+1}</div>
+ <div class="abs h" style="left:250px;top:1022px;font-size:64px">${t}</div>
+ <div class="abs" style="left:252px;right:72px;top:1104px;font:600 34px D;color:var(--grey);letter-spacing:-.015em;line-height:1.3">${s}</div>`});
+P['D-7']=`${logo}<div class="pg">8/8</div>
+ <div class="abs h" style="left:72px;right:60px;top:300px;font-size:104px">Want these in<br><span class="g">your bathroom?</span></div>
+ <div class="abs" style="left:74px;right:72px;top:590px;font:600 44px D;color:var(--grey);letter-spacing:-.02em;line-height:1.4">Pick the look. Choose your brands.<br>One fixed price. Handed over in 21 days.</div>
+ <div class="abs" style="left:74px;top:860px;font:600 46px D;letter-spacing:-.02em">Comment "BYOB" 👇</div>`;
+window.KEYS=Object.keys(P);
+window.show=k=>{const c=document.getElementById('c');c.style.width=W+'px';c.style.height=H+'px';c.innerHTML=P[k];return [W,H]};
+window.ready=Promise.all([document.fonts.ready,...['n01','n02','n03','n05','n06','n07','n09','n10','n11','n12','n13','n14','d1','d2','d3','d4','d5','d6'].map(n=>new Promise(r=>{const im=new Image();im.onload=im.onerror=r;im.src=`img2/${n}.jpg`}))]);
+</script></body></html>
