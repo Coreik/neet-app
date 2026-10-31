@@ -1,0 +1,102 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:D;src:url(fonts/InterDisplay-SemiBold.otf);font-weight:600}
+@font-face{font-family:D;src:url(fonts/InterDisplay-Bold.otf);font-weight:700}
+@font-face{font-family:T;src:url(fonts/Inter-Medium.otf);font-weight:500}
+@font-face{font-family:T;src:url(fonts/Inter-SemiBold.otf);font-weight:600}
+@font-face{font-family:T;src:url(fonts/Inter-Bold.otf);font-weight:700}
+:root{--ink:#1D1D1F;--grey:#86868B;--tile:#F5F5F7;--blue:#2B6A9E;--red:#D93B3B}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#fff;overflow:hidden}
+body{font-family:T,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+#c{position:relative;overflow:hidden;background:#fff}
+.abs{position:absolute}
+.h{font-family:D;font-weight:700;letter-spacing:-.035em;line-height:1.04}
+.g{background:linear-gradient(100deg,#9CCBEA 0%,#5A9BD0 45%,#2B6A9E 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 .04em;margin:0 -.04em}
+.logo{position:absolute;left:72px;top:64px;font:600 34px D;letter-spacing:-.01em}
+.pg{position:absolute;right:72px;top:68px;font:600 26px T;color:var(--grey)}
+.foot{position:absolute;left:72px;right:72px;bottom:60px;display:flex;justify-content:space-between;font:600 26px T;color:var(--grey)}
+.tile{position:absolute;border-radius:40px;background:var(--tile);overflow:hidden}
+.cover{position:absolute;inset:0;background-size:cover;background-position:center}
+.frame{position:absolute;overflow:hidden;border-radius:44px;box-shadow:0 2px 6px rgba(0,0,0,.05),0 24px 50px rgba(0,0,0,.10),0 60px 120px rgba(0,0,0,.10)}
+.pill{display:inline-block;background:rgba(255,255,255,.9);border-radius:999px;padding:14px 28px;font:600 30px T}
+.opt{position:absolute;left:90px;right:90px;height:150px;border-radius:40px;background:var(--tile);display:flex;align-items:center;gap:30px;padding:0 44px;font:600 50px D;letter-spacing:-.02em}
+.opt span{font-size:60px}
+</style></head><body><div id="c"></div>
+<script>
+const W=1080,H=1350,SH=1920;
+const logo='<div class="logo">Corebath</div>';
+const big=(n,txt,sub,pg)=>({w:W,h:H,html:`${logo}<div class="pg">${pg}</div>
+  <div class="abs h g" style="left:66px;top:250px;font-size:300px;letter-spacing:-.06em;line-height:1.1">${n}</div>
+  <div class="abs h" style="left:72px;right:72px;top:640px;font-size:84px">${txt}</div>
+  <div class="abs" style="left:74px;right:72px;top:${txt.includes('<br>')?880:800}px;font:600 40px D;letter-spacing:-.015em;color:var(--grey);line-height:1.3">${sub}</div>`});
+const NAMES=['Warm Plaster','Rattan & Lime','Skyline Marble','Skylight Shower','Curved Oak','Matte Black','Walnut & Green','Sage Kit-Kat','Terracotta Floor','Microcement'];
+const P={
+// 1 · teaser
+'01-teaser':{w:W,h:H,html:`${logo}
+  <div class="abs h" style="left:0;right:0;top:330px;text-align:center;font:600 48px D;color:var(--grey);letter-spacing:-.02em">Something new for Bengaluru bathrooms.</div>
+  <div class="abs h g" style="left:0;right:0;top:430px;text-align:center;font-size:330px;letter-spacing:-.06em;line-height:1.1;filter:blur(18px)">BYOB</div>
+  <div class="abs h" style="left:0;right:0;top:860px;text-align:center;font-size:96px">Coming soon.</div>
+  <div class="foot" style="justify-content:center"><span>Turn on notifications 🔔</span></div>`},
+// 2 · waterproofing carousel
+'02-leak-0':{w:W,h:H,html:`${logo}<div class="pg">1/7</div>
+  <svg class="abs" style="left:72px;top:250px" width="150" height="190" viewBox="0 0 24 30"><defs><linearGradient id="d" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9CCBEA"/><stop offset="1" stop-color="#2B6A9E"/></linearGradient></defs><path d="M12 1C12 1 2 13 2 19a10 10 0 0 0 20 0C22 13 12 1 12 1z" fill="url(#d)"/></svg>
+  <div class="abs h" style="left:72px;right:60px;top:500px;font-size:120px">5 signs your<br>bathroom is <span class="g">leaking.</span></div>
+  <div class="abs" style="left:74px;top:900px;font:600 46px D;color:var(--grey);letter-spacing:-.02em">Before you ever see a drip.</div>
+  <div class="foot"><span>Swipe →</span><span>Save for later 🔖</span></div>`},
+'02-leak-1':big('01','Damp patches on the wall<br>outside the bathroom.','Water is travelling through the wall behind your tiles.','2/7'),
+'02-leak-2':big('02','Grout that<br>never dries.','Permanently dark grout means the bed under the tiles is wet.','3/7'),
+'02-leak-3':big('03','Tiles that sound<br>hollow when tapped.','The adhesive has let go, often because water got underneath.','4/7'),
+'02-leak-4':big('04','Peeling paint on the<br>ceiling below.','In apartments, your neighbour usually notices first.','5/7'),
+'02-leak-5':big('05','A musty smell that<br>won\'t go away.','Trapped moisture breeds mould you can\'t see.','6/7'),
+'02-leak-6':{w:W,h:H,html:`${logo}<div class="pg">7/7</div>
+  <div class="abs h" style="left:72px;right:60px;top:260px;font-size:84px;color:var(--grey)">Spotted two or more?</div>
+  <div class="abs h" style="left:72px;right:60px;top:400px;font-size:104px"><span class="g">It's a waterproofing<br>problem,</span> not a<br>tile problem.</div>
+  <div class="abs" style="left:74px;right:72px;top:930px;font:600 42px D;color:var(--grey);letter-spacing:-.015em;line-height:1.35">Retiling on top won't fix it. The membrane underneath has to be redone.</div>
+  <div class="foot"><span>Share with someone who needs this</span><span>🔖</span></div>`},
+// 3 · quotes carousel
+'03-quote-0':{w:W,h:H,html:`${logo}<div class="pg">1/5</div>
+  <div class="abs h" style="left:72px;right:60px;top:260px;font-size:110px">Quoted<br>₹1,50,000.</div>
+  <div class="abs h" style="left:72px;right:60px;top:530px;font-size:110px;color:var(--red)">Paid<br>₹1,72,500.</div>
+  <div class="abs" style="left:74px;top:860px;font:600 48px D;color:var(--grey);letter-spacing:-.02em">Here's where the extra 15% goes.</div>
+  <div class="foot"><span>Swipe →</span><span>Illustrative example</span></div>`},
+'03-quote-1':big('+₹9.5k','Extra plumbing.','Old pipes are discovered after demolition, and they\'re never in the first quote.','2/5'),
+'03-quote-2':big('+₹6.8k','Tile wastage.','Cuts, breakage and "we need two more boxes."','3/5'),
+'03-quote-3':big('+₹6.2k','Labour revisions.','"This will take two more days." Every day is billed.','4/5'),
+'03-quote-4':{w:W,h:H,html:`${logo}<div class="pg">5/5</div>
+  <div class="abs h" style="left:72px;right:60px;top:240px;font-size:104px">The fix:<br><span class="g">one fixed price,</span><br>agreed before<br>work starts.</div>
+  <div class="tile" style="left:72px;right:72px;top:780px;height:440px;padding:46px 52px;font:600 36px T;line-height:1.75">
+   ✓ Demolition &amp; debris removal<br>✓ Waterproofing<br>✓ Tiling, sanitaryware &amp; fittings<br>✓ In-bathroom plumbing &amp; electrical</div>`},
+// 4 · bath board carousel
+'04-board-00':{w:W,h:H,html:`${logo}<div class="pg">1/11</div>
+  <div class="abs h" style="left:72px;right:60px;top:250px;font-size:120px">Which one<br>would you <span class="g">build?</span></div>
+  <div class="abs" style="left:74px;top:560px;font:600 46px D;color:var(--grey);letter-spacing:-.02em">10 bathrooms. Comment your number 👇</div>
+  <div class="frame" style="left:72px;top:700px;width:300px;height:400px;transform:rotate(-6deg)"><div class="cover" style="background-image:url(img/b04.jpg)"></div></div>
+  <div class="frame" style="left:390px;top:680px;width:300px;height:400px"><div class="cover" style="background-image:url(img/b09.jpg)"></div></div>
+  <div class="frame" style="left:708px;top:700px;width:300px;height:400px;transform:rotate(6deg)"><div class="cover" style="background-image:url(img/b08.jpg)"></div></div>
+  <div class="foot"><span>Swipe →</span><span>Save your favourite 🔖</span></div>`},
+// stories
+'05-story-poll':{w:W,h:SH,html:`${logo}
+  <div class="abs h" style="left:90px;right:90px;top:300px;font-size:104px">What's your worst<br><span class="g">renovation</span> nightmare?</div>
+  <div class="abs" style="left:92px;top:680px;font:600 40px D;color:var(--grey)">Add the poll sticker here ↓</div>
+  <div class="opt" style="top:790px"><span>💧</span>Leaks</div>
+  <div class="opt" style="top:970px"><span>🧾</span>Bills that keep climbing</div>
+  <div class="opt" style="top:1150px"><span>⏳</span>Endless delays</div>
+  <div class="opt" style="top:1330px"><span>📵</span>Vendors who vanish</div>`},
+'06-story-countdown':{w:W,h:SH,html:`${logo}
+  <div class="abs h" style="left:0;right:0;top:520px;text-align:center;font:600 54px D;color:var(--grey)">Bengaluru, get ready.</div>
+  <div class="abs h g" style="left:0;right:0;top:610px;text-align:center;font-size:330px;letter-spacing:-.06em;line-height:1.1">BYOB</div>
+  <div class="abs h" style="left:0;right:0;top:1000px;text-align:center;font-size:72px">Build Your Own Bathroom.</div>
+  <div class="abs" style="left:240px;right:240px;top:1200px;height:300px;border:4px dashed #D2D2D7;border-radius:40px;display:flex;align-items:center;justify-content:center;font:600 34px T;color:var(--grey)">Countdown sticker</div>`},
+};
+NAMES.forEach((n,i)=>{const num=String(i+1).padStart(2,'0');P[`04-board-${num}`]={w:W,h:H,html:`<div class="cover" style="background-image:url(img/b${num}.jpg)"></div>
+  <div class="abs" style="left:0;right:0;bottom:0;height:420px;background:linear-gradient(transparent,rgba(0,0,0,.45))"></div>
+  <div class="abs" style="left:60px;top:56px;background:rgba(255,255,255,.92);border-radius:999px;padding:12px 26px;font:600 30px D">Corebath</div>
+  <div class="abs" style="right:60px;top:56px;background:rgba(0,0,0,.45);color:#fff;border-radius:999px;padding:12px 24px;font:600 28px T">${i+2}/11</div>
+  <div class="abs h" style="left:64px;bottom:150px;font-size:200px;color:#fff;letter-spacing:-.06em">${num}</div>
+  <div class="abs" style="left:70px;bottom:90px;font:600 52px D;color:#fff;letter-spacing:-.02em">${n}</div>`}});
+window.KEYS=Object.keys(P);
+window.show=k=>{const p=P[k];const c=document.getElementById('c');c.style.width=p.w+'px';c.style.height=p.h+'px';c.innerHTML=p.html;return [p.w,p.h]};
+window.ready=Promise.all([document.fonts.ready,...[...Array(10)].map((_,i)=>new Promise(r=>{const im=new Image();im.onload=im.onerror=r;im.src=`img/b${String(i+1).padStart(2,'0')}.jpg`}))]);
+</script></body></html>
