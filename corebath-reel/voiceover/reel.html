@@ -1,0 +1,410 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:D;src:url(fonts/InterDisplay-Medium.otf);font-weight:500}
+@font-face{font-family:D;src:url(fonts/InterDisplay-SemiBold.otf);font-weight:600}
+@font-face{font-family:D;src:url(fonts/InterDisplay-Bold.otf);font-weight:700}
+@font-face{font-family:T;src:url(fonts/Inter-Regular.otf);font-weight:400}
+@font-face{font-family:T;src:url(fonts/Inter-Medium.otf);font-weight:500}
+@font-face{font-family:T;src:url(fonts/Inter-SemiBold.otf);font-weight:600}
+@font-face{font-family:T;src:url(fonts/Inter-Bold.otf);font-weight:700}
+:root{--ink:#1D1D1F;--grey:#86868B;--tile:#F5F5F7;--blue:#2B6A9E}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#fff}
+body{font-family:T,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+.abs{position:absolute}
+.scene{position:absolute;inset:0;display:none}
+.h{font-family:D;font-weight:700;letter-spacing:-.035em;line-height:1.04}
+.c{left:0;right:0;text-align:center}
+.g{background:linear-gradient(100deg,#9CCBEA 0%,#5A9BD0 45%,#2B6A9E 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 .04em;margin:0 -.04em}
+.w{display:inline-block;will-change:transform,filter,opacity}
+.frame{position:absolute;overflow:hidden;border-radius:48px;box-shadow:0 2px 6px rgba(0,0,0,.05),0 24px 50px rgba(0,0,0,.10),0 60px 120px rgba(0,0,0,.12)}
+.cover{position:absolute;inset:0;background-size:cover;background-position:center}
+.tile{position:absolute;border-radius:40px;background:var(--tile);overflow:hidden}
+/* phone UI */
+.card{position:absolute;left:290px;top:560px;width:380px;height:480px;margin:-240px 0 0 -190px;border-radius:30px;overflow:hidden;box-shadow:0 14px 34px rgba(0,0,0,.16)}
+.lbl{position:absolute;left:16px;bottom:16px;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:999px;padding:8px 16px;font:600 17px T;color:var(--ink)}
+.dot{height:8px;border-radius:4px;background:#D2D2D7}
+.btn{position:absolute;left:36px;right:36px;height:88px;border-radius:44px;display:flex;align-items:center;justify-content:center;font:600 28px T}
+.bt{position:absolute;width:240px;height:150px;border-radius:28px;background:var(--tile);overflow:hidden}
+.bt .n{position:absolute;left:26px;top:36px;font:700 30px T;letter-spacing:.03em}
+.bt .k{position:absolute;left:27px;top:84px;font:500 17px T;color:var(--grey)}
+.bt .on{position:absolute;inset:0;background:linear-gradient(135deg,#6AA8DA,#2B6A9E);opacity:0;color:#fff}
+.bt .on .k{color:rgba(255,255,255,.75)}
+.bt .ck{position:absolute;right:16px;top:16px;width:36px;height:36px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;transform:scale(0)}
+.ch{position:absolute;left:0;right:0;top:90px;text-align:center}.cs{position:absolute;left:0;right:0;top:250px;text-align:center;font:600 36px D;letter-spacing:-.02em;color:var(--grey)}</style></head><body>
+<div id="stage" class="abs" style="inset:0">
+
+<!-- 1. montage -->
+<div id="M" class="scene">
+  <div id="Mlogo" class="abs c" style="top:150px;font:600 34px D;letter-spacing:-.01em">Corebath</div>
+  <div id="Mf" class="frame" style="left:70px;top:270px;width:940px;height:1380px"><div id="Mimg" class="cover"></div></div>
+</div>
+
+<!-- 2. question -->
+<div id="Q" class="scene">
+  <div id="Qt" class="abs c h" style="top:690px;font-size:168px"><span class="w">Saw</span> <span class="w">one</span><br><span class="w">you</span> <span class="w g">love?</span></div>
+</div>
+
+<!-- 3. introducing -->
+<div id="I" class="scene">
+  <div id="I1" class="abs c" style="top:700px;font:600 54px D;letter-spacing:-.02em;color:var(--grey)">Introducing</div>
+  <div id="I2" class="abs c h g" style="top:770px;font-size:340px;letter-spacing:-.05em;line-height:1.1;left:60px;right:60px">BYOB</div>
+  <div id="I3" class="abs c" style="top:1170px;font:600 58px D;letter-spacing:-.025em">Build Your Own Bathroom.</div>
+</div>
+
+<!-- 4. phone -->
+<div id="P" class="scene">
+  <div id="ph1" class="abs c h" style="top:250px;font-size:96px">Your <span class="g">bath board.</span></div>
+  <div id="ph2" class="abs c h" style="top:250px;font-size:96px">Tap the one<br>you <span class="g">love.</span></div>
+  <div id="ph3" class="abs c h" style="top:250px;font-size:96px">Choose your<br><span class="g">brands.</span></div>
+  <div id="phone" class="abs" style="left:230px;top:600px;width:620px;height:1290px">
+    <div class="abs" style="inset:0;border-radius:98px;background:linear-gradient(140deg,#E6E8EB 0%,#9A9FA6 22%,#F2F3F5 48%,#868B92 76%,#D3D6DA 100%);box-shadow:0 30px 60px rgba(0,0,0,.18),0 80px 160px rgba(0,0,0,.18)"></div>
+    <div class="abs" style="inset:5px;border-radius:93px;background:#050506"></div>
+    <div id="screen" class="abs" style="left:20px;top:20px;width:580px;height:1250px;border-radius:78px;overflow:hidden;background:#fff">
+      <!-- screen 1: bath board -->
+      <div id="s1" class="abs" style="inset:0;background:#fff">
+        <div class="abs" style="left:40px;top:128px;font:600 17px T;letter-spacing:.18em;color:var(--grey)">SAVED INSPIRATION</div>
+        <div class="abs h" style="left:38px;top:156px;font-size:60px">The <span class="g">bath</span> board</div>
+        <div id="trk" class="abs" style="inset:0"></div>
+        <div id="dots" class="abs" style="left:0;right:0;top:850px;display:flex;justify-content:center;gap:8px"></div>
+        <div id="cnt" class="abs c" style="top:878px;font:600 21px T;color:var(--grey);font-variant-numeric:tabular-nums">01 / 10</div>
+        <div id="b1" class="btn" style="top:1108px;background:#E8E8ED;color:#A1A1A6">Select a bathroom</div>
+        <div id="b1on" class="btn" style="top:1108px;background:linear-gradient(135deg,#5A9BD0,#2B6A9E);color:#fff;opacity:0">Build this bathroom</div>
+        <div id="s1dim" class="abs" style="inset:0;background:#000;opacity:0"></div>
+      </div>
+      <!-- screen 2: brands -->
+      <div id="s2" class="abs" style="inset:0;background:#fff;box-shadow:-20px 0 40px rgba(0,0,0,.12)">
+        <div class="abs" style="left:34px;top:122px;font:500 22px T;color:var(--blue)">‹ Back</div>
+        <div class="abs" style="right:40px;top:124px;font:500 20px T;color:var(--grey)">Step 2 of 3</div>
+        <div class="abs h" style="left:38px;top:168px;font-size:58px">Pick your <span class="g">brands</span></div>
+        <div class="abs" style="left:40px;top:262px;right:40px;height:76px;display:flex;align-items:center;gap:16px">
+          <div style="width:76px;height:76px;border-radius:18px;background:url(img/b09.jpg) center/cover"></div>
+          <div style="flex:1"><div style="font:600 22px T">Terracotta Floor</div><div id="sel" style="font:500 18px T;color:var(--grey);margin-top:4px">0 of 6 brands selected</div></div>
+        </div>
+        <div id="grid"></div>
+        <div id="b2" class="btn" style="top:1108px;background:#E8E8ED;color:#A1A1A6">Continue</div>
+        <div id="b2on" class="btn" style="top:1108px;background:linear-gradient(135deg,#5A9BD0,#2B6A9E);color:#fff;opacity:0">Continue</div>
+      </div>
+      <!-- status bar -->
+      <div class="abs" style="left:58px;top:34px;font:600 25px T">9:41</div>
+      <svg class="abs" style="right:44px;top:38px" width="120" height="24" viewBox="0 0 120 24"><g fill="#1D1D1F"><rect x="0" y="14" width="5" height="8" rx="1.5"/><rect x="8" y="10" width="5" height="12" rx="1.5"/><rect x="16" y="6" width="5" height="16" rx="1.5"/><rect x="24" y="2" width="5" height="20" rx="1.5"/>
+        <path d="M46 9a14 14 0 0 1 20 0l-2.2 2.3a11 11 0 0 0-15.6 0zM50.5 13.6a7.6 7.6 0 0 1 11 0L56 19z"/>
+        <rect x="80" y="3" width="34" height="18" rx="5" fill="none" stroke="#1D1D1F" stroke-width="2" opacity=".5"/><rect x="83" y="6" width="26" height="12" rx="2.5"/><rect x="116" y="9" width="3" height="6" rx="1" opacity=".5"/></g></svg>
+      <div id="touch" class="abs" style="width:76px;height:76px;margin:-38px;border-radius:50%;background:rgba(60,60,67,.22);border:2px solid rgba(255,255,255,.7);box-shadow:0 4px 14px rgba(0,0,0,.12);opacity:0"></div>
+    </div>
+    <div class="abs" style="left:50%;top:40px;width:176px;height:52px;margin-left:-88px;border-radius:26px;background:#000"></div>
+  </div>
+</div>
+
+<!-- 5. drawn -> built -->
+<div id="D" class="scene">
+  <div id="d1" class="abs c h" style="top:250px;font-size:92px">Drawn to the<br><span class="g">millimetre.</span></div>
+  <div id="d2" class="abs c h" style="top:250px;font-size:92px">Built in<br><span class="g">your home.</span></div>
+  <div id="Df" class="frame" style="left:80px;top:560px;width:920px;height:1220px">
+    <div id="Dbp" class="cover" style="background-image:url(img/bp09.jpg)"></div>
+    <svg id="Ddim" class="abs" style="inset:0" width="920" height="1220"><g stroke="#2B6A9E" stroke-width="3" fill="none" stroke-linecap="round" opacity=".9">
+      <path id="dh" d="M70 80 L850 80 M70 66 L70 94 M850 66 L850 94" pathLength="1" stroke-dasharray="1"/>
+      <path id="dv" d="M50 120 L50 1120 M36 120 L64 120 M36 1120 L64 1120" pathLength="1" stroke-dasharray="1"/></g>
+      <g font-family="T" font-weight="600" font-size="24" fill="#2B6A9E" letter-spacing="2"><text id="dht" x="460" y="60" text-anchor="middle">2400 mm</text><text id="dvt" x="86" y="620" transform="rotate(-90 86 620)" text-anchor="middle">2700 mm</text></g></svg>
+    <div id="Dph" class="cover" style="background-image:url(img/h09.jpg)"></div>
+  </div>
+</div>
+
+<!-- 6. 21 days -->
+<div id="S1" class="scene">
+  <div id="s1a" class="abs c" style="top:560px;font:600 64px D;letter-spacing:-.025em;color:var(--grey)">Handed over in</div>
+  <div id="s1b" class="abs c h g" style="top:620px;font-size:560px;letter-spacing:-.06em;line-height:1.08;left:80px;right:80px;font-variant-numeric:tabular-nums">21</div>
+  <div id="s1c" class="abs c h" style="top:1240px;font-size:150px">days.</div>
+  <div class="abs" style="left:240px;right:240px;top:1480px;height:8px;border-radius:4px;background:#E8E8ED;overflow:hidden"><div id="s1bar" class="abs" style="left:0;top:0;bottom:0;width:0;border-radius:4px;background:linear-gradient(90deg,#9CCBEA,#2B6A9E)"></div></div>
+</div>
+
+<!-- 7. one order -->
+<div id="S2" class="scene">
+  <div id="s2a" class="abs c h" style="top:720px;font-size:170px">One order.</div>
+  <div id="s2b" class="abs c h" style="top:930px;font-size:116px"><span class="g">One fixed price.</span></div>
+</div>
+
+<!-- 8. zero chaos -->
+<div id="S3" class="scene">
+  <div id="s3a" class="abs c h g" style="top:560px;font-size:400px;letter-spacing:-.06em;line-height:1.08;left:40px;right:40px">Zero</div>
+  <div id="s3b" class="abs c h" style="top:1050px;font-size:104px">contractor chaos.</div>
+</div>
+
+<!-- 9. bento -->
+<div id="B" class="scene">
+  <div id="bento" class="abs" style="inset:0">
+    <div class="tile" style="left:50px;top:240px;width:980px;height:600px"><div class="cover" style="background-image:url(img/b04.jpg)"></div>
+      <div class="abs" style="left:40px;bottom:36px;font:700 52px D;letter-spacing:-.03em;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.25)">Your pick.</div></div>
+    <div class="tile" style="left:50px;top:860px;width:480px;height:420px">
+      <div class="abs h g" style="left:40px;top:40px;font-size:200px;letter-spacing:-.06em;line-height:1.1">21</div>
+      <div class="abs" style="left:44px;bottom:44px;font:600 40px D;letter-spacing:-.02em">day handover</div></div>
+    <div class="tile" style="left:550px;top:860px;width:480px;height:420px">
+      <div class="abs h" style="left:40px;top:70px;font-size:120px;letter-spacing:-.05em">Fixed</div>
+      <div class="abs" style="left:44px;bottom:44px;font:600 40px D;letter-spacing:-.02em;color:var(--grey)">price, one order</div></div>
+    <div class="tile" style="left:50px;top:1300px;width:980px;height:380px">
+      <div class="abs" style="left:44px;top:60px;font:600 34px D;letter-spacing:-.01em;color:var(--grey)">Your brands. Your call.</div>
+      <div class="abs h" style="left:44px;top:130px;right:40px;font-size:64px;letter-spacing:-.03em;line-height:1.25">Jaquar · Cera · Kohler<br><span class="g">Grohe · Kajaria</span></div></div>
+  </div>
+</div>
+
+<!-- 10. end -->
+<div id="E" class="scene">
+  <div id="e1" class="abs c h" style="top:430px;font-size:110px;letter-spacing:-.045em">Corebath</div>
+  <div id="e2" class="abs c h" style="top:640px;font-size:118px">Your bathroom.<br><span class="g">Built in 21 days.</span></div>
+  <div id="e3" class="abs" style="left:110px;top:1000px;width:860px;height:180px">
+    <div id="eglow" class="abs" style="inset:-30px;border-radius:999px;background:radial-gradient(closest-side,rgba(90,155,208,.45),rgba(90,155,208,0))"></div>
+    <div id="ebtn" class="abs" style="inset:0;border-radius:90px;background:linear-gradient(135deg,#6AA8DA 0%,#3B7DB6 50%,#255E8E 100%);
+      box-shadow:inset 0 2px 0 rgba(255,255,255,.35),0 24px 50px rgba(43,106,158,.40),0 6px 14px rgba(43,106,158,.25);display:flex;align-items:center;justify-content:center;gap:26px;overflow:hidden">
+      <div id="eshine" class="abs" style="top:-30px;bottom:-30px;width:160px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg)"></div>
+      <span style="position:relative;font:700 62px D;letter-spacing:-.02em;color:#fff">Start your BYOB</span>
+      <span id="earrow" style="position:relative;width:84px;height:84px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center">
+        <svg width="44" height="44" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="#2B6A9E" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div id="etouch" class="abs" style="left:640px;top:90px;width:110px;height:110px;margin:-55px;border-radius:50%;background:rgba(255,255,255,.35);border:3px solid rgba(255,255,255,.8);opacity:0"></div>
+  </div>
+  <div id="e4" class="abs c" style="top:1240px;font:600 38px T;color:var(--grey);letter-spacing:-.005em">Fixed price · Top brands · 21-day handover</div>
+  <div id="e5" class="abs c" style="top:1640px;font:600 34px T;color:var(--ink)">Tap below to start <span style="color:var(--blue)">↓</span></div>
+  <div id="e6" class="abs c" style="top:1700px;font:500 28px T;color:var(--grey)">Bengaluru</div>
+</div>
+</div>
+<div id="PAIN" class="abs" style="inset:0;background:#fff;display:none;z-index:80;overflow:hidden">
+ <div id="p0" class="abs c h" style="top:760px;font-size:104px">Then you try<br>to <span style="color:var(--grey)">renovate it.</span></div>
+ <div id="peye" class="abs c" style="top:250px;font:600 48px D;letter-spacing:-.02em;color:var(--grey)">The usual renovation.</div>
+ <div id="drumwrap" class="abs" style="left:0;top:0;width:1080px;height:1920px;perspective:2600px;perspective-origin:540px 1040px">
+  <div id="drum" class="abs" style="left:130px;top:430px;width:820px;height:1220px;transform-style:preserve-3d"></div>
+ </div>
+ <div id="p6" class="abs c h" style="top:820px;font-size:170px;transform-origin:50% 50%"><span class="g">Not anym<span id="oo">o</span>re.</span></div>
+</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)), lerp=(a,b,t)=>a+(b-a)*t, prog=(t,a,b)=>clamp((t-a)/(b-a));
+const eOut5=p=>1-Math.pow(1-p,5), eOut4=p=>1-Math.pow(1-p,4), eIn3=p=>p*p*p, eIO3=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+const eBack=(p,s=1.2)=>{const c=s+1;return 1+c*Math.pow(p-1,3)+s*Math.pow(p-1,2)};
+const show=(el,on)=>{el.style.display=on?'block':'none';return on};
+// Apple-style reveal: fade + rise + blur-to-sharp; exit: fade + blur + drift up
+function fx(el,t,a,out=null,d=.8,rise=40,blur=18,sc=0){
+  const p=eOut5(prog(t,a,a+d)); let o=p,y=(1-p)*rise,b=(1-p)*blur,s=1+(1-p)*sc;
+  if(out!==null){const q=eIn3(prog(t,out,out+.3));o*=1-q;y-=q*30;b+=q*14;}
+  el.style.opacity=o;el.style.transform=`translateY(${y}px) scale(${s})`;el.style.filter=b>.3?`blur(${b.toFixed(1)}px)`:'none';
+}
+function words(el,t,a,st=.12,out=null){el.querySelectorAll('.w').forEach((w,i)=>fx(w,t,a+i*st,out))}
+
+// ---- montage
+const MON=['b06','b02','b07','b04','b08','b01'];
+// ---- phone content
+const NAMES=['Warm Plaster','Rattan & Lime','Skyline Marble','Skylight Shower','Curved Oak','Matte Black','Walnut & Green','Sage Kit-Kat','Terracotta Floor','Microcement'];
+const cards=NAMES.map((n,i)=>{const num=String(i+1).padStart(2,'0');
+  $('trk').insertAdjacentHTML('beforeend',`<div class="card"><div class="cover" style="background-image:url(img/b${num}.jpg)"></div><div class="lbl">${num} · ${n}</div></div>`);
+  $('dots').insertAdjacentHTML('beforeend','<div class="dot"></div>');return $('trk').lastElementChild});
+const dots=[...$('dots').children];
+cards[8].insertAdjacentHTML('beforeend',`<div id="ring" class="abs" style="inset:0;border-radius:30px;box-shadow:inset 0 0 0 5px #4F8FC6;opacity:0"></div>
+  <div id="cbadge" class="abs" style="right:18px;top:18px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#6AA8DA,#2B6A9E);display:flex;align-items:center;justify-content:center;transform:scale(0);box-shadow:0 6px 16px rgba(43,106,158,.4)">
+  <svg width="28" height="28" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`);
+const BR=[['JAQUAR','Fittings'],['CERA','Sanitaryware'],['KOHLER','Fittings'],['HINDWARE','Sanitaryware'],['GROHE','Fittings'],['KAJARIA','Tiles']];
+const tiles=BR.map(([b,k],i)=>{const x=40+(i%2)*260,y=370+Math.floor(i/2)*170;
+  const inner=`<div class="n">${b}</div><div class="k">${k}</div>`;
+  $('grid').insertAdjacentHTML('beforeend',`<div class="bt" style="left:${x}px;top:${y}px">${inner}<div class="on">${inner}</div>
+   <div class="ck"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#2B6A9E" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>`);
+  return {el:$('grid').lastElementChild,x:x+120,y:y+75}});
+const PICKS=[[0,9.5],[1,10.0],[5,10.5]];
+// carousel position
+function CP(t){
+  if(t<5.9)return 0;
+  if(t<6.3)return eIO3(prog(t,5.9,6.3));
+  if(t<6.35)return 1;
+  if(t<6.75)return 1+eIO3(prog(t,6.35,6.75));
+  if(t<6.8)return 2;
+  return 2+6*eOut4(prog(t,6.8,7.65));
+}
+// touch gestures (screen coords)
+const G=[{a:5.84,b:6.3,x0:470,y0:600,x1:150,y1:600},{a:6.29,b:6.75,x0:470,y0:600,x1:150,y1:600},{a:6.74,b:6.98,x0:500,y0:600,x1:110,y1:600},
+  {a:7.88,b:8.18,x0:300,y0:620,tap:8.0},{a:8.38,b:8.68,x0:290,y0:1152,tap:8.5},
+  ...PICKS.map(([k,tt])=>({a:tt-.12,b:tt+.18,x0:tiles[k].x,y0:tiles[k].y,tap:tt})),{a:10.88,b:11.18,x0:290,y0:1152,tap:11.0}];
+function touch(t){
+  const g=G.find(g=>t>=g.a&&t<g.b);const el=$('touch');
+  if(!g){el.style.opacity=0;return}
+  const u=prog(t,g.a,g.b);let x=g.x0,y=g.y0,s=1;
+  if(g.tap===undefined){const m=eIO3(prog(t,g.a+.04,g.b-.04));x=lerp(g.x0,g.x1,m);y=lerp(g.y0,g.y1,m);}
+  else{const pr=Math.sin(Math.PI*prog(t,g.tap-.05,g.tap+.12));s=1-.18*pr;}
+  el.style.opacity=Math.min(prog(t,g.a,g.a+.06),1-prog(t,g.b-.08,g.b))*1;
+  el.style.left=x+'px';el.style.top=y+'px';el.style.transform=`scale(${s})`;
+}
+
+function renderOrig(t){
+  // 1 montage 0-1.5
+  if(show($('M'),t<1.62)){
+    const k=Math.min(5,Math.floor(t/.25)), lt=t-k*.25;
+    $('Mimg').style.backgroundImage=`url(img/${MON[k]}.jpg)`;$('Mimg').style.transform=`scale(${1.1-.06*eOut4(clamp(lt/.25))})`;
+    const e=eIn3(prog(t,1.3,1.6));
+    $('Mf').style.transform=`scale(${(1-.03*eOut5(prog(t,0,.5)))*(1-.08*e)})`;$('Mf').style.opacity=1-e;$('Mf').style.filter=e>.01?`blur(${e*14}px)`:'none';
+    fx($('Mlogo'),t,.1,1.3,.7,20,10);
+  }
+  // 2 question 1.5-3.0
+  if(show($('Q'),t>=1.5&&t<3.05)){ words($('Qt'),t,1.55,.13,2.75); $('Qt').style.transform=`scale(${1+.03*prog(t,1.5,3)})`; }
+  // 3 introducing 3.0-5.0
+  if(show($('I'),t>=3.0&&t<5.05)){
+    fx($('I1'),t,3.0,4.72,.7,24,12); fx($('I2'),t,3.2,4.72,1.0,0,26,.12); fx($('I3'),t,3.75,4.72,.8,30,14);
+  }
+  // 4 phone 5.0-11.8
+  if(show($('P'),t>=5.0&&t<11.85)){
+    const pin=eOut5(prog(t,5.0,6.0)), pout=eIn3(prog(t,11.25,11.75));
+    const ry=Math.sin((t-5)*.55)*3.5;
+    $('phone').style.transform=`perspective(2600px) translateY(${(1-pin)*1250+pout*1500}px) rotateX(${(1-pin)*28-pout*12}deg) rotateY(${ry}deg) scale(${.9+.02*prog(t,6,11)})`;
+    fx($('ph1'),t,5.35,7.35,.8,30,16); fx($('ph2'),t,7.6,8.6,.7,30,16); fx($('ph3'),t,8.85,11.2,.7,30,16);
+    // carousel
+    const p=CP(t), v=Math.abs(CP(t+1/120)-CP(t-1/120))*60;
+    $('trk').style.filter=v>1.5?`blur(${Math.min(v*1.2,10).toFixed(1)}px)`:'none';
+    const press=1-.03*Math.sin(Math.PI*prog(t,7.95,8.15));
+    cards.forEach((c,i)=>{const d=i-p, ad=Math.abs(d);
+      const s=(1-.14*Math.min(ad,1))*(i===8?press:1);
+      c.style.transform=`translateX(${d*410}px) scale(${s})`;c.style.display=ad>2.2?'none':'block';c.style.zIndex=10-Math.round(ad);});
+    dots.forEach((d,i)=>{const a=clamp(1-Math.abs(i-p));d.style.width=(8+22*a)+'px';d.style.background=a>.5?'#2B6A9E':'#D2D2D7'});
+    $('cnt').textContent=String(Math.round(clamp(p,0,9))+1).padStart(2,'0')+' / 10';
+    const sel=eBack(prog(t,8.02,8.32),1.3);$('cbadge').style.transform=`scale(${sel})`;$('ring').style.opacity=prog(t,8.0,8.15);
+    $('b1on').style.opacity=prog(t,8.05,8.25);
+    // push to screen 2
+    const ps=eOut5(prog(t,8.6,9.15));
+    $('s1').style.transform=`translateX(${-ps*30}%)`;$('s1dim').style.opacity=ps*.12;
+    $('s2').style.transform=`translateX(${(1-ps)*100}%)`;$('s2').style.display=t>=8.6?'block':'none';
+    let n=0;
+    PICKS.forEach(([k,tt])=>{const el=tiles[k].el,q=prog(t,tt,tt+.2);
+      el.querySelector('.on').style.opacity=q;el.querySelector('.ck').style.transform=`scale(${eBack(prog(t,tt+.05,tt+.35),1.3)})`;
+      el.style.transform=`scale(${1-.04*Math.sin(Math.PI*prog(t,tt-.05,tt+.15))})`; if(t>=tt)n++;});
+    $('sel').textContent=`${n} of 6 brands selected`;
+    $('b2on').style.opacity=prog(t,9.55,9.75);
+    touch(t);
+  }
+  // 5 drawn -> built 12.0-14.5
+  if(show($('D'),t>=11.95&&t<14.55)){
+    fx($('Df'),t,12.0,14.22,.9,120,20);
+    $('Df').style.transform+=` scale(${1+.03*prog(t,12,14.5)})`;
+    fx($('d1'),t,12.1,13.05,.7,30,16); fx($('d2'),t,13.3,14.22,.7,30,16);
+    $('dh').style.strokeDashoffset=1-eOut4(prog(t,12.35,12.85));$('dv').style.strokeDashoffset=1-eOut4(prog(t,12.45,12.95));
+    $('dht').style.opacity=prog(t,12.7,12.85);$('dvt').style.opacity=prog(t,12.8,12.95);
+    const w=eIO3(prog(t,13.0,13.6))*120;
+    $('Dph').style.webkitMaskImage=$('Dph').style.maskImage=`linear-gradient(90deg,#000 ${w-20}%,transparent ${w}%)`;
+    $('Dbp').style.transform=`scale(${1+.04*prog(t,12,13.6)})`;$('Dph').style.transform=`scale(${1.04-.03*prog(t,13,14.5)})`;
+    $('Ddim').style.opacity=1-prog(t,13.0,13.3);
+  }
+  // 6 21 days 14.5-16
+  if(show($('S1'),t>=14.5&&t<16.05)){
+    fx($('s1a'),t,14.5,15.72,.7,24,12);
+    const c=eOut4(prog(t,14.62,15.3)); $('s1b').textContent=Math.round(21*c);
+    fx($('s1b'),t,14.6,15.72,.9,0,22,.08); fx($('s1c'),t,14.9,15.72,.7,30,14);
+    $('s1bar').style.width=(c*100)+'%';
+  }
+  // 7 one order 16-17.5
+  if(show($('S2'),t>=16.0&&t<17.55)){ fx($('s2a'),t,16.0,17.22,.8,40,18); fx($('s2b'),t,16.5,17.22,.8,40,18); }
+  // 8 zero 17.5-19
+  if(show($('S3'),t>=17.5&&t<19.05)){ fx($('s3a'),t,17.5,18.72,1.0,0,26,.12); fx($('s3b'),t,17.85,18.72,.8,30,16); }
+  // 9 bento 19-21
+  if(show($('B'),t>=19.0&&t<21.05)){
+    [...$('bento').children].forEach((el,i)=>fx(el,t,19.0+i*.1,20.72,.8,60,16,-.06));
+    $('bento').style.transform=`scale(${1.02-.03*prog(t,19,21)})`;
+  }
+  // 10 end 21-25
+  if(show($('E'),t>=21.0)){
+    fx($('e1'),t,21.0,null,.8,20,14); fx($('e2'),t,21.2,null,.9,40,18);
+    fx($('e3'),t,21.75,null,.9,80,18,-.1);
+    const pr=Math.sin(Math.PI*prog(t,22.45,22.65)), beat=t>22.7?.018*Math.max(0,Math.cos((t-22.5)*Math.PI*4)):0;
+    $('ebtn').style.transform=`scale(${1-.05*pr+beat})`;
+    $('eglow').style.opacity=.5+.5*Math.sin((t-21.75)*Math.PI*2)*.5+.5*prog(t,22.5,22.8)*(1-prog(t,22.8,23.6));
+    $('eglow').style.transform=`scale(${1+.08*prog(t,22.5,23.0)})`;
+    const ts=prog(t,22.3,22.9);$('etouch').style.opacity=Math.min(prog(t,22.3,22.38),1-prog(t,22.75,22.9));$('etouch').style.transform=`scale(${1-.2*pr})`;
+    $('eshine').style.left=lerp(-260,1000,eIO3(prog((t-22.55)%1.5,0,.75)))*(t>22.55?1:0)+(t>22.55?0:-400)+'px';
+    $('earrow').style.transform=`translateX(${t>22.6?Math.max(0,Math.sin((t-22.6)*Math.PI*2))*10:0}px)`;
+    fx($('e4'),t,22.0,null,.8,24,12); fx($('e5'),t,23.0,null,.8,20,10); fx($('e6'),t,23.2,null,.8,10,8);
+    $('E').style.transform=`scale(${1+.015*prog(t,21,25)})`;
+  }
+}
+
+
+const CARDS=[
+`<div class="ch h" style="font-size:120px">Leaks.</div><div class="cs">Seepage. Damp walls. Dripping ceilings.</div>
+ <div class="frame" style="left:40px;top:400px;width:740px;height:416px;border-radius:36px"><div id="leak" class="cover"></div>
+ <div class="abs" style="left:20px;bottom:20px;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:9px 20px;font:600 22px T">Real footage</div></div>
+ <div class="cs" style="top:880px;color:#D93B3B;font-weight:700">Fixing it means breaking tiles.</div>`,
+`<div class="ch h" style="font-size:96px;top:70px">Quotes that<br>keep climbing.</div><div class="cs" style="top:300px">"Keep a 15% buffer," they say.</div>
+ <div class="abs" style="left:40px;right:40px;top:400px;background:#fff;border-radius:36px;padding:40px 46px;box-shadow:0 10px 30px rgba(0,0,0,.06)">
+  <div style="display:flex;justify-content:space-between;font:600 36px T"><span>Quoted</span><span>₹1,50,000</span></div>
+  <div class="ql" style="display:flex;justify-content:space-between;margin-top:22px;font:500 32px T;color:#D93B3B"><span>+ Extra plumbing</span><span>₹9,500</span></div>
+  <div class="ql" style="display:flex;justify-content:space-between;margin-top:16px;font:500 32px T;color:#D93B3B"><span>+ Tile wastage</span><span>₹6,800</span></div>
+  <div class="ql" style="display:flex;justify-content:space-between;margin-top:16px;font:500 32px T;color:#D93B3B"><span>+ Labour revision</span><span>₹6,200</span></div>
+  <div style="height:2px;background:#D2D2D7;margin-top:28px"></div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:24px"><span style="font:700 36px T">Final bill</span><span id="qt" style="font:700 58px D;letter-spacing:-.03em">₹1,50,000</span></div>
+  <div id="qb" style="text-align:right;margin-top:8px;font:700 28px T;color:#D93B3B">↑ 15% over quote</div></div>`,
+`<div class="ch h" style="font-size:120px">Delays.</div><div class="cs">Most renovations run 45+ days.</div>
+ <div class="abs c" style="top:400px;font:600 56px D;color:var(--grey)">Day</div>
+ <div id="dn" class="abs c h" style="top:460px;font-size:330px;letter-spacing:-.06em;line-height:1.05">1</div>
+ <div class="abs" style="left:90px;right:90px;top:880px;height:14px;border-radius:7px;background:#E8E8ED;overflow:hidden"><div id="db" class="abs" style="left:0;top:0;bottom:0;width:0;border-radius:7px;background:#1D1D1F"></div></div>
+ <div id="dl" class="cs" style="top:930px;color:#D93B3B;font-weight:700">Still not done.</div>`,
+`<div class="ch h" style="font-size:104px">Five vendors.</div><div class="cs" style="font-size:44px;font-weight:700">Zero accountability.</div>
+ <div id="vl" class="abs" style="left:40px;right:40px;top:380px;background:#fff;border-radius:36px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.06)"></div>`,
+`<div class="ch h" style="font-size:112px">Hollow tiles.</div><div class="cs">Wrong slope. Water that won't drain.</div>
+ <div class="abs" style="left:40px;top:380px;width:740px;height:740px;perspective:1600px">
+  <div id="fl" class="abs" style="inset:0;transform:rotateX(55deg);transform-origin:50% 60%;background:#B9B4AC;border-radius:22px;overflow:hidden">
+   <div id="ft" class="abs" style="inset:0;display:grid;grid-template-columns:repeat(6,1fr);gap:5px;padding:5px"></div>
+   <div id="pud" class="abs" style="left:350px;top:320px;width:440px;height:360px;margin:-180px -220px;border-radius:50%;background:radial-gradient(closest-side,rgba(120,170,215,.78),rgba(120,170,215,.45) 70%,rgba(120,170,215,0));transform:scale(0)"></div>
+   <div id="rip" class="abs" style="left:350px;top:320px;width:180px;height:180px;margin:-90px;border-radius:50%;border:3px solid rgba(255,255,255,.85);opacity:0"></div>
+   <svg class="abs" style="inset:0" width="740" height="740"><path class="ck2" d="M240 120 L265 190 L250 250 L290 320 L272 370" fill="none" stroke="#3A3530" stroke-width="5" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/><path class="ck2" d="M500 430 L532 495 L515 545 L565 605" fill="none" stroke="#3A3530" stroke-width="5" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>
+  </div></div>`];
+CARDS.forEach(h=>$('drum').insertAdjacentHTML('beforeend',`<div class="pc" style="position:absolute;inset:0;border-radius:56px;background:#F5F5F7;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.10)">${h}</div>`));
+const pcs=[...document.querySelectorAll('.pc')];
+const PV=[['Plumber','Not answering'],['Mason','Missed call'],['Tiler','Will come tomorrow'],['Electrician','Not answering'],['Carpenter','Missed call']];
+PV.forEach(([n,st])=>$('vl').insertAdjacentHTML('beforeend',`<div class="vr" style="display:flex;align-items:center;gap:22px;padding:22px 36px;border-bottom:1.5px solid #E5E5EA">
+  <div style="width:76px;height:76px;border-radius:50%;background:#D2D2D7;display:flex;align-items:center;justify-content:center;font:600 32px T;color:#fff">${n[0]}</div>
+  <div style="flex:1"><div style="font:600 36px T">${n}</div><div style="font:500 27px T;color:#D93B3B;margin-top:2px">${st}</div></div>
+  <svg width="44" height="44" viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z" fill="#D93B3B"/></svg></div>`));
+const vrs=[...document.querySelectorAll('.vr')];
+for(let k=0;k<36;k++)$('ft').insertAdjacentHTML('beforeend',`<div style="background:linear-gradient(135deg,#F4F1EC,#E6E1D8);border-radius:4px"></div>`);
+
+const LEAK=[...Array(60)].map((_,k)=>`leak/l${String(k+1).padStart(3,'0')}.jpg`);
+const inr=(t,a,b)=>t>=a&&t<b;
+// drum: active windows [start,end] per card, steps between
+const ACT=[[4.2,5.5],[5.85,7.2],[7.55,8.5],[8.85,11.0],[11.35,12.7]];
+function drumA(T){ // degrees; card k front when A=72k
+  if(T<4.2){const u=prog(T,3.55,4.2);return -1080*(1-eOut4(u))-.0;}
+  for(let k=1;k<5;k++){const s0=ACT[k-1][1],s1=ACT[k][0];if(T<s0)return 72*(k-1);if(T<s1)return 72*(k-1)+72*eBack(prog(T,s0,s1),1.5);}
+  return 288;
+}
+function pain(T){
+  if(!show($('PAIN'),T>=3.0&&T<13.9)) return;
+  show($('p0'),inr(T,3.0,3.9)); if(T<3.9) fx($('p0'),T,3.0,3.55,.6,30,14);
+  const dOn=show($('drumwrap'),inr(T,3.5,13.05)); show($('peye'),dOn);
+  if(dOn){
+    fx($('peye'),T,3.7,12.7,.6,20,10);
+    const A=drumA(T), v=Math.abs(drumA(T+1/120)-drumA(T-1/120))*60;
+    const ex=eIn3(prog(T,12.7,13.0)), en=eOut5(prog(T,3.5,3.9));
+    $('drum').style.transform=`translateZ(-560px) translateY(${(1-en)*300}px) scale(${1-.15*ex})`;$('drumwrap').style.opacity=en*(1-ex);
+    pcs.forEach((c,i)=>{let rel=((i*72-A)%360+540)%360-180;
+      c.style.transform=`rotateY(${rel}deg) translateZ(564px)`;c.style.display=Math.abs(rel)>110?'none':'block';
+      c.style.opacity=1-.55*Math.min(Math.abs(rel)/72,1);c.style.filter=v>40?`blur(${Math.min(v/40,14).toFixed(1)}px)`:'none';});
+    // card internals
+    const a0=ACT[0][0];$('leak').style.backgroundImage=`url(${LEAK[Math.min(59,Math.max(0,Math.floor((T-a0+.2)*30)))]})`;
+    const a1=ACT[1][0];document.querySelectorAll('.ql').forEach((l,k)=>{const q=eOut5(prog(T,a1+.2+k*.2,a1+.5+k*.2));l.style.opacity=q;l.style.transform=`translateX(${(1-q)*40}px)`});
+    const qv=150000+22500*eOut4(prog(T,a1+.2,a1+1.0));$('qt').textContent='₹'+(Math.round(qv/100)*100).toLocaleString('en-IN');$('qt').style.color=T>a1+.25?'#D93B3B':'var(--ink)';$('qb').style.opacity=prog(T,a1+.95,a1+1.1);
+    const a2=ACT[2][0],d=Math.round(1+51*eIO3(prog(T,a2,a2+.8)));$('dn').textContent=d;$('dn').style.color=d>45?'#D93B3B':'var(--ink)';
+    $('db').style.width=Math.min(100,d/45*100)+'%';$('db').style.background=d>45?'#D93B3B':'#1D1D1F';$('dl').style.opacity=prog(T,a2+.75,a2+.9);
+    const a3=ACT[3][0];vrs.forEach((r,k)=>{const q=eOut5(prog(T,a3+.1+k*.15,a3+.4+k*.15));r.style.opacity=q;r.style.transform=`translateY(${(1-q)*24}px)`});
+    const a4=ACT[4][0];$('pud').style.transform=`scale(${eOut4(prog(T,a4+.15,a4+1.1))})`;const rr=prog(T,a4+.5,a4+1.1);$('rip').style.opacity=rr>0?(1-rr)*.9:0;$('rip').style.transform=`scale(${.3+rr*2.2})`;
+    document.querySelectorAll('.ck2').forEach((pa,k)=>pa.style.strokeDashoffset=1-eOut4(prog(T,a4+.3+k*.2,a4+.6+k*.2)));
+  }
+  // "Not anymore." then zoom through the letter into Introducing
+  const on=show($('p6'),T>=12.8);
+  if(on){ fx($('p6'),T,12.8,null,.55,0,20,.1);
+    if(T>=13.5){$('p6').style.transform='none';const o=$('oo').getBoundingClientRect(),z=prog(T,13.5,13.9),s=Math.pow(80,eIn3(z));
+      const pr=$('p6').getBoundingClientRect();$('p6').style.transformOrigin=`${o.left-pr.left+o.width*.5}px ${o.top-pr.top+o.height*.6}px`;$('p6').style.transform=`scale(${s})`;$('p6').style.opacity=1-prog(T,13.78,13.9);}
+    else $('p6').style.transformOrigin='540px 960px';
+  }
+}
+function render(T){
+  let t; if(T<3.0)t=T; else if(T<13.9)t=3.0; else t=T-10.9;
+  renderOrig(t); if(T>=3.0)show($('Q'),false); pain(T);
+}
+window.render=render;
+window.ready=Promise.all([document.fonts.ready,...['b01','b02','b03','b04','b05','b06','b07','b08','b09','b10','h09','bp09'].map(n=>`img/${n}.jpg`).concat(LEAK).map(u=>new Promise(r=>{const im=new Image();im.onload=im.onerror=r;im.src=u}))]);
+render(0);
+</script></body></html>
