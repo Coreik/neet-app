@@ -1,5 +1,7 @@
 # Corebath BYOB: 90-day launch and growth strategy
 
+**Brand:** Corebath, a product of **Corespace** (shown as "Corebath by Corespace")
+
 **Business:** bathroom renovation, Bengaluru apartments
 **Offer:** pick a bathroom you love → we build that look → fixed price from ₹1.49 lakh → handed over in 21 days → 5-year waterproofing warranty
 **Primary conversion:** WhatsApp conversation → site visit → signed order
@@ -32,6 +34,21 @@
 
 ---
 
+## 1A. Brand architecture: Corebath by Corespace
+
+| Where | How to show it |
+|---|---|
+| Video end cards | **Corebath** large, *by Corespace* small beneath |
+| Real project footage | Keep the Corespace mark; caption "Real project by Corespace, the team behind Corebath" |
+| Instagram | Use @corespace's existing audience if it has one, or @corebath with "A Corespace company" in the bio |
+| Ads and captions | First mention "Corebath by Corespace", then "Corebath" |
+| Quotes, warranty card, invoices | Corebath header; Corespace legal entity in the footer (the warranty is issued by the legal company) |
+| Google Business Profile | Use Corespace's profile and reviews; add "Corebath bathroom renovation" as a service |
+
+**Why it matters:** Corespace's track record (projects completed, years, Google rating, past customers) is Corebath's proof. Put those numbers in ads and on the end card.
+
+---
+
 ## 2. Positioning and message
 
 **One idea:** *Saw a bathroom you love? We build that exact look in your home: fixed price, 21 days.*
@@ -60,7 +77,8 @@
 ## 3. Foundations (Day −21 to −15). Do not launch without these.
 
 **Brand and legal**
-- [ ] One brand name everywhere (Corebath *or* Corespace)
+- [ ] "Corebath by Corespace" lockup applied everywhere (end cards, bio, quotes, warranty)
+- [ ] Pull Corespace proof: number of projects, years in business, Google rating, 3 best before/afters
 - [ ] Offer terms in writing: fixed-price inclusions and exclusions, warranty card, 21-day clock start (design sign-off + material confirmation), delay guarantee cap
 - [ ] Image rights: use your own or licensed images in ads; credit inspiration images in organic posts
 
@@ -140,7 +158,9 @@
 - Same audience, **₹200/day**
 - Ads: the contest post, the meme cards, bath board (use **existing posts** so likes and comments stack on the organic post)
 
-**Build these custom audiences now** (Audiences → Create → Custom audience):
+**Build these custom audiences now** (Audiences → Create → Custom audience). Include Corespace's existing assets from day one:
+0. **Corespace past customers** (upload the phone list) → exclude them from prospecting, retarget for referrals, and build a **1–3% lookalike** immediately
+0. **@corespace followers and engagers** + **Corespace website visitors** (if the pixel is installed)
 1. **Video viewers 50%**, last 30 days
 2. **Instagram engagers**, last 60 days
 3. **Profile visitors**, last 30 days
@@ -332,14 +352,14 @@ Meta's delivery needs about 50 results or 3–4 days to settle. Don't edit ads i
 | More leads than you can serve | Cap the budget to delivery capacity; show "limited slots per month" honestly |
 | Slow replies kill the ROI | A named owner, an SLA, automation for the first reply |
 | Quality issues hurt reviews | Supervisor checklist; waterproofing ponding test documented on video |
-| Brand confusion (Corebath vs Corespace) | Resolve before Day −14 |
+| Brand confusion (Corebath vs Corespace) | Use the "Corebath by Corespace" lockup consistently |
 | Contest legal issues | A clear T&C post, a prize cap, a judging date, no purchase required |
 
 ---
 
 ## 13. Week-by-week checklist
 
-**Week −3** · Foundations: brand, legal terms, WhatsApp setup, automation, tracker, Google Business Profile, team SLA
+**Week −3** · Foundations: "Corebath by Corespace" lockup, Corespace proof numbers, customer list upload, legal terms, WhatsApp setup, automation, tracker, Google Business Profile, team SLA
 **Week −2** · Design new cards (teaser, memes, contest); film crew/founder; Phase 1 starts with 3 posts + ₹500/day seeding
 **Week −1** · Contest running; 4 posts; build custom audiences; prepare launch ads and WhatsApp templates
 **Week 1** · 🚀 Launch: film + caption; Campaigns A, B, C live; reply in under 5 min; daily stories
