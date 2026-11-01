@@ -1,0 +1,63 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:D;src:url(fonts/InterDisplay-SemiBold.otf);font-weight:600}
+@font-face{font-family:D;src:url(fonts/InterDisplay-Bold.otf);font-weight:700}
+@font-face{font-family:T;src:url(fonts/Inter-Medium.otf);font-weight:500}
+@font-face{font-family:T;src:url(fonts/Inter-SemiBold.otf);font-weight:600}
+@font-face{font-family:T;src:url(fonts/Inter-Bold.otf);font-weight:700}
+:root{--ink:#1D1D1F;--grey:#86868B;--tile:#F5F5F7;--blue:#2B6A9E;--red:#D93B3B}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#fff;overflow:hidden}
+body{font-family:T,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+#c{position:relative;overflow:hidden;background:#fff}
+.abs{position:absolute}
+.h{font-family:D;font-weight:700;letter-spacing:-.035em;line-height:1.04}
+.g{background:linear-gradient(100deg,#9CCBEA 0%,#5A9BD0 45%,#2B6A9E 100%);-webkit-background-clip:text;background-clip:text;color:transparent;padding:0 .04em;margin:0 -.04em}
+.logo{position:absolute;left:72px;top:64px;font:600 34px D;letter-spacing:-.01em}
+.pg{position:absolute;right:72px;top:68px;font:600 26px T;color:var(--grey)}
+.foot{position:absolute;left:72px;right:72px;bottom:60px;display:flex;justify-content:space-between;font:600 26px T;color:var(--grey)}
+.tile{position:absolute;border-radius:40px;background:var(--tile);overflow:hidden}
+.cover{position:absolute;inset:0;background-size:cover;background-position:center}
+.frame{position:absolute;overflow:hidden;border-radius:44px;box-shadow:0 2px 6px rgba(0,0,0,.05),0 24px 50px rgba(0,0,0,.10),0 60px 120px rgba(0,0,0,.10)}
+.pill{display:inline-block;background:rgba(255,255,255,.9);border-radius:999px;padding:14px 28px;font:600 30px T}
+.opt{position:absolute;left:90px;right:90px;height:150px;border-radius:40px;background:var(--tile);display:flex;align-items:center;gap:30px;padding:0 44px;font:600 50px D;letter-spacing:-.02em}
+.opt span{font-size:60px}
+</style></head><body><div id="c"></div>
+<script>
+const W=1080,H=1350;
+const logo='<div class="logo">Corebath <span style="font:600 24px T;color:var(--grey)">by Corespace</span></div>';
+const P={
+'N1-teaser':`${logo}
+ <div class="abs h g" style="left:0;right:0;top:330px;text-align:center;font-size:360px;letter-spacing:-.06em;line-height:1.1">BYOB.</div>
+ <div class="abs h" style="left:0;right:0;top:760px;text-align:center;font-size:110px">Not that one.</div>
+ <div class="abs" style="left:0;right:0;top:920px;text-align:center;font:600 44px D;color:var(--grey);letter-spacing:-.02em">The one with tiles. 🛁</div>
+ <div class="foot" style="justify-content:center"><span>Coming soon to Bengaluru</span></div>`,
+'N2-plumber':`${logo}
+ <div class="abs" style="left:90px;right:90px;top:250px;background:var(--tile);border-radius:44px;padding:34px 38px;display:flex;gap:28px;align-items:flex-start;box-shadow:0 20px 50px rgba(0,0,0,.08)">
+  <div style="width:110px;height:110px;border-radius:28px;background:#E8E8ED;display:flex;align-items:center;justify-content:center;font-size:60px">🔧</div>
+  <div style="flex:1"><div style="display:flex;justify-content:space-between;font:600 30px T;color:var(--grey)"><span>PLUMBER ANNA</span><span>March</span></div>
+   <div style="font:700 46px T;margin-top:10px">Naale banthini 👍</div><div style="font:500 32px T;color:var(--grey);margin-top:6px">(I'll come tomorrow)</div></div></div>
+ <div class="abs h" style="left:90px;right:60px;top:640px;font-size:120px">It's November.</div>
+ <div class="abs h" style="left:90px;right:60px;top:780px;font-size:120px"><span class="g">Still tomorrow.</span></div>
+ <div class="abs" style="left:92px;right:72px;top:960px;font:600 42px D;color:var(--grey);letter-spacing:-.02em">Bathrooms shouldn't run on "naale".</div>`,
+'N3-contest':`${logo}
+ <div class="abs" style="left:72px;top:200px;font:700 30px T;letter-spacing:.2em;color:var(--blue)">CONTEST</div>
+ <div class="abs h" style="left:72px;right:60px;top:250px;font-size:116px">Bengaluru's<br><span class="g">Worst Bathroom.</span></div>
+ <div class="abs" style="left:74px;right:72px;top:520px;font:600 46px D;letter-spacing:-.02em">Show us yours. Win a free waterproofing job.*</div>
+ <div class="abs" style="left:72px;right:72px;top:660px;background:var(--tile);border-radius:40px;padding:44px 50px;font:600 40px T;line-height:1.9">
+  1 · Post a photo or reel of your worst bathroom 📸<br>2 · Tag us + #ByobBengaluru<br>3 · Leaks, cracks, mould: the worse, the better 😅</div>
+ <div class="abs" style="left:74px;right:72px;top:1130px;font:500 28px T;color:var(--grey)">*For homeowners in Bengaluru. Full T&amp;C in caption.</div>`,
+'N4-silkboard':`${logo}
+ <div class="abs" style="left:72px;right:72px;top:240px">
+  ${[['Silk Board traffic','2 hours','var(--ink)'],['Your last contractor','3 months','#D93B3B'],['Corebath','21 days','g']].map(([a,b,c],k)=>`
+  <div style="display:flex;justify-content:space-between;align-items:baseline;padding:44px 0;border-bottom:${k<2?'2px solid #E5E5EA':'none'}">
+   <span style="font:600 50px D;letter-spacing:-.02em;color:var(--grey)">${a}</span>
+   <span class="h ${c==='g'?'g':''}" style="font-size:${k==2?140:104}px;${c!=='g'?'color:'+c:''}">${b}</span></div>`).join('')}
+ </div>
+ <div class="abs" style="left:74px;right:72px;top:1040px;font:600 44px D;letter-spacing:-.02em">One of these is not like the others. 😌</div>`,
+};
+window.KEYS=Object.keys(P);
+window.show=k=>{const c=document.getElementById('c');c.style.width=W+'px';c.style.height=H+'px';c.innerHTML=P[k];return [W,H]};
+window.ready=document.fonts.ready;
+</script></body></html>
