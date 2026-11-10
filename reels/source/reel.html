@@ -1,0 +1,299 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=block" rel="stylesheet">
+<style>html,body{margin:0;background:#000}canvas{width:1080px;height:1920px;display:block}</style>
+</head><body>
+<canvas id="c" width="2160" height="3840"></canvas>
+<script>
+const W=1080,H=1920,DUR=34;
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+const COL={bg:'#F5F5F8',ink:'#16163A',indigo:'#2A27B5',lav:'#8C84F2',lav2:'#B8B3F7',lav3:'#DCD9FB',grey:'#E4E4EC',grey2:'#C9C9D6',muted:'#8A8AA0',navy:'#0E0D2E'};
+const SERIF='"Instrument Serif", Georgia, serif', SANS='Inter, sans-serif';
+
+/* ---------- helpers ---------- */
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const eo=t=>1-Math.pow(1-clamp(t),3);
+const eio=t=>{t=clamp(t);return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2};
+const eback=t=>{t=clamp(t);const c1=1.5,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2)};
+const prog=(t,a,b)=>clamp((t-a)/(b-a));
+function rnd(i){const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x);}
+
+const IC=Math.cos(Math.PI/6),IS=0.5;
+let OX=540,OY=900;
+function P(x,y,z){return [OX+(x-y)*IC, OY+(x+y)*IS-z];}
+function poly(pts,fill,stroke,lw=2){ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.lineJoin='round';ctx.stroke();}}
+function box(x,y,z,w,d,h,c,stroke=COL.indigo,lw=2){
+  poly([P(x+w,y,z),P(x+w,y+d,z),P(x+w,y+d,z+h),P(x+w,y,z+h)],c.r,stroke,lw);
+  poly([P(x,y+d,z),P(x+w,y+d,z),P(x+w,y+d,z+h),P(x,y+d,z+h)],c.l,stroke,lw);
+  poly([P(x,y,z+h),P(x+w,y,z+h),P(x+w,y+d,z+h),P(x,y+d,z+h)],c.t,stroke,lw);
+}
+const BOXA={t:'#C9C5FA',l:'#8C84F2',r:'#A7A0F6'};
+const BOXB={t:'#FFFFFF',l:'#D9D9E6',r:'#EBEBF3'};
+const BOXC={t:'#6F66EE',l:'#2A27B5',r:'#4A43D6'};
+
+function txt(s,x,y,size,color,{font=SANS,weight=500,align='center',italic=false,alpha=1,ls=0}={}){
+  ctx.save();ctx.globalAlpha*=alpha;ctx.fillStyle=color;ctx.textAlign=align;ctx.textBaseline='alphabetic';
+  ctx.font=`${italic?'italic ':''}${weight} ${size}px ${font}`;
+  if(ls){ctx.letterSpacing=ls+'px';}
+  ctx.fillText(s,x,y);ctx.restore();
+}
+
+/* rich caption: *word* = accent. Words fade+rise one by one */
+function caption(str,t,t0,t1,y=1395){
+  if(t<t0-0.05||t>t1+0.35)return;
+  const out=1-eo(prog(t,t1,t1+0.3));
+  const words=str.split(' ').map(w=>{const em=/^\*.*\*[.,?!]?$/.test(w)||w.startsWith('*')||w.endsWith('*');return{w:w.replace(/\*/g,''),em}});
+  // track emphasis spans across words
+  let inEm=false;words.forEach(o=>{});
+  const raw=str.split(' ');let st=false;
+  raw.forEach((r,i)=>{const open=r.startsWith('*');if(open)st=true;words[i].em=st;if(r.replace(/[.,?!]$/,'').endsWith('*'))st=false;});
+  const size=58;ctx.font=`italic 400 ${size}px ${SERIF}`;
+  const sp=ctx.measureText(' ').width;
+  const widths=words.map(o=>ctx.measureText(o.w).width);
+  // wrap to max 880
+  const lines=[[]];let lw=0;
+  words.forEach((o,i)=>{const w=widths[i];if(lw+w>880&&lines[lines.length-1].length){lines.push([]);lw=0;}lines[lines.length-1].push(i);lw+=w+sp;});
+  lines.forEach((ln,li)=>{
+    const tw=ln.reduce((s,i)=>s+widths[i],0)+sp*(ln.length-1);
+    let x=540-tw/2;const yy=y+li*70-(lines.length-1)*35;
+    ln.forEach(i=>{
+      const a=eo(prog(t,t0+i*0.07,t0+i*0.07+0.35));
+      ctx.save();ctx.globalAlpha=a*out;ctx.font=`italic 400 ${size}px ${SERIF}`;ctx.fillStyle=words[i].em?COL.lav:COL.ink;ctx.textBaseline='alphabetic';
+      ctx.fillText(words[i].w,x,yy+(1-a)*14);ctx.restore();
+      x+=widths[i]+sp;
+    });
+  });
+}
+
+function sceneAlpha(t,a,b,fi=0.35,fo=0.35){return Math.min(eo(prog(t,a,a+fi)),1-eo(prog(t,b-fo,b)));}
+
+/* ---------- scenes ---------- */
+// S1 0-4.4 : 12 hours a day — books stacking + hour counter
+function s1(t){
+  const A=sceneAlpha(t,0,4.4,0.01);if(A<=0)return;ctx.save();ctx.globalAlpha=A;
+  OX=540;OY=940;
+  // desk slab
+  box(-260,-200,-30,520,400,30,BOXB,COL.grey2,2);
+  const hrs=Math.round(lerp(0,12,eio(prog(t,0.3,3.0))));
+  const n=6;
+  for(let i=0;i<n;i++){
+    const ap=eback(prog(t,0.3+i*0.42,0.75+i*0.42));if(ap<=0)continue;
+    const z=i*46+(1-ap)*260;const off=(rnd(i)-.5)*40;
+    ctx.save();ctx.globalAlpha*=clamp(ap*2);
+    box(-150+off,-110+off*0.4,z,300,220,40,i%2?BOXA:BOXB,COL.indigo,2.4);
+    // page lines on the spine
+    const pA=P(-150+off+300,-110+off*0.4+20,z+20),pB=P(-150+off+300,-110+off*0.4+200,z+20);
+    ctx.strokeStyle=i%2?'#ECEBFE':COL.lav2;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(...pA);ctx.lineTo(...pB);ctx.stroke();
+    ctx.restore();
+  }
+  // counter
+  const ca=eo(prog(t,0.2,0.7));
+  txt(String(hrs),505,420,170,COL.ink,{weight:600,align:'right',alpha:ca,ls:-4});
+  txt('hrs',520,385,54,COL.lav,{weight:500,align:'left',alpha:ca});
+  txt('of study, every day',520,425,30,COL.muted,{weight:400,align:'left',alpha:ca});
+  ctx.restore();
+  caption('You study for *12 hours* a day.',t,0.4,4.2);
+}
+
+// S2 4.4-8.6 : mock score card
+function s2(t){
+  const A=sceneAlpha(t,4.4,8.6);if(A<=0)return;ctx.save();ctx.globalAlpha=A;
+  const p=eback(prog(t,4.5,5.2));
+  ctx.save();ctx.translate(540,830);ctx.scale(0.85+0.15*p,0.85+0.15*p);ctx.rotate((1-p)*-0.05);
+  // shadow
+  ctx.fillStyle='rgba(42,39,181,0.08)';rr(-330+18,-420+26,660,840,36);ctx.fill();
+  ctx.fillStyle='#fff';rr(-330,-420,660,840,36);ctx.fill();ctx.strokeStyle=COL.indigo;ctx.lineWidth=3;ctx.stroke();
+  txt('MOCK TEST · 07',0,-330,26,COL.muted,{weight:600,ls:4});
+  ctx.strokeStyle=COL.grey;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-270,-290);ctx.lineTo(270,-290);ctx.stroke();
+  const sc=Math.round(lerp(0,480,eio(prog(t,5.0,6.6))));
+  txt(String(sc),0,-90,210,COL.ink,{weight:600,ls:-6});
+  txt('/ 720',0,-20,48,COL.muted,{weight:400});
+  // subject rows
+  const rows=[['Biology','268 / 360'],['Chemistry','112 / 180'],['Physics','100 / 180']];
+  rows.forEach((r,i)=>{const a=eo(prog(t,6.0+i*0.2,6.5+i*0.2));const y=90+i*92;
+    ctx.save();ctx.globalAlpha*=a;
+    txt(r[0],-260,y,36,COL.ink,{align:'left',weight:500});txt(r[1],260,y,36,COL.indigo,{align:'right',weight:600});
+    ctx.strokeStyle=COL.grey;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-260,y+32);ctx.lineTo(260,y+32);ctx.stroke();ctx.restore();});
+  ctx.restore();
+  ctx.restore();
+  caption('Then the *mock result* comes back.',t,4.7,8.4);
+}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+
+// S3 8.6-12.4 : 240 marks missing — bar + ?
+function s3(t){
+  const A=sceneAlpha(t,8.6,12.4);if(A<=0)return;ctx.save();ctx.globalAlpha=A;
+  const x0=120,w=840,y=900,h=120;
+  const fill=eio(prog(t,8.8,9.8));
+  ctx.fillStyle=COL.grey;rr(x0,y,w,h,20);ctx.fill();
+  ctx.save();rr(x0,y,w,h,20);ctx.clip();ctx.fillStyle=COL.indigo;ctx.fillRect(x0,y,w*480/720*fill,h);ctx.restore();
+  // missing part dashed + pulse
+  const mp=eo(prog(t,9.8,10.3));
+  ctx.save();ctx.globalAlpha*=mp;ctx.setLineDash([14,12]);ctx.strokeStyle=COL.lav;ctx.lineWidth=4;
+  const mx=x0+w*480/720;rr(mx+8,y+8,w*240/720-16,h-16,14);ctx.stroke();ctx.setLineDash([]);
+  const pulse=0.15+0.12*Math.sin(t*6);ctx.fillStyle=`rgba(140,132,242,${pulse})`;rr(mx+8,y+8,w*240/720-16,h-16,14);ctx.fill();ctx.restore();
+  txt('480 scored',x0,y+h+60,34,COL.ink,{align:'left',weight:500,alpha:eo(prog(t,9.4,9.9))});
+  txt('240 lost',x0+w,y+h+60,34,COL.lav,{align:'right',weight:600,alpha:mp});
+  // floating question mark
+  const q=eback(prog(t,10.1,10.8));
+  ctx.save();ctx.globalAlpha*=clamp(q);const qx=mx+w*120/720,qy=y-70-Math.sin(t*2.4)*10;
+  txt('?',qx,qy-q*20,240,COL.lav,{font:SERIF,italic:true,weight:400});
+  txt('marks',qx+80,qy-110,30,COL.muted,{align:'left',weight:400});
+  ctx.restore();
+  // tick marks
+  ctx.strokeStyle=COL.grey2;ctx.lineWidth=2;for(let i=0;i<=4;i++){const xx=x0+w*i/4;ctx.beginPath();ctx.moveTo(xx,y+h+10);ctx.lineTo(xx,y+h+22);ctx.stroke();}
+  ctx.restore();
+  caption('*240 marks* just disappeared. But where?',t,8.9,12.2);
+}
+
+// S4 12.4-17.4 : 180-question grid, wrong answers cluster
+const WRONG=[];{for(let i=0;i<180;i++)WRONG.push(rnd(i+3)<0.30?1:0);}
+const TOPIC=[];{let k=0;for(let i=0;i<180;i++){if(WRONG[i]){TOPIC[i]=rnd(i*7+1)<0.6?(k++%5):-1;}}}
+function s4(t){
+  const A=sceneAlpha(t,12.4,17.4);if(A<=0)return;ctx.save();ctx.globalAlpha=A;
+  const cols=12,cs=56,g=10,gw=cols*(cs+g)-g,x0=540-gw/2,y0=300;
+  txt('180 questions',x0,y0-40,30,COL.muted,{align:'left',weight:500,alpha:eo(prog(t,12.5,13))});
+  const hl=eo(prog(t,15.0,15.8));
+  for(let i=0;i<180;i++){
+    const c=i%cols,r=Math.floor(i/cols);
+    const a=eo(prog(t,12.5+(c+r)*0.035,12.9+(c+r)*0.035));if(a<=0)continue;
+    const wr=WRONG[i]&&t>13.7+(r*0.04);
+    let col='#FFFFFF',st=COL.grey2;
+    if(wr){col=COL.lav2;st=COL.lav;}
+    if(wr&&hl>0){ if(TOPIC[i]>=0){col=COL.indigo;st=COL.indigo;} else {ctx.globalAlpha=A*(1-0.6*hl);} }
+    const s=cs*(0.6+0.4*a);
+    ctx.save();ctx.globalAlpha*=a;ctx.fillStyle=col;rr(x0+c*(cs+g)+(cs-s)/2,y0+r*(cs+g)+(cs-s)/2,s,s,10);ctx.fill();ctx.strokeStyle=st;ctx.lineWidth=2;ctx.stroke();ctx.restore();
+    ctx.globalAlpha=A;
+  }
+  // legend
+  const la=eo(prog(t,15.2,15.8));
+  ctx.save();ctx.globalAlpha*=la;const ly=y0+15*(cs+g)+40;
+  ctx.fillStyle=COL.indigo;rr(x0,ly-24,30,30,7);ctx.fill();txt('same 5 topics',x0+44,ly,30,COL.ink,{align:'left',weight:500});
+  ctx.fillStyle=COL.lav2;rr(x0+380,ly-24,30,30,7);ctx.fill();txt('everything else',x0+424,ly,30,COL.muted,{align:'left',weight:500});
+  ctx.restore();
+  ctx.restore();
+  caption('Look at *every wrong answer* closely.',t,12.7,14.8);
+  caption('A pattern shows up.',t,15.0,17.2);
+}
+
+// S5 17.4-21.4 : 60% from 5 topics — iso columns
+function s5(t){
+  const A=sceneAlpha(t,17.4,21.4);if(A<=0)return;ctx.save();ctx.globalAlpha=A;
+  OX=540;OY=1010;
+  const names=['Genetics','Equilibrium','Rotation','Organic','Physiology'];
+  const hs=[300,240,270,210,250];
+  // base plate along screen-horizontal axis
+  const sp=82,bw=70;
+  {const [lx,ly]=P(bw,bw,0);ctx.strokeStyle=COL.grey2;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(110,ly);ctx.lineTo(970,ly);ctx.stroke();}
+  for(let i=0;i<5;i++){
+    const k=i-2,gx=k*sp,gy=-k*sp;
+    const g=eback(prog(t,17.7+i*0.15,18.5+i*0.15));
+    box(gx,gy,0,bw,bw,Math.max(2,hs[i]*g),BOXA,COL.indigo,2.4);
+    const [px,py]=P(gx+bw,gy+bw,0);const a=eo(prog(t,18.4+i*0.12,18.9+i*0.12));
+    txt(names[i],px,py+58,25,COL.ink,{weight:500,alpha:a});
+  }
+  // big 60%
+  const pa=eo(prog(t,18.0,18.6));
+  const pct=Math.round(lerp(0,60,eio(prog(t,18.0,19.4))));
+  txt(pct+'%',540,440,190,COL.ink,{weight:600,alpha:pa,ls:-6});
+  txt('of all your mistakes',540,500,34,COL.muted,{weight:400,alpha:pa});
+  ctx.restore();
+  caption('*60%* of them come from just *5 topics.*',t,17.7,21.2);
+}
+
+// S6 21.4-27.4 : the math — (+4 +1) x 8 = +40
+function s6(t){
+  const A=sceneAlpha(t,21.4,27.4);if(A<=0)return;ctx.save();ctx.globalAlpha=A;
+  OX=540;OY=1000;
+  // stack of question slabs
+  const n=Math.floor(clamp(prog(t,24.6,25.8))*8)+(t>21.6?1:0);
+  const cnt=Math.min(8,Math.max(1,n));
+  for(let i=0;i<cnt;i++){
+    const ap=i===0?eback(prog(t,21.6,22.3)):eback(prog(t,24.6+(i-1)*0.15,24.95+(i-1)*0.15));
+    const z=i*30+(1-ap)*200;
+    ctx.save();ctx.globalAlpha*=clamp(ap*2);box(-130,-130,z,260,260,22,i===cnt-1?BOXA:BOXA,COL.indigo,2.4);ctx.restore();
+  }
+  // q mark on top slab face
+  // header formula
+  const hy=400;
+  const a1=eo(prog(t,22.2,22.7)),a2=eo(prog(t,23.4,23.9)),a3=eo(prog(t,24.6,25.1)),a4=eo(prog(t,25.9,26.4));
+  ctx.save();ctx.globalAlpha*=a1*(1-a4);
+  txt('+4',430,hy,140,COL.ink,{weight:600,align:'right',ls:-3});
+  txt('marks / question',450,hy-20,30,COL.muted,{align:'left',weight:400});
+  ctx.globalAlpha=A*a2*(1-a4);
+  txt('+1',430,hy+130,110,COL.lav,{weight:600,align:'right',ls:-3});
+  txt('negative avoided',450,hy+110,30,COL.muted,{align:'left',weight:400});
+  ctx.globalAlpha=A*a3*(1-a4);
+  txt('× 8',430,hy+250,110,COL.indigo,{weight:600,align:'right',ls:-3});
+  txt('traps fixed',450,hy+230,30,COL.muted,{align:'left',weight:400});
+  ctx.restore();
+  // result
+  ctx.save();ctx.globalAlpha*=a4;
+  txt('(4 + 1) × 8',540,hy-30,52,COL.muted,{weight:500});
+  const v=Math.round(lerp(0,40,eio(prog(t,26.0,26.8))));
+  txt('+'+v,560,hy+170,220,COL.indigo,{weight:600,ls:-8});
+  txt('marks',540,hy+230,36,COL.ink,{weight:500});
+  ctx.restore();
+  ctx.restore();
+  caption('Every trap you fix gives back *4 marks,*',t,21.7,23.3);
+  caption('plus the *1* you were losing.',t,23.4,24.5);
+  caption('Fix just *8 of them...*',t,24.6,25.8);
+  caption('that\'s *+40 marks.*',t,25.9,27.2);
+}
+
+// S7 27.4-30 : 480 -> 520
+function s7(t){
+  const A=sceneAlpha(t,27.4,30.2);if(A<=0)return;ctx.save();ctx.globalAlpha=A;
+  const x0=120,w=840,y=900,h=120;
+  const g=eio(prog(t,27.9,29.0));
+  ctx.fillStyle=COL.grey;rr(x0,y,w,h,20);ctx.fill();
+  ctx.save();rr(x0,y,w,h,20);ctx.clip();
+  ctx.fillStyle=COL.indigo;ctx.fillRect(x0,y,w*480/720,h);
+  ctx.fillStyle=COL.lav;ctx.fillRect(x0+w*480/720,y,w*40/720*g,h);ctx.restore();
+  const sc=Math.round(480+40*g);
+  txt(String(sc),540,620,200,COL.ink,{weight:600,ls:-6});
+  txt('/ 720',540,690,44,COL.muted,{weight:400});
+  txt('+40',x0+w*520/720,y-24,40,COL.lav,{weight:600,alpha:g});
+  ctx.restore();
+  caption('Same hours. *Smarter* revision.',t,27.7,30.0);
+}
+
+// S8 30-34 : CTA dark card
+function s8(t){
+  const p=eio(prog(t,30.0,30.7));if(p<=0)return;
+  ctx.save();
+  // wipe up
+  const top=H*(1-p);
+  const gr=ctx.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#0E0D2E');gr.addColorStop(0.7,'#15134A');gr.addColorStop(1,'#2A2780');
+  ctx.fillStyle=gr;ctx.fillRect(0,top,W,H);
+  ctx.translate(0,top+90);
+  const a=k=>eo(prog(t,30.5+k*0.12,31.0+k*0.12));
+  txt('NEET 2026 · STUDY COMPANION',80,330,24,COL.lav2,{align:'left',weight:600,ls:4,alpha:a(0)});
+  txt('Stop losing',80,470,112,'#FFFFFF',{align:'left',weight:300,ls:-3,alpha:a(1)});
+  txt('marks to the',80,590,112,'#FFFFFF',{align:'left',weight:300,ls:-3,alpha:a(2)});
+  txt('same traps.',80,710,120,COL.lav,{align:'left',font:SERIF,italic:true,weight:400,alpha:a(3)});
+  const feats=[['42-day','study plan, day by day'],['PYQ traps','chapter-wise, high-yield'],['Error log','spot your weak 5 topics']];
+  feats.forEach((f,i)=>{const y=880+i*150;ctx.save();ctx.globalAlpha=a(4+i);
+    ctx.strokeStyle='rgba(184,179,247,0.25)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(80,y-60);ctx.lineTo(1000,y-60);ctx.stroke();
+    txt(f[0],80,y+10,56,'#FFFFFF',{align:'left',font:SERIF,italic:true,weight:400});
+    txt(f[1],1000,y,30,'rgba(255,255,255,0.7)',{align:'right',weight:400});ctx.restore();});
+  // CTA pill
+  const ca=eback(prog(t,31.6,32.2));
+  ctx.save();ctx.globalAlpha*=clamp(ca);ctx.translate(540,1340);ctx.scale(0.9+0.1*ca,0.9+0.1*ca);
+  ctx.fillStyle=COL.lav;rr(-300,-60,600,120,60);ctx.fill();
+  txt('Free · Link in bio  →',0,14,40,COL.navy,{weight:600});
+  ctx.restore();
+  ctx.restore();
+}
+
+function render(t){
+  ctx.setTransform(2,0,0,2,0,0);
+  ctx.fillStyle=COL.bg;ctx.fillRect(0,0,W,H);
+  // faint dot grid
+  ctx.fillStyle='#E6E6EE';for(let x=30;x<W;x+=60)for(let y=30;y<H;y+=60){ctx.fillRect(x,y,2.5,2.5);}
+  s1(t);s2(t);s3(t);s4(t);s5(t);s6(t);s7(t);s8(t);
+}
+window.render=render;window.DUR=DUR;
+document.fonts.load('italic 40px "Instrument Serif"').then(()=>document.fonts.ready).then(()=>{window.READY=true;render(0);});
+</script></body></html>
