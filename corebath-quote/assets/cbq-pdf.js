@@ -85,7 +85,7 @@
       "Floor " + q.areas.floor + " sqft | Wall tiles " + q.areas.wall + " sqft (to " + r.tileHeight + " ft)",
       "Waterproofing " + q.areas.waterproof + " sqft | " + q.waterPoints + " water + " + q.drainPoints + " drain points",
       (r.demolition ? "Renovation with demolition" : "New bathroom, no demolition") + (r.tilesByUs ? "; tiles by CoreBath" : "; tiles by client"),
-      "Base package: " + st.baseBrand + " " + E.PKG_LABEL[st.basePkg] + " (customised)",
+      "Package: " + E.mixLabel(st, catalog),
     ]);
     y += 100;
 

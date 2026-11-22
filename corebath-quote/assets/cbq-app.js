@@ -6,7 +6,7 @@
 (function (g) {
   "use strict";
   var CBQ = g.CBQ, E = CBQ.engine;
-  var STATE_KEY = "cbq-state-v1", BOOK_KEY = "cbq-ratebook-v1";
+  var STATE_KEY = "cbq-state-v1", BOOK_KEY = "cbq-ratebook-v1", SHEET_CACHE = "cbq-sheet-cache-v1";
 
   function esc(s) {
     return String(s === null || s === undefined ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -53,13 +53,106 @@
     if (this.mode === "admin" && book.settings) this.state.settings = E.deepMerge(book.settings, this.state.settings || {});
     if (!this.state.quoteNo) this.state.quoteNo = quoteNo(this.cfg);
     this.tab = "build";
+    // Google Sheet link: URL from the page (Shopify setting) or, in admin, typed in Rates & settings
+    this.baseCfg = this.cfg;
+    this.sheet = { url: root.getAttribute("data-sheet-url") || book.sheetUrl || "", key: book.sheetKey || "" };
+    this.sheetStatus = { state: this.sheet.url ? "loading" : "off", msg: "" };
+    var cached = this.sheet.url ? load(SHEET_CACHE) : null;
+    if (cached && cached.url === this.sheet.url && cached.data) this.applySheet(cached.data, true);
     this.bind();
     this.render();
+    if (this.sheet.url) this.loadSheet();
   }
+
+  // ---------- Google Sheet ----------
+  App.prototype.applySheet = function (data, fromCache) {
+    if (data.products && data.products.length) E.loadCatalog(this.catalog, data.products);
+    var cfg = E.deepMerge(this.baseCfg, data.settings || {});
+    if (data.addons && data.addons.length) cfg.addons = data.addons;
+    this.cfg = cfg;
+    this.sheetStatus = { state: "ok", msg: (fromCache ? "Saved copy of sheet" : "Live from Google Sheet") + (data.updatedAt ? " \u00B7 " + data.updatedAt : ""), count: (data.products || []).length };
+  };
+
+  App.prototype.sheetCall = function (payload) {
+    var url = this.sheet.url;
+    if (!payload) return fetch(url + (url.indexOf("?") < 0 ? "?" : "&") + "action=catalog", { redirect: "follow" }).then(function (r) { return r.json(); });
+    // text/plain keeps this a "simple" request, which Apps Script web apps accept cross-origin
+    return fetch(url, { method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+      .then(function (r) { return r.json(); });
+  };
+
+  App.prototype.loadSheet = function () {
+    var self = this;
+    this.sheetStatus = { state: "loading", msg: "Loading Google Sheet\u2026" }; this.render();
+    return this.sheetCall().then(function (data) {
+      if (!data || data.ok === false) throw new Error((data && data.error) || "No data");
+      self.applySheet(data, false);
+      save(SHEET_CACHE, { url: self.sheet.url, data: data });
+    }).catch(function (err) {
+      self.sheetStatus = { state: "err", msg: "Could not reach the Google Sheet (" + err.message + "). Using " + (load(SHEET_CACHE) ? "the last saved copy." : "built-in prices.") };
+    }).then(function () { self.render(); });
+  };
+
+  App.prototype.quotePayload = function () {
+    var st = this.state, q = E.compute(st, this.catalog, this.cfg), lines = [];
+    q.sections.forEach(function (sec) {
+      sec.lines.forEach(function (l) {
+        lines.push({ section: sec.id + ". " + sec.title, item: l.item || "", desc: l.desc, brand: l.brand || "", sku: l.sku || "", qty: l.qty, unit: l.unit || "", rate: l.rate, amount: l.amount, source: l.source || "" });
+      });
+    });
+    return {
+      action: "saveQuote",
+      quote: {
+        quoteNo: st.quoteNo, date: st.date, mode: this.mode, client: st.client,
+        size: st.room.length + " x " + st.room.width + " x " + st.room.height + " ft",
+        package: E.mixLabel(st, this.catalog), brands: E.brandMix(st, this.catalog).map(function (m) { return m.brand + " x" + m.count; }).join(", "),
+        sections: q.sections.map(function (sec) { return { id: sec.id, title: sec.title, total: sec.total }; }),
+        totals: q.totals, estimated: q.flags.estimated, lines: lines, state: st,
+      },
+    };
+  };
+
+  App.prototype.saveToSheet = function (silent) {
+    var self = this;
+    if (!this.sheet.url) return;
+    this.sheetBusy = "Saving quote\u2026"; if (!silent) this.render();
+    this.sheetCall(this.quotePayload()).then(function (res) {
+      if (!res || !res.ok) throw new Error((res && res.error) || "not saved");
+      self.lastSaved = "Quote " + self.state.quoteNo + (res.updated ? " updated" : " saved") + " in Google Sheet";
+    }).catch(function (err) { self.lastSaved = "Not saved to Google Sheet: " + err.message; })
+      .then(function () { self.sheetBusy = null; self.render(); });
+  };
+
+  App.prototype.pushRates = function () {
+    var self = this, st = this.state, S = E.settings(st, this.baseCfg);
+    if (!this.sheet.key) { this.lastSaved = "Enter the sheet admin key first."; this.render(); return; }
+    var settings = [], over = st.settings || {};
+    ["pricing", "services", "siteCharges", "tileAllowance", "fixing", "company"].forEach(function (sec) {
+      Object.keys(over[sec] || {}).forEach(function (k) {
+        var v = over[sec][k];
+        if (typeof v !== "object") settings.push({ section: sec, key: k, value: v });
+      });
+    });
+    var addonRates = {};
+    if (over.addons) Object.keys(over.addons).forEach(function (i) { var a = S.addons[i]; if (a) addonRates[a.key] = a.rate; });
+    Object.keys(st.addons || {}).forEach(function (k) { if (st.addons[k] && st.addons[k].rate !== undefined && st.addons[k].rate !== "") addonRates[k] = st.addons[k].rate; });
+    this.sheetBusy = "Sending rates\u2026"; this.render();
+    this.sheetCall({ action: "saveRates", key: this.sheet.key, rates: st.rateOverrides, settings: settings, addonRates: addonRates })
+      .then(function (res) {
+        if (!res || !res.ok) throw new Error((res && res.error) || "not saved");
+        self.lastSaved = res.prices + " price(s) and " + res.settings + " setting(s) written to the Google Sheet.";
+        st.rateOverrides = {}; st.settings = {};
+        Object.keys(st.addons || {}).forEach(function (k) { if (st.addons[k]) delete st.addons[k].rate; });
+        self.persist();
+        return self.loadSheet();
+      })
+      .catch(function (err) { self.lastSaved = "Rates not sent: " + err.message; })
+      .then(function () { self.sheetBusy = null; self.render(); });
+  };
 
   App.prototype.persist = function () {
     save(STATE_KEY + "-" + this.mode, this.state);
-    if (this.mode === "admin") save(BOOK_KEY, { rateOverrides: this.state.rateOverrides, settings: this.state.settings });
+    if (this.mode === "admin") save(BOOK_KEY, { rateOverrides: this.state.rateOverrides, settings: this.state.settings, sheetUrl: this.sheet.url, sheetKey: this.sheet.key });
   };
 
   App.prototype.bind = function () {
@@ -71,6 +164,16 @@
       if (el.type === "checkbox") v = el.hasAttribute("data-invert") ? !el.checked : el.checked;
       else if (t === "num") v = el.value === "" ? "" : parseFloat(el.value);
       else v = el.value;
+      if (f.indexOf("sheet.") === 0) {
+        var k2 = f.slice(6), changed = self.sheet[k2] !== String(v).trim();
+        self.sheet[k2] = String(v).trim();
+        self.persist();
+        if (k2 === "url" && changed) {
+          if (self.sheet.url) self.loadSheet();
+          else { self.cfg = self.baseCfg; self.sheetStatus = { state: "off" }; self.render(); }
+        }
+        return;
+      }
       if (f.indexOf("rateOverrides.") === 0) {
         var id = f.slice("rateOverrides.".length);
         if (v === "" || v === null || isNaN(v)) delete self.state.rateOverrides[id];
@@ -158,6 +261,17 @@
     else if (act === "load-pkg") {
       var bp = arg.split("|");
       E.applyPackage(st, this.catalog, bp[0], bp[1]);
+    } else if (act === "fx-brand") {
+      var kb = arg.split("|"), curP = st.fixtures[kb[0]] && E.index(this.catalog).byId[st.fixtures[kb[0]].productId];
+      var np = E.pick(this.catalog, kb[0], kb[1], curP ? curP.pkg : st.basePkg);
+      if (np) { st.fixtures[kb[0]] = Object.assign({}, st.fixtures[kb[0]], { productId: np.id, on: true }); }
+    } else if (act === "all-brand") {
+      var cat = this.catalog;
+      Object.keys(st.fixtures).forEach(function (k) {
+        var cp = E.index(cat).byId[st.fixtures[k].productId];
+        var np2 = E.pick(cat, k, arg, cp ? cp.pkg : st.basePkg);
+        if (np2 && np2.brand === arg) st.fixtures[k].productId = np2.id;
+      });
     } else if (act === "toggle-addon") {
       st.addons[arg] = st.addons[arg] || {};
       st.addons[arg].on = !st.addons[arg].on;
@@ -170,7 +284,14 @@
     } else if (act === "pdf") {
       var q = E.compute(st, this.catalog, this.cfg);
       CBQ.pdf.generate(q, st, this.catalog, { mode: this.mode });
+      if (this.sheet.url) this.saveToSheet(true);
       return;
+    } else if (act === "sheet-save") {
+      this.saveToSheet(); return;
+    } else if (act === "sheet-reload") {
+      this.loadSheet(); return;
+    } else if (act === "sheet-push") {
+      this.pushRates(); return;
     } else if (act === "pdf-preview") {
       this.previewPdf(); return;
     } else if (act === "close-preview") {
@@ -226,7 +347,7 @@
     var q = E.compute(st, this.catalog, this.cfg);
     var payload = {
       bathroom: { size_ft: [st.room.length, st.room.width, st.room.height], areas: q.areas, demolition: st.room.demolition },
-      context: st.context, base_package: st.baseBrand + " " + E.PKG_LABEL[st.basePkg],
+      context: st.context, base_package: E.mixLabel(st, this.catalog),
       sections: q.sections.map(function (s) {
         return { title: s.title, total: s.total, lines: s.lines.map(function (l) { return { item: l.item || "", desc: l.desc, brand: l.brand || "", qty: l.qty, amount: l.amount }; }) };
       }),
@@ -248,7 +369,7 @@
     if (!form) return;
     if (!c.name || !c.email || !c.phone) { g.alert("Please fill in your name, email and phone first."); this.tab = "build"; this.render(); return; }
     var q = E.compute(st, this.catalog, this.cfg);
-    var lines = ["CoreBath quote " + st.quoteNo, "Base: " + st.baseBrand + " " + E.PKG_LABEL[st.basePkg],
+    var lines = ["CoreBath quote " + st.quoteNo, "Package: " + E.mixLabel(st, this.catalog),
       "Size: " + st.room.length + " x " + st.room.width + " ft", "Site: " + (c.address || "-"), ""];
     q.sections.forEach(function (s) {
       if (!s.lines.length) return;
@@ -260,6 +381,7 @@
     form.querySelector("[name='contact[email]']").value = c.email;
     form.querySelector("[name='contact[phone]']").value = c.phone;
     form.querySelector("[name='contact[body]']").value = lines.join("\n");
+    if (this.sheet.url) this.saveToSheet(true);
     form.submit();
   };
 
@@ -355,15 +477,19 @@
       var opts = (idx.byKey[it.key] || []).slice().sort(function (a, b) {
         return a.brand === b.brand ? E.PKGS.indexOf(a.pkg) - E.PKGS.indexOf(b.pkg) : a.brand < b.brand ? -1 : 1;
       });
-      var groups = {};
-      opts.forEach(function (p) { (groups[p.brand] = groups[p.brand] || []).push(p); });
-      var selectHtml = '<select data-f="fixtures.' + it.key + '.productId" data-t="str">' + Object.keys(groups).map(function (b) {
-        return '<optgroup label="' + esc(b) + '">' + groups[b].map(function (p) {
+      var cur = sel.productId ? idx.byId[sel.productId] : null;
+      var curBrand = cur ? cur.brand : st.baseBrand;
+      var brandsFor = [];
+      opts.forEach(function (p) { if (brandsFor.indexOf(p.brand) < 0) brandsFor.push(p.brand); });
+      var chips = '<div class="cbq-chips" role="group" aria-label="Brand for ' + esc(it.label) + '">' + brandsFor.map(function (b) {
+        return '<button type="button" class="cbq-chip' + (b === curBrand ? " on" : "") + '" data-act="fx-brand" data-arg="' + it.key + "|" + esc(b) + '"' + (b === curBrand ? ' aria-pressed="true"' : ' aria-pressed="false"') + ">" + esc(b) + "</button>";
+      }).join("") + "</div>";
+      var selectHtml = chips + '<select data-f="fixtures.' + it.key + '.productId" data-t="str" aria-label="' + esc(it.label) + ' model">' +
+        opts.filter(function (p) { return p.brand === curBrand; }).map(function (p) {
           var pr = E.priceOf(p, st, self.catalog);
-          var price = pr.source === "included" ? "included" : pr.rate ? "₹" + E.inr(pr.rate) + (pr.source === "estimate" ? " est." : "") : "on request";
-          return '<option value="' + p.id + '"' + (sel.productId === p.id ? " selected" : "") + ">" + esc(E.PKG_LABEL[p.pkg].replace("Core ", "") + " · " + p.name + " · " + price) + "</option>";
-        }).join("") + "</optgroup>";
-      }).join("") + "</select>";
+          var price = pr.source === "included" ? "included" : pr.rate ? "\u20B9" + E.inr(pr.rate) + (pr.source === "estimate" ? " est." : "") : "on request";
+          return '<option value="' + p.id + '"' + (sel.productId === p.id ? " selected" : "") + ">" + esc((E.PKG_LABEL[p.pkg] || p.pkg).replace("Core ", "") + " \u00B7 " + p.name + " \u00B7 " + price) + "</option>";
+        }).join("") + "</select>";
       var l = lineByKey[it.key];
       var p = sel.productId ? idx.byId[sel.productId] : null;
       return '<tr class="' + (sel.on ? "" : "off") + '"><td>' + check("", "fixtures." + it.key + ".on", sel.on) + "</td>" +
@@ -390,7 +516,13 @@
         '<td class="r">' + (l ? self.rateCell(l, admin) : "") + '</td><td class="r b">' + (l ? rs(l.amount) : "–") + "</td></tr>";
     }).join("");
 
-    return '<section class="cbq-card"><h3>Fixtures <small>' + esc(st.baseBrand + " · " + E.PKG_LABEL[st.basePkg]) + " base — swap any item</small></h3>" +
+    var mix = E.brandMix(st, this.catalog);
+    var mixHtml = '<div class="cbq-mix"><span>' + (mix.length > 1 ? "Your mix:" : "All fixtures:") + "</span> " + mix.map(function (m) {
+      return '<span class="cbq-mixpill">' + esc(m.brand) + " \u00D7 " + m.count + "</span>";
+    }).join("") + "</div>" +
+      '<div class="cbq-allbrand"><span class="cbq-small">Set every fixture to one brand (keeps the tier):</span><div class="cbq-chips">' +
+      idx.brands.map(function (b) { return '<button type="button" class="cbq-chip" data-act="all-brand" data-arg="' + esc(b) + '">' + esc(b) + "</button>"; }).join("") + "</div></div>";
+    return '<section class="cbq-card"><h3>Fixtures <small>mix and match brands: pick a brand for each item, then the model</small></h3>' + mixHtml +
       '<table class="cbq-table cbq-ftable"><thead><tr><th></th><th>Item</th><th>Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr></thead><tbody>' + rows + "</tbody></table></section>" +
       '<section class="cbq-card"><h3>Concealed &amp; connection parts <small>matched to the fixtures above</small></h3>' +
       '<p class="cbq-hint">Each in-wall part follows the brand and series of the fixture it connects to, so bodies, trims and finishes fit. Change one only if you know it is compatible.</p>' +
@@ -464,7 +596,17 @@
         '<td class="r"><input class="cbq-rate need" type="number" min="0" data-t="num" data-f="rateOverrides.' + esc(p.id) + '" placeholder="' + esc(est(p)) + '"></td></tr>';
     }).join("");
     var entered = Object.keys(st.rateOverrides).length;
-    return '<section class="cbq-card"><h3>Rate book</h3>' +
+    var ss = this.sheetStatus;
+    var sheetCard = '<section class="cbq-card"><h3>Google Sheet</h3>' +
+      '<p class="cbq-hint">Keep products, prices, add-ons and rates in your Google Sheet, and log every saved quote there. Paste the web app URL from the sheet\u2019s Setup tab.</p>' +
+      '<div class="cbq-grid">' + field("Web app URL", "sheet.url", this.sheet.url, { wide: true, ph: "https://script.google.com/macros/s/\u2026/exec" }) +
+      field("Admin key (to send rates)", "sheet.key", this.sheet.key, { type: "password" }) + "</div>" +
+      '<div class="cbq-sheet" style="margin-top:10px"><span class="cbq-dot ' + (ss.state === "ok" ? "ok" : ss.state === "err" ? "err" : "") + '"></span>' +
+      esc(ss.state === "off" ? "Not connected. Using the built-in catalogue." : ss.msg + (ss.count ? " \u00B7 " + ss.count + " products" : "")) + "</div>" +
+      (this.sheet.url ? '<div class="cbq-row"><button class="cbq-btn ghost" data-act="sheet-reload">Reload from sheet</button>' +
+        '<button class="cbq-btn" data-act="sheet-push"' + (this.sheetBusy ? " disabled" : "") + ">Send my rates &amp; settings to sheet</button></div>" : "") +
+      (this.lastSaved ? '<p class="cbq-small">' + esc(this.lastSaved) + "</p>" : "") + "</section>";
+    return sheetCard + '<section class="cbq-card"><h3>Rate book</h3>' +
       '<p class="cbq-hint">' + missing.length + " catalogue items have no price (“Get dealer quote”). Until you enter a rate, the quote uses an estimate from the same item in other brands and marks it EST. You have entered " + entered + " rate(s).</p>" +
       '<div class="cbq-row"><button class="cbq-btn" data-act="export-rates">Download cbq-rates.js (for Shopify)</button><button class="cbq-btn ghost" data-act="import">Import rates / quote</button><button class="cbq-btn ghost" data-act="export-json">Save this quote (.json)</button></div>' +
       '<div class="cbq-scroll"><table class="cbq-table"><thead><tr><th>Brand</th><th>Tier</th><th>Item</th><th class="r">Rate ₹</th></tr></thead><tbody>' + missingRows + "</tbody></table></div></section>" +
@@ -511,12 +653,14 @@
       (t.discount ? '<tr><td>Discount</td><td class="r">−' + rs(t.discount) + "</td></tr>" : "") +
       "<tr><td>GST " + t.gstPct + '%</td><td class="r">' + rs(t.gst) + "</td></tr>" +
       '<tr class="grand"><td>Total</td><td class="r">' + rs(t.grand) + "</td></tr></table>" +
-      '<div class="cbq-small">' + q.areas.floor + " sqft floor · " + esc(this.state.baseBrand) + " " + esc(E.PKG_LABEL[this.state.basePkg]) + "</div>" +
+      '<div class="cbq-small">' + q.areas.floor + " sqft floor \u00B7 " + esc(E.mixLabel(this.state, this.catalog)) + "</div>" +
       (warn ? '<ul class="cbq-warn">' + warn + "</ul>" : "") +
       '<button class="cbq-btn big" data-act="pdf">Download PDF quote</button>' +
       '<button class="cbq-btn ghost" data-act="pdf-preview">Preview PDF</button>' +
       (this.cfg.aiEndpoint ? '<button class="cbq-btn ghost" data-act="ai"' + (this.aiBusy ? " disabled" : "") + ">" + (this.aiBusy ? "Asking AI advisor…" : "AI review of this bathroom") + "</button>" : "") +
       (hasForm ? '<button class="cbq-btn ghost" data-act="send">Send to CoreBath for a site visit</button>' : "") +
+      (this.sheet.url && admin ? '<button class="cbq-btn ghost" data-act="sheet-save"' + (this.sheetBusy ? " disabled" : "") + ">" + (this.sheetBusy || "Save quote to Google Sheet") + "</button>" : "") +
+      (this.sheet.url && admin ? '<div class="cbq-sheet"><span class="cbq-dot ' + (this.sheetStatus.state === "ok" ? "ok" : this.sheetStatus.state === "err" ? "err" : "") + '"></span>' + esc(this.lastSaved || this.sheetStatus.msg || "") + "</div>" : "") +
       (admin ? '<button class="cbq-btn link" data-act="new-quote">' + this.label("new-quote", "Start a new quote", "Click again: clears client & selections") + "</button>" : "") +
       "</div></aside>";
   };

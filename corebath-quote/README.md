@@ -35,6 +35,32 @@ Builds a quote for a custom bathroom package and outputs it as a PDF. It runs on
 
 Run locally: open `index.html` (admin). Add `?mode=customer` to the address to see the shopper view.
 
+## Mix and match brands
+
+On the Fixtures tab every item has a row of brand buttons. Pick a brand for each fixture (for example a Kohler WC, Jaquar faucets, a Grohe diverter), then the model from that brand's list. "Set every fixture to one brand" switches them all at once and keeps each item's tier. The concealed parts behind each fixture follow that fixture's brand. The PDF and the sheet show the mix, e.g. "Custom mix (Jaquar x6, Kohler x1, Grohe x1), Core Signature base".
+
+## Google Sheet (products, rates and saved quotes)
+
+`google-sheet/CoreBath_Quotation_Data.xlsx` (upload to Drive, it converts to a Google Sheet) has these tabs:
+
+| Tab | What it holds |
+|---|---|
+| Setup | Setup steps, admin key, web app URL |
+| Products | All 306 products. Edit **Price (Rs)**; yellow cells still need a price. Add rows for new products or brands; the ID fills itself in. |
+| Add-ons | Add-on names, rates, units |
+| Settings | Every service rate, site charge, GST, markup, tile allowance, fixing rate, company details |
+| Quotes | One row per saved quote with section totals and grand total |
+| Quote Lines | Every line of every saved quote |
+
+`google-sheet/Code.gs` is the Apps Script that connects the sheet to the tool. Paste it into the sheet (Extensions → Apps Script), run `setup`, and deploy it as a web app (Execute as: Me, Access: Anyone). Then paste the `/exec` URL into the tool (Rates & settings → Google Sheet) or into the Shopify section setting.
+
+Once connected:
+- the tool loads products, prices, add-ons and rates from the sheet when it opens (and keeps a copy in case the sheet can't be reached)
+- every PDF download, "Send to CoreBath" and "Save quote to Google Sheet" writes the quote to the Quotes and Quote Lines tabs; saving the same quote again updates it
+- in admin mode, "Send my rates & settings to sheet" writes the rates you typed in the tool back into the sheet (needs the admin key from the Setup tab)
+
+To rebuild the .xlsx from the catalogue: `node tools/build_sheet.cjs > /tmp/cbq.json && python3 tools/build_sheet.py /tmp/cbq.json`.
+
 ## Put it on Shopify
 
 1. In Shopify admin, go to **Online Store → Themes → … → Edit code**.

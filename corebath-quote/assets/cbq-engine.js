@@ -412,6 +412,30 @@
     };
   }
 
+  // Which brands the selected fixtures come from, most used first.
+  function brandMix(st, catalog) {
+    var idx = index(catalog), count = {};
+    Object.keys(st.fixtures || {}).forEach(function (k) {
+      var f = st.fixtures[k], p = f && f.on && idx.byId[f.productId];
+      if (p) count[p.brand] = (count[p.brand] || 0) + 1;
+    });
+    return Object.keys(count).map(function (b) { return { brand: b, count: count[b] }; })
+      .sort(function (a, b) { return b.count - a.count; });
+  }
+  function mixLabel(st, catalog) {
+    var mix = brandMix(st, catalog);
+    var tier = PKG_LABEL[st.basePkg] || st.basePkg;
+    if (mix.length <= 1) return (mix[0] ? mix[0].brand : st.baseBrand) + " " + tier;
+    return "Custom mix (" + mix.map(function (m) { return m.brand + " x" + m.count; }).join(", ") + "), " + tier + " base";
+  }
+
+  // Replace the catalogue with rows loaded from the Google Sheet.
+  function loadCatalog(catalog, products) {
+    catalog.products = products;
+    delete catalog._idx;
+    return catalog;
+  }
+
   // Items that still need a rate (for the rate book screen)
   function unpriced(catalog, state) {
     var ov = (state && state.rateOverrides) || {};
@@ -423,7 +447,7 @@
   CBQ.engine = {
     PKG_LABEL: PKG_LABEL, PKGS: PKGS,
     newState: newState, applyPackage: applyPackage, compute: compute, matchConcealed: matchConcealed,
-    recommend: recommend, areas: areas, priceOf: priceOf, pick: pick, unpriced: unpriced,
+    recommend: recommend, areas: areas, brandMix: brandMix, mixLabel: mixLabel, loadCatalog: loadCatalog, priceOf: priceOf, pick: pick, unpriced: unpriced,
     settings: settings, deepMerge: deepMerge, index: index, inr: inr, num: num,
   };
 })(typeof window !== "undefined" ? window : globalThis);

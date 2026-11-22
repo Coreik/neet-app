@@ -29,6 +29,7 @@
     data-brand="{{ section.settings.default_brand }}"
     data-package="{{ section.settings.default_package }}"
     data-theme="{{ section.settings.theme }}"
+    {% if section.settings.sheet_url != blank %}data-sheet-url="{{ section.settings.sheet_url }}"{% endif %}
     {% if section.settings.ai_endpoint != blank %}data-ai-endpoint="{{ section.settings.ai_endpoint }}"{% endif %}
   ></div>
 
@@ -88,6 +89,7 @@
     { "type": "checkbox", "id": "enable_enquiry", "label": "Show \"Send to CoreBath\" button (uses the store contact form)", "default": true },
     { "type": "text", "id": "success_message", "label": "Message after sending", "default": "Thank you! Our team will call you to schedule a site visit." },
     { "type": "text", "id": "admin_tag", "label": "Customer tag for admin mode", "default": "corebath-admin", "info": "Log in to the store with a customer account carrying this tag to edit rates and add custom items." },
+    { "type": "url", "id": "sheet_url", "label": "Google Sheet web app URL (optional)", "info": "The /exec URL from the CoreBath Quotation Data sheet. Prices, add-ons and rates load from the sheet, and every quote a shopper downloads or sends is saved to it." },
     { "type": "url", "id": "ai_endpoint", "label": "AI advisor URL (optional)", "info": "URL of the deployed ai/worker.js. Leave blank to use built-in recommendations only." },
     { "type": "range", "id": "padding", "label": "Vertical padding", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 24 }
   ],
