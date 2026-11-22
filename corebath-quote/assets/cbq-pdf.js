@@ -105,8 +105,9 @@
         if (l.source === "missing" || (l.source === "custom" && !l.rate)) rate = "TBC";
         return [s.id + (i + 1), { content: (l.item ? l.item + ": " : "") + l.desc + (sub.length ? "\n" + sub.join("\n") : ""), est: l.source === "estimate" }, qtyStr(l.qty), l.unit || "nos", rate, money(l.amount)];
       });
+      if (y > H - 130) { doc.addPage(); y = 50; } // never leave a section heading alone at the foot of a page
       doc.autoTable({
-        startY: y, margin: { left: M, right: M },
+        startY: y, margin: { left: M, right: M, top: 50, bottom: 50 },
         head: [[{ content: s.id + ".  " + s.title, colSpan: 5 }, { content: money(s.total), styles: { halign: "right" } }]],
         body: [head[0]].concat(body),
         theme: "plain",

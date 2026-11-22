@@ -66,3 +66,20 @@ for (const k of ["grab_bars", "anti_skid", "exhaust_fan", "geyser"]) assert.stri
 assert.strictEqual(pdf.words(314100), "Three Lakh Fourteen Thousand One Hundred");
 assert.strictEqual(pdf.words(12500000), "One Crore Twenty Five Lakh");
 console.log("All engine tests passed");
+
+// per-quote line edits: change qty/rate/description, remove a line, percent lines follow
+{
+  const st = E.newState(catalog, cfg, { brand: "Jaquar", pkg: "signature" });
+  const before = E.compute(st, catalog, cfg);
+  st.lineOverrides = { demolition: { rate: 50 }, waterproofing: { qty: 120, desc: "Waterproofing incl. full shower walls" }, cleaning: { off: true } };
+  const q2 = E.compute(st, catalog, cfg);
+  const demo = q2.sections[2].lines.find((l) => l.key === "demolition");
+  assert.strictEqual(demo.rate, 50); assert.ok(demo.edited);
+  const wp = q2.sections[2].lines.find((l) => l.key === "waterproofing");
+  assert.strictEqual(wp.qty, 120); assert.strictEqual(wp.desc, "Waterproofing incl. full shower walls");
+  assert.ok(!q2.sections[6].lines.some((l) => l.key === "cleaning"));
+  assert.ok(q2.removedLines.some((l) => l.key === "cleaning"));
+  const cons = (q) => q.sections[6].lines.find((l) => l.key === "consumables").amount;
+  assert.ok(cons(q2) > cons(before), "consumables % follows edited works");
+  console.log("Line edit tests passed");
+}

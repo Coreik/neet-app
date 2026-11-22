@@ -279,6 +279,9 @@
       st.customItems.push({ desc: "", qty: 1, unit: "nos", rate: "", kind: "service" });
     } else if (act === "del-custom") {
       st.customItems.splice(+arg, 1);
+    } else if (act === "reset-line") {
+      var lo = (st.lineOverrides || {})[arg];
+      if (lo) { delete lo.qty; delete lo.rate; delete lo.desc; }
     } else if (act === "reset-concealed") {
       delete st.concealed[arg];
     } else if (act === "pdf") {
@@ -393,6 +396,7 @@
     this.quote = q;
     var admin = this.mode === "admin";
     var tabs = [["build", "1. Bathroom"], ["fixtures", "2. Fixtures"], ["addons", "3. Add-ons & extras"]];
+    if (admin) tabs.splice(2, 0, ["works", "Works & charges"]);
     if (admin) tabs.push(["rates", "Rates & settings"]);
     var html = '<div class="cbq">' +
       '<header class="cbq-head"><div><div class="cbq-logo">Core<b>Bath</b></div><div class="cbq-sub">Custom bathroom package quotation</div></div>' +
@@ -576,6 +580,32 @@
       html += '<section class="cbq-card"><h3>Anything else?</h3><div class="cbq-grid">' + field("Notes for our team", "client.notes", st.client.notes, { wide: true, ph: "e.g. move the WC, add a window, timeline" }) + "</div></section>";
     }
     return html;
+  };
+
+  // Edit any civil / plumbing / site-charge line for this quote: description, qty, rate, or remove it.
+  App.prototype.tab_works = function (q) {
+    var st = this.state, removed = q.removedLines || [];
+    var groups = [["C", "Civil work: demolition, waterproofing, tiling", "Areas come from the room size on tab 1. Default rates: Rates & settings \u2192 Civil & plumbing rates."],
+      ["D", "Plumbing & fixing", "Points and fixing count come from the selected fixtures. Default rates: Rates & settings."],
+      ["G", "Site & project charges", "Percent lines (consumables, project management) recalculate unless you type a rate."]];
+    var sec = {}; q.sections.forEach(function (x) { sec[x.id] = x; });
+    function row(l) {
+      var o = (st.lineOverrides || {})[l.key] || {}, off = !!o.off, f = "lineOverrides." + l.key + ".";
+      return '<tr class="' + (off ? "off" : "") + '"><td><label class="cbq-check" title="Untick to leave this line out of the quote"><input type="checkbox" data-f="' + f + 'off" data-invert="1"' + (off ? "" : " checked") + "></label></td>" +
+        '<td><input data-t="str" data-f="' + f + 'desc" value="' + esc(o.desc || "") + '" placeholder="' + esc(l.auto.desc) + '" aria-label="Description">' +
+        (l.edited ? ' <a href="#" class="cbq-link" data-act="reset-line" data-arg="' + esc(l.key) + '">undo my changes</a>' : "") + "</td>" +
+        '<td><input class="cbq-qty" type="number" min="0" step="any" data-t="num" data-f="' + f + 'qty" value="' + esc(o.qty === undefined ? "" : o.qty) + '" placeholder="' + l.auto.qty + '" aria-label="Quantity"> <span class="cbq-small">' + esc(l.unit) + "</span></td>" +
+        '<td class="r"><input class="cbq-rate" type="number" min="0" step="any" data-t="num" data-f="' + f + 'rate" value="' + esc(o.rate === undefined ? "" : o.rate) + '" placeholder="' + Math.round(l.auto.rate * 100) / 100 + '" aria-label="Rate"></td>' +
+        '<td class="r b">' + (off ? "removed" : rs(l.amount)) + "</td></tr>";
+    }
+    return '<section class="cbq-card"><h3>Works &amp; charges</h3><p class="cbq-hint">Change any line for this quote only. Leave a box empty to use the calculated value (shown in grey). Untick a line to remove it. To change a rate for every future quote, use Rates &amp; settings instead.</p></section>' +
+      groups.map(function (g) {
+        var lines = sec[g[0]].lines.concat(removed.filter(function (l) { return l.section === g[0]; }));
+        return '<section class="cbq-card"><h3>' + g[0] + ". " + g[1] + ' <small>' + rs(sec[g[0]].total) + '</small></h3><p class="cbq-hint">' + g[2] + "</p>" +
+          '<table class="cbq-table cbq-ftable cbq-works"><thead><tr><th></th><th>Description</th><th>Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr></thead><tbody>' +
+          lines.map(row).join("") + "</tbody></table></section>";
+      }).join("") +
+      '<section class="cbq-card"><h3>Need another line?</h3><p class="cbq-hint">Add any extra item or service charge under <a href="#" class="cbq-link" data-act="tab" data-arg="addons">Add-ons &amp; extras \u2192 Additional items &amp; services</a>.</p></section>';
   };
 
   App.prototype.aiBlock = function (n) {

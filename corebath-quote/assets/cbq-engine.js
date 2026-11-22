@@ -311,7 +311,7 @@
       if (sel.qty !== undefined && sel.qty !== "" && d.unit !== "each") qty = num(sel.qty, qty);
       var rate = sel.rate !== undefined && sel.rate !== "" ? num(sel.rate) : num(d.rate);
       addons.push({ key: k, desc: d.name, qty: round2(qty), unit: unit, rate: rate, amount: round2(rate * qty), source: "addon" });
-      if (num(d.fixing) > 0) addonFixing.push({ desc: "Installation: " + d.name, qty: d.unit === "each" ? qty : 1, rate: num(d.fixing) });
+      if (num(d.fixing) > 0) addonFixing.push({ key: k, desc: "Installation: " + d.name, qty: d.unit === "each" ? qty : 1, rate: num(d.fixing) });
       if (k !== "elec_point") elecPoints += num(d.elecPoints) * (d.unit === "each" ? qty : 1);
     });
     if (elecPoints > 0 && !(st.addons.elec_point && st.addons.elec_point.on)) {
@@ -322,24 +322,33 @@
     // C. civil work
     var r = st.room || {};
     var civil = [];
-    function svc(list, desc, qty, unit, rate, note) {
+    // Every work / charge line has a stable key so it can be edited or removed per quote (state.lineOverrides).
+    var LO = st.lineOverrides || {}, removed = [];
+    function svc(list, key, desc, qty, unit, rate, note) {
+      var o = LO[key] || {}, auto = { qty: round2(qty), rate: rate, desc: desc };
+      var has = function (v) { return v !== undefined && v !== null && v !== ""; };
+      if (has(o.qty)) qty = num(o.qty);
+      if (has(o.rate)) rate = num(o.rate);
+      if (has(o.desc)) desc = o.desc;
+      var line = { key: key, desc: desc, qty: round2(qty), unit: unit, rate: rate, amount: round2(qty * rate), note: note || "", auto: auto, edited: has(o.qty) || has(o.rate) || has(o.desc), section: list === civil ? "C" : list === plumbing ? "D" : "G" };
+      if (o.off) { line.amount = 0; removed.push(line); return; }
       if (!(qty > 0) || !(rate > 0)) return;
-      list.push({ desc: desc, qty: round2(qty), unit: unit, rate: rate, amount: round2(qty * rate), note: note || "" });
+      list.push(line);
     }
     if (r.demolition) {
-      svc(civil, "Demolition: break and remove old floor and wall tiles with bed", a.tiled, "sqft", num(sv.demolitionPerSqft));
-      svc(civil, "Dismantle old sanitaryware and fittings", 1, "lump", num(sv.sanitaryDismantleLump));
-      svc(civil, "Debris bagging, carrying and disposal", 1, "lump", num(sv.debrisDisposalLump));
+      svc(civil, "demolition", "Demolition: break and remove old floor and wall tiles with bed", a.tiled, "sqft", num(sv.demolitionPerSqft));
+      svc(civil, "dismantle", "Dismantle old sanitaryware and fittings", 1, "lump", num(sv.sanitaryDismantleLump));
+      svc(civil, "debris", "Debris bagging, carrying and disposal", 1, "lump", num(sv.debrisDisposalLump));
     }
-    svc(civil, "Waterproofing: floor, " + num(sv.waterproofUpturnFt) + " ft up all walls, shower walls; with flood test", a.waterproof, "sqft", num(sv.waterproofPerSqft));
-    svc(civil, "Floor screed with slope to drain", a.floor, "sqft", num(sv.screedPerSqft));
+    svc(civil, "waterproofing", "Waterproofing: floor, " + num(sv.waterproofUpturnFt) + " ft up all walls, shower walls; with flood test", a.waterproof, "sqft", num(sv.waterproofPerSqft));
+    svc(civil, "screed", "Floor screed with slope to drain", a.floor, "sqft", num(sv.screedPerSqft));
     if (r.tilesByUs) {
       var allowance = num((S.tileAllowance || {})[st.basePkg]);
-      svc(civil, "Tiles supply (allowance Rs " + allowance + "/sqft, incl. " + num(sv.tileWastagePct) + "% wastage)", a.tiled * (1 + num(sv.tileWastagePct) / 100), "sqft", allowance);
+      svc(civil, "tiles", "Tiles supply (allowance Rs " + allowance + "/sqft, incl. " + num(sv.tileWastagePct) + "% wastage)", a.tiled * (1 + num(sv.tileWastagePct) / 100), "sqft", allowance);
     }
-    svc(civil, "Tile adhesive and grout", a.tiled, "sqft", num(sv.adhesiveGroutPerSqft));
-    svc(civil, "Floor tile laying", a.floor, "sqft", num(sv.floorTileLayPerSqft));
-    svc(civil, "Wall tile laying up to " + num(r.tileHeight) + " ft", a.wall, "sqft", num(sv.wallTileLayPerSqft));
+    svc(civil, "adhesive", "Tile adhesive and grout", a.tiled, "sqft", num(sv.adhesiveGroutPerSqft));
+    svc(civil, "floor_laying", "Floor tile laying", a.floor, "sqft", num(sv.floorTileLayPerSqft));
+    svc(civil, "wall_laying", "Wall tile laying up to " + num(r.tileHeight) + " ft", a.wall, "sqft", num(sv.wallTileLayPerSqft));
 
     // D. plumbing + fixing
     var autoWater = (fixOn("basin_mixer") ? 2 : 0) + (fixOn("diverter_trim") ? 2 : 0) + (fixOn("health_faucet") ? 1 : 0) +
@@ -349,14 +358,14 @@
     var waterPts = r.waterPoints !== "" && r.waterPoints !== undefined ? num(r.waterPoints) : autoWater;
     var drainPts = r.drainPoints !== "" && r.drainPoints !== undefined ? num(r.drainPoints) : autoDrain;
     var plumbing = [];
-    svc(plumbing, "Concealed CPVC water lines (hot/cold) incl. pressure test", waterPts, "points", num(sv.waterPointRate));
-    svc(plumbing, "Drainage lines (SWR/uPVC) to stack", drainPts, "points", num(sv.drainPointRate));
+    svc(plumbing, "water_points", "Concealed CPVC water lines (hot/cold) incl. pressure test", waterPts, "points", num(sv.waterPointRate));
+    svc(plumbing, "drain_points", "Drainage lines (SWR/uPVC) to stack", drainPts, "points", num(sv.drainPointRate));
     var fixQty = {};
     fixtures.concat(concealed).forEach(function (l) { fixQty[l.key] = (fixQty[l.key] || 0) + l.qty; });
     catalog.items.forEach(function (it) {
-      if (fixQty[it.key]) svc(plumbing, "Fixing: " + it.label, fixQty[it.key], "nos", num(fx[it.key]));
+      if (fixQty[it.key]) svc(plumbing, "fix_" + it.key, "Fixing: " + it.label, fixQty[it.key], "nos", num(fx[it.key]));
     });
-    addonFixing.forEach(function (x) { svc(plumbing, x.desc, x.qty, "nos", x.rate); });
+    addonFixing.forEach(function (x) { svc(plumbing, "addonfix_" + x.key, x.desc, x.qty, "nos", x.rate); });
 
     // F. custom items & services
     var custom = (st.customItems || []).filter(function (c) { return c && c.desc; }).map(function (c) {
@@ -370,13 +379,13 @@
 
     // G. unseen site & project charges
     var site = [];
-    svc(site, "Consumables: cement, sand, white cement, silicone, sleeves, fasteners (" + num(sc.consumablesPct) + "% of works)", 1, "lump", round2((tC + tD) * num(sc.consumablesPct) / 100));
-    svc(site, "Site protection: floor and furniture covering on the access route", 1, "lump", num(sc.siteProtectionLump));
-    svc(site, "Material transport, lifting and handling", 1, "lump", num(sc.transportLump));
-    svc(site, "Post-work deep cleaning and acid wash", 1, "lump", num(sc.cleaningLump));
+    svc(site, "consumables", "Consumables: cement, sand, white cement, silicone, sleeves, fasteners (" + num(sc.consumablesPct) + "% of works)", 1, "lump", round2((tC + tD) * num(sc.consumablesPct) / 100));
+    svc(site, "site_protection", "Site protection: floor and furniture covering on the access route", 1, "lump", num(sc.siteProtectionLump));
+    svc(site, "transport", "Material transport, lifting and handling", 1, "lump", num(sc.transportLump));
+    svc(site, "cleaning", "Post-work deep cleaning and acid wash", 1, "lump", num(sc.cleaningLump));
     var pmBase = tA + tB + tC + tD + tE + tF;
-    svc(site, "Project management and site supervision (" + num(sc.projectMgmtPct) + "%)", 1, "lump", round2(pmBase * num(sc.projectMgmtPct) / 100));
-    if (num(sc.contingencyPct) > 0) svc(site, "Contingency (" + num(sc.contingencyPct) + "%)", 1, "lump", round2(pmBase * num(sc.contingencyPct) / 100));
+    svc(site, "project_mgmt", "Project management and site supervision (" + num(sc.projectMgmtPct) + "%)", 1, "lump", round2(pmBase * num(sc.projectMgmtPct) / 100));
+    if (num(sc.contingencyPct) > 0) svc(site, "contingency", "Contingency (" + num(sc.contingencyPct) + "%)", 1, "lump", round2(pmBase * num(sc.contingencyPct) / 100));
     var tG = sum(site);
 
     var sections = [
@@ -403,7 +412,7 @@
 
     return {
       sections: sections, areas: a, waterPoints: waterPts, drainPoints: drainPts,
-      recommendations: recommend(st, catalog, cfg), warnings: warnings, flags: flags,
+      recommendations: recommend(st, catalog, cfg), warnings: warnings, flags: flags, removedLines: removed,
       totals: {
         subtotal: subtotal, discount: discount, taxable: taxable, gstPct: num(S.pricing.gstPct), gst: gst,
         roundOff: round2(grand - raw), grand: grand,

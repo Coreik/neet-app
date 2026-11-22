@@ -126,3 +126,7 @@
 .cbq-sheet { font-size: 12px; color: var(--cbq-muted); display: flex; align-items: center; gap: 6px; }
 .cbq-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cbq-muted); display: inline-block; }
 .cbq-dot.ok { background: var(--cbq-ok); } .cbq-dot.err { background: #c0392b; }
+.cbq-works td input[data-f$=".desc"] { width: 100%; }
+.cbq-works td:nth-child(3) { white-space: nowrap; }
+.cbq-works input.cbq-qty { width: 80px !important; }
+@media (max-width: 600px) { .cbq-works tr { grid-template-columns: 28px 128px 1fr auto; } }
