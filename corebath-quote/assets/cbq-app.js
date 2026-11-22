@@ -112,6 +112,46 @@
     setTimeout(function () { if (self.pending && !self.pointerDown) self.render(); }, 0);
   };
 
+  // In-page confirmation: first click arms the button, second click within 4s runs it.
+  App.prototype.confirmTwice = function (act) {
+    var self = this;
+    if (this.armed === act) { this.armed = null; return true; }
+    this.armed = act;
+    clearTimeout(this.armTimer);
+    this.armTimer = setTimeout(function () { self.armed = null; self.render(); }, 4000);
+    this.render();
+    return false;
+  };
+  App.prototype.label = function (act, normal, confirm) { return this.armed === act ? confirm : normal; };
+
+  // Show the generated PDF inside the page (pdf.js if loaded, else a new tab).
+  App.prototype.previewPdf = function () {
+    var q = E.compute(this.state, this.catalog, this.cfg);
+    var doc = CBQ.pdf.generate(q, this.state, this.catalog, { mode: this.mode, returnDoc: true });
+    if (!doc) return;
+    if (!g.pdfjsLib) { g.open(doc.output("bloburl"), "_blank"); return; }
+    var old = document.getElementById("cbq-pdf-overlay"); if (old) old.remove();
+    var ov = document.createElement("div");
+    ov.id = "cbq-pdf-overlay"; ov.className = "cbq-overlay";
+    ov.innerHTML = '<div class="cbq-overlay-bar"><b>PDF preview</b><span class="cbq-small">' + esc(this.state.quoteNo) + '</span><button class="cbq-btn" data-act="close-preview">Close</button></div><div class="cbq-pages">Rendering\u2026</div>';
+    this.root.appendChild(ov);
+    var pagesEl = ov.querySelector(".cbq-pages");
+    g.pdfjsLib.getDocument({ data: new Uint8Array(doc.output("arraybuffer")) }).promise.then(function (pdf) {
+      pagesEl.textContent = "";
+      var chain = Promise.resolve();
+      for (var i = 1; i <= pdf.numPages; i++) (function (n) {
+        chain = chain.then(function () { return pdf.getPage(n); }).then(function (page) {
+          var vp = page.getViewport({ scale: 2 });
+          var c = document.createElement("canvas");
+          c.width = vp.width; c.height = vp.height; c.className = "cbq-page";
+          pagesEl.appendChild(c);
+          return page.render({ canvasContext: c.getContext("2d"), viewport: vp }).promise;
+        });
+      })(i);
+      return chain;
+    }).catch(function (err) { pagesEl.textContent = "Could not render the preview: " + err.message; });
+  };
+
   App.prototype.action = function (act, arg) {
     var st = this.state, self = this;
     if (act === "tab") { this.tab = arg; }
@@ -131,8 +171,12 @@
       var q = E.compute(st, this.catalog, this.cfg);
       CBQ.pdf.generate(q, st, this.catalog, { mode: this.mode });
       return;
+    } else if (act === "pdf-preview") {
+      this.previewPdf(); return;
+    } else if (act === "close-preview") {
+      var ov = document.getElementById("cbq-pdf-overlay"); if (ov) ov.remove(); return;
     } else if (act === "new-quote") {
-      if (!g.confirm("Start a new quote? Client details and selections will be cleared (your rates are kept).")) return;
+      if (!this.confirmTwice(act)) return;
       var keep = { rateOverrides: st.rateOverrides, settings: st.settings };
       this.state = E.newState(this.catalog, this.cfg, { brand: st.baseBrand, pkg: st.basePkg });
       Object.assign(this.state, keep);
@@ -165,7 +209,7 @@
       inp.click();
       return;
     } else if (act === "reset-settings") {
-      if (!g.confirm("Reset all service rates and settings to the defaults? Product rates you entered are kept.")) return;
+      if (!this.confirmTwice(act)) return;
       st.settings = {};
     } else if (act === "ai") {
       this.runAI(); return;
@@ -451,7 +495,7 @@
       field("Phone", "settings.company.phone", S.company.phone) + field("Email", "settings.company.email", S.company.email) +
       field("GSTIN", "settings.company.gstin", S.company.gstin) + field("Quote valid (days)", "settings.company.validityDays", S.company.validityDays, { type: "number", min: 1 }) +
       field("Address", "settings.company.address", S.company.address, { wide: true }) + "</div>" +
-      '<div class="cbq-row"><button class="cbq-btn ghost" data-act="reset-settings">Reset rates to defaults</button></div></section>';
+      '<div class="cbq-row"><button class="cbq-btn ghost" data-act="reset-settings">' + this.label("reset-settings", "Reset rates to defaults", "Click again to reset all rates") + '</button></div></section>';
   };
 
   App.prototype.summary = function (q) {
@@ -470,9 +514,10 @@
       '<div class="cbq-small">' + q.areas.floor + " sqft floor · " + esc(this.state.baseBrand) + " " + esc(E.PKG_LABEL[this.state.basePkg]) + "</div>" +
       (warn ? '<ul class="cbq-warn">' + warn + "</ul>" : "") +
       '<button class="cbq-btn big" data-act="pdf">Download PDF quote</button>' +
+      '<button class="cbq-btn ghost" data-act="pdf-preview">Preview PDF</button>' +
       (this.cfg.aiEndpoint ? '<button class="cbq-btn ghost" data-act="ai"' + (this.aiBusy ? " disabled" : "") + ">" + (this.aiBusy ? "Asking AI advisor…" : "AI review of this bathroom") + "</button>" : "") +
       (hasForm ? '<button class="cbq-btn ghost" data-act="send">Send to CoreBath for a site visit</button>' : "") +
-      (admin ? '<button class="cbq-btn link" data-act="new-quote">Start a new quote</button>' : "") +
+      (admin ? '<button class="cbq-btn link" data-act="new-quote">' + this.label("new-quote", "Start a new quote", "Click again: clears client & selections") + "</button>" : "") +
       "</div></aside>";
   };
 

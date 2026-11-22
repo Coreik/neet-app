@@ -107,7 +107,7 @@
       });
       doc.autoTable({
         startY: y, margin: { left: M, right: M },
-        head: [[{ content: s.id + ".  " + s.title, colSpan: 4 }, { content: "", colSpan: 1 }, { content: money(s.total), styles: { halign: "right" } }]],
+        head: [[{ content: s.id + ".  " + s.title, colSpan: 5 }, { content: money(s.total), styles: { halign: "right" } }]],
         body: [head[0]].concat(body),
         theme: "plain",
         styles: { font: "helvetica", fontSize: 8.4, textColor: C.ink, cellPadding: { top: 4, bottom: 4, left: 4, right: 4 }, lineColor: C.line, valign: "top" },
