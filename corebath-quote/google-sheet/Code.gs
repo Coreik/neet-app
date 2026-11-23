@@ -130,7 +130,7 @@ function saveQuote_(q) {
   var sh = sheet_("Quotes"), lines = sheet_("Quote Lines");
   var c = q.client || {}, t = q.totals || {}, sec = {};
   (q.sections || []).forEach(function (s) { sec[s.id] = s.total; });
-  var row = [new Date(), q.quoteNo, q.mode === "admin" ? "CoreBath team" : "Website", c.name || "", c.phone || "", c.email || "",
+  var row = [new Date(), q.quoteNo, q.mode === "admin" ? "CoreBath team" : "Website", c.name || "", "'" + (c.phone || ""), c.email || "",
     c.address || "", q.package || "", q.brands || "", q.size || "", sec.A || 0, sec.B || 0, sec.C || 0, sec.D || 0, sec.E || 0,
     sec.F || 0, sec.G || 0, t.subtotal || 0, t.discount || 0, t.gst || 0, t.grand || 0, q.estimated || 0, c.notes || "",
     JSON.stringify(q.state || {}).slice(0, 49000)];
