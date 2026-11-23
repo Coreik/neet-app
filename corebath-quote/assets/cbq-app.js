@@ -32,7 +32,14 @@
   function quoteNo(cfg) {
     var d = new Date();
     var p = function (n) { return (n < 10 ? "0" : "") + n; };
-    return (cfg.company.quotePrefix || "CB") + "-" + String(d.getFullYear()).slice(2) + p(d.getMonth() + 1) + p(d.getDate()) + "-" + String(Math.floor(Math.random() * 9000) + 1000);
+    return (cfg.company.quotePrefix || "CB") + "-" + String(d.getFullYear()).slice(2) + p(d.getMonth() + 1) + p(d.getDate()) + "-" + rand5();
+  }
+  // 5 characters from 31 unambiguous letters/digits: ~28 million per day, so team members never clash
+  function rand5() {
+    var abc = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ", out = "", buf = new Uint32Array(5);
+    try { (g.crypto || {}).getRandomValues(buf); } catch (e) { for (var i = 0; i < 5; i++) buf[i] = Math.floor(Math.random() * 1e9); }
+    for (var j = 0; j < 5; j++) out += abc[buf[j] % abc.length];
+    return out;
   }
 
   function App(root) {
