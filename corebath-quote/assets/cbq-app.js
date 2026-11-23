@@ -726,3 +726,11 @@
   function boot() { var el = document.getElementById("corebath-quote"); if (el && !el.__cbq) CBQ.mount(el); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })(window);
+
+// Theme integration: <corebath-quote> mounts itself, for themes that compose pages from web components.
+(function () {
+  if (!window.customElements || window.customElements.get("corebath-quote")) return;
+  window.customElements.define("corebath-quote", class extends HTMLElement {
+    connectedCallback() { if (!this.__cbq && window.CBQ && window.CBQ.mount) window.CBQ.mount(this); }
+  });
+})();
