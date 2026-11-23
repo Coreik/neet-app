@@ -445,6 +445,12 @@
     return catalog;
   }
 
+  // Text lists (payment schedule, terms) may be an array or one text block with a line per item.
+  function textLines(v) {
+    if (Array.isArray(v)) return v.filter(function (x) { return String(x).trim(); });
+    return String(v || "").split(/\r?\n/).map(function (x) { return x.replace(/^\s*[-\u2022*]\s*/, "").trim(); }).filter(Boolean);
+  }
+
   // Items that still need a rate (for the rate book screen)
   function unpriced(catalog, state) {
     var ov = (state && state.rateOverrides) || {};
@@ -456,7 +462,7 @@
   CBQ.engine = {
     PKG_LABEL: PKG_LABEL, PKGS: PKGS,
     newState: newState, applyPackage: applyPackage, compute: compute, matchConcealed: matchConcealed,
-    recommend: recommend, areas: areas, brandMix: brandMix, mixLabel: mixLabel, loadCatalog: loadCatalog, priceOf: priceOf, pick: pick, unpriced: unpriced,
+    recommend: recommend, areas: areas, brandMix: brandMix, mixLabel: mixLabel, textLines: textLines, loadCatalog: loadCatalog, priceOf: priceOf, pick: pick, unpriced: unpriced,
     settings: settings, deepMerge: deepMerge, index: index, inr: inr, num: num,
   };
 })(typeof window !== "undefined" ? window : globalThis);

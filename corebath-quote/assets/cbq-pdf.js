@@ -187,7 +187,10 @@
     }
 
     // ---- recommended but not selected ----
-    var notTaken = q.recommendations.filter(function (rc) { return rc.priority !== "optional" && !(st.addons[rc.key] && st.addons[rc.key].on); });
+    var pdfOpt = st.pdf || {}, hidden = pdfOpt.hiddenRecs || {};
+    var notTaken = pdfOpt.showRecs === false ? [] : q.recommendations.filter(function (rc) {
+      return rc.priority !== "optional" && !hidden[rc.key] && !(st.addons[rc.key] && st.addons[rc.key].on);
+    });
     if (notTaken.length) {
       heading("Recommended for your bathroom (not included above)");
       bullets(notTaken.map(function (rc) {
@@ -208,8 +211,9 @@
 
     if (c.notes) { heading("Notes"); bullets([c.notes]); }
     if (anyEst) { heading("Estimated rates"); bullets(["Rates marked * are estimated from equivalent products and will be confirmed before ordering."]); }
-    heading("Payment schedule"); bullets(co.paymentTerms || []);
-    heading("Terms"); bullets(co.terms || []);
+    var pay = E.textLines(co.paymentTerms), terms = E.textLines(co.terms);
+    if (pay.length) { heading("Payment schedule"); bullets(pay); }
+    if (terms.length) { heading("Terms"); bullets(terms); }
 
     // ---- footer on every page ----
     var pages = doc.internal.getNumberOfPages();

@@ -119,6 +119,8 @@ for sec in ["pricing", "services", "siteCharges", "tileAllowance", "fixing"]:
         srows.append([sec, k, v, d or ""])
 for k in ["phone", "email", "address", "gstin", "validityDays", "quotePrefix"]:
     srows.append(["company", k, cfg["company"].get(k, ""), "Shown on the PDF"])
+srows.append(["company", "paymentTerms", "\n".join(cfg["company"]["paymentTerms"]), "Payment schedule at the end of the PDF, one point per line (Alt+Enter for a new line)"])
+srows.append(["company", "terms", "\n".join(cfg["company"]["terms"]), "Terms at the end of the PDF, one point per line (Alt+Enter for a new line)"])
 wsets = wb.create_sheet("Settings")
 table(wsets, ["Section", "Key", "Value", "What it is"], srows, [14, 24, 14, 60])
 

@@ -279,6 +279,9 @@
       st.customItems.push({ desc: "", qty: 1, unit: "nos", rate: "", kind: "service" });
     } else if (act === "del-custom") {
       st.customItems.splice(+arg, 1);
+    } else if (act === "toggle-rec-pdf") {
+      st.pdf = st.pdf || {}; st.pdf.hiddenRecs = st.pdf.hiddenRecs || {};
+      st.pdf.hiddenRecs[arg] = !st.pdf.hiddenRecs[arg];
     } else if (act === "reset-line") {
       var lo = (st.lineOverrides || {})[arg];
       if (lo) { delete lo.qty; delete lo.rate; delete lo.desc; }
@@ -418,6 +421,9 @@
       (opts.step ? ' step="' + opts.step + '"' : "") + (opts.min !== undefined ? ' min="' + opts.min + '"' : "") +
       (opts.ph ? ' placeholder="' + esc(opts.ph) + '"' : "") + "></label>";
   }
+  function area(label, f, val, rows) {
+    return '<label class="cbq-field wide"><span>' + label + '</span><textarea rows="' + (rows || 4) + '" data-f="' + f + '" data-t="str">' + esc(val) + "</textarea></label>";
+  }
   function check(label, f, val) {
     return '<label class="cbq-check"><input type="checkbox" data-f="' + f + '"' + (val ? " checked" : "") + "> " + label + "</label>";
   }
@@ -545,16 +551,23 @@
       seen[addon.key] = 1;
       var sel = st.addons[addon.key] || {}, on = !!sel.on, l = addonLine[addon.key];
       var unit = addon.unit === "each" ? "each" : addon.unit === "per_drain" ? "per drain" : "per sqft";
-      return '<div class="cbq-addon' + (on ? " on" : "") + '">' +
+      var pdfHidden = !!((st.pdf || {}).hiddenRecs || {})[addon.key];
+      var pdfLink = admin && priority && priority !== "optional" && !on ?
+        '<a href="#" class="cbq-link" data-act="toggle-rec-pdf" data-arg="' + addon.key + '">' + (pdfHidden ? "Not in PDF \u2014 show it" : "Leave out of PDF") + "</a>" : "";
+      return '<div class="cbq-addon' + (on ? " on" : "") + (pdfHidden ? " cbq-dim" : "") + '">' +
         '<div class="cbq-addon-top">' + (priority ? '<span class="cbq-pri ' + priority + '">' + priority + "</span>" : "") +
         '<button class="cbq-btn ' + (on ? "ghost" : "") + '" data-act="toggle-addon" data-arg="' + addon.key + '">' + (on ? "Remove" : "Add") + "</button></div>" +
         '<div class="cbq-addon-name">' + esc(addon.name) + "</div>" + (reason ? '<div class="cbq-meta">' + esc(reason) + "</div>" : "") +
         '<div class="cbq-addon-price">' + (admin ?
           '<input class="cbq-rate" type="number" min="0" data-t="num" data-f="addons.' + addon.key + '.rate" value="' + esc(sel.rate !== undefined ? sel.rate : "") + '" placeholder="' + addon.rate + '"> ' : rs(addon.rate) + " ") + unit +
         (addon.unit === "each" && on ? ' × <input class="cbq-qty" type="number" min="1" data-t="num" data-f="addons.' + addon.key + '.qty" value="' + esc(sel.qty || 1) + '">' : "") +
-        (l ? ' = <b>' + rs(l.amount) + "</b>" : "") + "</div></div>";
+        (l ? ' = <b>' + rs(l.amount) + "</b>" : "") + "</div>" + pdfLink + "</div>";
     }
-    var html = '<section class="cbq-card"><h3>Recommended for this bathroom</h3><div class="cbq-addons">' +
+    var showRecs = (st.pdf || {}).showRecs !== false;
+    var html = '<section class="cbq-card"><h3>Recommended for this bathroom</h3>' +
+      (admin ? '<p class="cbq-hint">Add one to put it in the quote. Recommendations you don\u2019t add are listed in the PDF under \u201CRecommended for your bathroom (not included above)\u201D.</p><div class="cbq-checks" style="margin:0 0 12px">' +
+        check("Show that list in the PDF", "pdf.showRecs", showRecs) + "</div>" : "") +
+      '<div class="cbq-addons">' +
       recs.map(function (r) { return card(r.addon, r.priority, r.reason); }).join("") + "</div>";
     var rest = q.settings.addons.filter(function (a) { return !seen[a.key]; });
     if (rest.length) html += '<h4>More add-ons</h4><div class="cbq-addons">' + rest.map(function (a) { return card(a, "", ""); }).join("") + "</div>";
@@ -667,6 +680,9 @@
       field("Phone", "settings.company.phone", S.company.phone) + field("Email", "settings.company.email", S.company.email) +
       field("GSTIN", "settings.company.gstin", S.company.gstin) + field("Quote valid (days)", "settings.company.validityDays", S.company.validityDays, { type: "number", min: 1 }) +
       field("Address", "settings.company.address", S.company.address, { wide: true }) + "</div>" +
+      "<h4>Text at the end of the PDF</h4><p class=\"cbq-hint\">One point per line. Leave a box empty to drop that section from the PDF. Applies to every quote; click \u201CSend my rates &amp; settings to sheet\u201D to save it in the Google Sheet too.</p>" +
+      '<div class="cbq-grid">' + area("Payment schedule", "settings.company.paymentTerms", E.textLines(S.company.paymentTerms).join("\n"), 4) +
+      area("Terms", "settings.company.terms", E.textLines(S.company.terms).join("\n"), 7) + "</div>" +
       '<div class="cbq-row"><button class="cbq-btn ghost" data-act="reset-settings">' + this.label("reset-settings", "Reset rates to defaults", "Click again to reset all rates") + '</button></div></section>';
   };
 
