@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CoreBath Quotation Builder</title>
+  <link rel="stylesheet" href="assets/cbq.css">
+  <style>html, body { margin: 0; background: #fff; } @media (prefers-color-scheme: dark) { html, body { background: #12191c; } }</style>
+</head>
+<body>
+  <!--
+    data-mode="admin"    : your team's tool - edit rates, add custom items, discounts, rate book.
+    data-mode="customer" : what shoppers see on corebath.in (open index.html?mode=customer to preview).
+    data-ai-endpoint     : optional URL of ai/worker.js once deployed.
+  -->
+  <div id="corebath-quote" data-mode="admin" data-brand="Jaquar" data-package="signature"></div>
+  <script>
+    if (/[?&]mode=customer/.test(location.search)) document.getElementById("corebath-quote").setAttribute("data-mode", "customer");
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="assets/cbq-catalog.js"></script>
+  <script src="assets/cbq-config.js"></script>
+  <script src="assets/cbq-rates.js"></script>
+  <script src="assets/cbq-engine.js"></script>
+  <script src="assets/cbq-pdf.js"></script>
+  <script src="assets/cbq-app.js"></script>
+</body>
+</html>

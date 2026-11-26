@@ -1,0 +1,8 @@
+name = "corebath-ai-advisor"
+main = "worker.js"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Comma-separated sites allowed to call the advisor
+ALLOWED_ORIGINS = "https://corebath.in,https://www.corebath.in"
