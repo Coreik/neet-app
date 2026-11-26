@@ -256,7 +256,10 @@
 
     if (opts.returnDoc) return doc;
     var who = (c.name || "client").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "");
-    doc.save("CoreBath-Quote-" + st.quoteNo + "-" + who + ".pdf");
+    var fname = "CoreBath-Quote-" + st.quoteNo + "-" + who + ".pdf";
+    // A host page may supply its own saver (e.g. a viewer that blocks normal downloads).
+    if (typeof CBQ.saveFile === "function") CBQ.saveFile(fname, doc.output("blob"), "application/pdf");
+    else doc.save(fname);
     return doc;
   }
 

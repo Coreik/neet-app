@@ -23,6 +23,7 @@
   }
   function rs(n) { return "₹" + E.inr(n); }
   function download(name, text, type) {
+    if (typeof CBQ.saveFile === "function") return CBQ.saveFile(name, new Blob([text], { type: type || "application/octet-stream" }), type);
     var blob = new Blob([text], { type: type || "application/octet-stream" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob); a.download = name;
