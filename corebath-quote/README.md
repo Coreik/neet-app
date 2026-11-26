@@ -35,6 +35,19 @@ Builds a quote for a custom bathroom package and outputs it as a PDF. It runs on
 
 Run locally: open `index.html` (admin). Add `?mode=customer` to the address to see the shopper view.
 
+## Several bathrooms in one quote
+
+The bar above the tabs lists the bathrooms in the quote. **+ Add bathroom** starts a new one with the same size and package as the one you're on, and **Copy this bathroom** duplicates it with all its fixtures and add-ons. Click a bathroom to edit it: each has its own name, size, package, brands, fixtures, concealed parts, add-ons and work-line edits.
+
+The whole job shares:
+- additional items
+- site protection and transport, charged once
+- deep cleaning, charged per bathroom
+- consumables and project management, as a percentage of all bathrooms
+- discount and GST
+
+The PDF has a titled section per bathroom (items numbered 1A1, 2A1, ...), then the shared charges, and a total listing each bathroom.
+
 ## Mix and match brands
 
 On the Fixtures tab every item has a row of brand buttons. Pick a brand for each fixture (for example a Kohler WC, Jaquar faucets, a Grohe diverter), then the model from that brand's list. "Set every fixture to one brand" switches them all at once and keeps each item's tier. The concealed parts behind each fixture follow that fixture's brand. The PDF and the sheet show the mix, e.g. "Custom mix (Jaquar x6, Kohler x1, Grohe x1), Core Signature base".

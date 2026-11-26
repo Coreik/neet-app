@@ -107,9 +107,60 @@
       baseBrand: brand, basePkg: pkg,
       fixtures: {}, concealed: {}, addons: {}, customItems: [],
       rateOverrides: {}, settings: {}, discount: { type: "pct", value: 0 },
-      aiNotes: null,
+      aiNotes: null, projectOverrides: {},
+      name: "Bathroom 1", lineOverrides: {},
     };
     applyPackage(st, catalog, brand, pkg);
+    st.bathrooms = [{}];
+    st.activeBath = 0;
+    syncOut(st);
+    return st;
+  }
+
+  // ---------- several bathrooms in one quote ----------
+  // The active bathroom's fields live on the quote itself (so every form path keeps working);
+  // the others wait in st.bathrooms. syncOut/syncIn move them between the two.
+  var BATH_FIELDS = ["name", "room", "context", "baseBrand", "basePkg", "fixtures", "concealed", "addons", "lineOverrides"];
+  function syncOut(st) {
+    if (!st.bathrooms || !st.bathrooms.length) return st;
+    var b = st.bathrooms[st.activeBath || 0] || (st.bathrooms[st.activeBath || 0] = {});
+    BATH_FIELDS.forEach(function (k) { b[k] = st[k]; });
+    return st;
+  }
+  function syncIn(st, i) {
+    if (!st.bathrooms || !st.bathrooms[i]) return st;
+    st.activeBath = i;
+    var b = st.bathrooms[i];
+    BATH_FIELDS.forEach(function (k) { if (b[k] !== undefined) st[k] = b[k]; });
+    return st;
+  }
+  // A fresh bathroom: same size and package as `from` unless told otherwise.
+  function newBathroom(catalog, from, name) {
+    var b = {
+      name: name, lineOverrides: {}, concealed: {}, addons: {},
+      room: JSON.parse(JSON.stringify((from && from.room) || { length: 8, width: 5, height: 10, tileHeight: 8, demolition: true, tilesByUs: true })),
+      context: JSON.parse(JSON.stringify((from && from.context) || { hotWater: "none", ventilation: "window" })),
+    };
+    b.room.waterPoints = ""; b.room.drainPoints = "";
+    applyPackage(b, catalog, (from && from.baseBrand) || "Jaquar", (from && from.basePkg) || "signature");
+    b.concealed = {};
+    return b;
+  }
+  // Make an older single-bathroom quote look like a one-bathroom list.
+  function migrate(st) {
+    if (!st.bathrooms || !st.bathrooms.length) {
+      st.name = st.name || "Bathroom 1";
+      st.lineOverrides = st.lineOverrides || {};
+      st.projectOverrides = st.projectOverrides || {};
+      ["consumables", "site_protection", "transport", "cleaning", "project_mgmt", "contingency"].forEach(function (k) {
+        if (st.lineOverrides[k]) { st.projectOverrides[k] = st.lineOverrides[k]; delete st.lineOverrides[k]; }
+      });
+      st.bathrooms = [{}]; st.activeBath = 0;
+      syncOut(st);
+    } else {
+      st.projectOverrides = st.projectOverrides || {};
+      syncIn(st, Math.min(st.activeBath || 0, st.bathrooms.length - 1));
+    }
     return st;
   }
 
@@ -244,9 +295,23 @@
   }
 
   // ---------- compute ----------
-  function compute(st, catalog, cfg) {
+  function makeSvc(LO, removed) {
+    return function svc(list, key, desc, qty, unit, rate, note) {
+      var o = LO[key] || {}, auto = { qty: round2(qty), rate: rate, desc: desc };
+      var has = function (v) { return v !== undefined && v !== null && v !== ""; };
+      if (has(o.qty)) qty = num(o.qty);
+      if (has(o.rate)) rate = num(o.rate);
+      if (has(o.desc)) desc = o.desc;
+      var line = { key: key, desc: desc, qty: round2(qty), unit: unit, rate: rate, amount: round2(qty * rate), note: note || "", auto: auto, edited: has(o.qty) || has(o.rate) || has(o.desc), section: list.sec };
+      if (o.off) { line.amount = 0; removed.push(line); return; }
+      if (!(qty > 0) || !(rate > 0)) return;
+      list.push(line);
+    };
+  }
+
+  // Sections A-E for one bathroom.
+  function computeBath(st, catalog, cfg, S) {
     var idx = index(catalog);
-    var S = settings(st, cfg);
     var markup = 1 + num(S.pricing.productMarkupPct) / 100;
     var sv = S.services, fx = S.fixing, sc = S.siteCharges;
     var warnings = [], flags = { estimated: 0, missing: 0 };
@@ -322,19 +387,9 @@
     // C. civil work
     var r = st.room || {};
     var civil = [];
-    // Every work / charge line has a stable key so it can be edited or removed per quote (state.lineOverrides).
-    var LO = st.lineOverrides || {}, removed = [];
-    function svc(list, key, desc, qty, unit, rate, note) {
-      var o = LO[key] || {}, auto = { qty: round2(qty), rate: rate, desc: desc };
-      var has = function (v) { return v !== undefined && v !== null && v !== ""; };
-      if (has(o.qty)) qty = num(o.qty);
-      if (has(o.rate)) rate = num(o.rate);
-      if (has(o.desc)) desc = o.desc;
-      var line = { key: key, desc: desc, qty: round2(qty), unit: unit, rate: rate, amount: round2(qty * rate), note: note || "", auto: auto, edited: has(o.qty) || has(o.rate) || has(o.desc), section: list === civil ? "C" : list === plumbing ? "D" : "G" };
-      if (o.off) { line.amount = 0; removed.push(line); return; }
-      if (!(qty > 0) || !(rate > 0)) return;
-      list.push(line);
-    }
+    // Every work line has a stable key so it can be edited or removed per quote (lineOverrides).
+    var removed = [], svc = makeSvc(st.lineOverrides || {}, removed);
+    civil.sec = "C";
     if (r.demolition) {
       svc(civil, "demolition", "Demolition: break and remove old floor and wall tiles with bed", a.tiled, "sqft", num(sv.demolitionPerSqft));
       svc(civil, "dismantle", "Dismantle old sanitaryware and fittings", 1, "lump", num(sv.sanitaryDismantleLump));
@@ -358,6 +413,7 @@
     var waterPts = r.waterPoints !== "" && r.waterPoints !== undefined ? num(r.waterPoints) : autoWater;
     var drainPts = r.drainPoints !== "" && r.drainPoints !== undefined ? num(r.drainPoints) : autoDrain;
     var plumbing = [];
+    plumbing.sec = "D";
     svc(plumbing, "water_points", "Concealed CPVC water lines (hot/cold) incl. pressure test", waterPts, "points", num(sv.waterPointRate));
     svc(plumbing, "drain_points", "Drainage lines (SWR/uPVC) to stack", drainPts, "points", num(sv.drainPointRate));
     var fixQty = {};
@@ -367,38 +423,69 @@
     });
     addonFixing.forEach(function (x) { svc(plumbing, "addonfix_" + x.key, x.desc, x.qty, "nos", x.rate); });
 
-    // F. custom items & services
+    var sum = function (l) { return round2(l.reduce(function (t, x) { return t + x.amount; }, 0)); };
+    var sections = [
+      { id: "A", title: "Bathroom fixtures", lines: fixtures, total: sum(fixtures) },
+      { id: "B", title: "Concealed & connection parts (matched to your fixtures)", lines: concealed, total: sum(concealed) },
+      { id: "C", title: "Civil work: demolition, waterproofing, tiling", lines: civil, total: sum(civil) },
+      { id: "D", title: "Plumbing & fixing", lines: plumbing, total: sum(plumbing) },
+      { id: "E", title: "Add-ons", lines: addons, total: sum(addons) },
+    ];
+    return {
+      name: st.name || "Bathroom", sections: sections, areas: a, waterPoints: waterPts, drainPoints: drainPts,
+      total: round2(sections.reduce(function (t, x) { return t + x.total; }, 0)),
+      recommendations: recommend(st, catalog, cfg), warnings: warnings, flags: flags, removed: removed,
+      addonsOn: Object.keys(st.addons || {}).filter(function (k) { return st.addons[k] && st.addons[k].on; }),
+      mix: mixLabel(st, catalog), room: st.room, basePkg: st.basePkg,
+    };
+  }
+
+  // The whole quote: every bathroom, then extras, site charges, discount and GST once.
+  function compute(st, catalog, cfg) {
+    var S = settings(st, cfg), sc = S.siteCharges;
+    var list = st.bathrooms && st.bathrooms.length ? st.bathrooms : [st];
+    var active = Math.min(st.activeBath || 0, list.length - 1);
+    var baths = list.map(function (b, i) {
+      // the active bathroom's live data is on the quote itself
+      var view = i === active ? st : Object.assign({}, st, b);
+      return computeBath(view, catalog, cfg, S);
+    });
+    var multi = baths.length > 1;
+    var flags = { estimated: 0, missing: 0 }, warnings = [];
+    baths.forEach(function (b) {
+      flags.estimated += b.flags.estimated; flags.missing += b.flags.missing;
+      b.warnings.forEach(function (w) { warnings.push(multi ? b.name + ": " + w : w); });
+    });
+    var sum = function (l) { return round2(l.reduce(function (t, x) { return t + x.amount; }, 0)); };
+    var secTotal = function (id) { return round2(baths.reduce(function (t, b) { return t + b.sections.filter(function (x) { return x.id === id; })[0].total; }, 0)); };
+
+    // F. custom items & services (whole job)
     var custom = (st.customItems || []).filter(function (c) { return c && c.desc; }).map(function (c) {
       var qty = num(c.qty, 1), rate = num(c.rate);
       if (!(rate > 0)) flags.missing++;
       return { desc: c.desc, qty: qty, unit: c.unit || "nos", rate: rate, amount: round2(qty * rate), source: "custom", kind: c.kind || "service" };
     });
+    var tF = sum(custom);
+    var tBaths = round2(baths.reduce(function (t, b) { return t + b.total; }, 0));
 
-    var sum = function (l) { return round2(l.reduce(function (t, x) { return t + x.amount; }, 0)); };
-    var tA = sum(fixtures), tB = sum(concealed), tC = sum(civil), tD = sum(plumbing), tE = sum(addons), tF = sum(custom);
-
-    // G. unseen site & project charges
-    var site = [];
-    svc(site, "consumables", "Consumables: cement, sand, white cement, silicone, sleeves, fasteners (" + num(sc.consumablesPct) + "% of works)", 1, "lump", round2((tC + tD) * num(sc.consumablesPct) / 100));
+    // G. unseen site & project charges (whole job)
+    var removedG = [], svc = makeSvc(st.projectOverrides || {}, removedG), site = [];
+    site.sec = "G";
+    var n = baths.length;
+    svc(site, "consumables", "Consumables: cement, sand, white cement, silicone, sleeves, fasteners (" + num(sc.consumablesPct) + "% of works)", 1, "lump", round2((secTotal("C") + secTotal("D")) * num(sc.consumablesPct) / 100));
     svc(site, "site_protection", "Site protection: floor and furniture covering on the access route", 1, "lump", num(sc.siteProtectionLump));
     svc(site, "transport", "Material transport, lifting and handling", 1, "lump", num(sc.transportLump));
-    svc(site, "cleaning", "Post-work deep cleaning and acid wash", 1, "lump", num(sc.cleaningLump));
-    var pmBase = tA + tB + tC + tD + tE + tF;
+    svc(site, "cleaning", "Post-work deep cleaning and acid wash" + (n > 1 ? " (" + n + " bathrooms)" : ""), n, n > 1 ? "nos" : "lump", num(sc.cleaningLump));
+    var pmBase = tBaths + tF;
     svc(site, "project_mgmt", "Project management and site supervision (" + num(sc.projectMgmtPct) + "%)", 1, "lump", round2(pmBase * num(sc.projectMgmtPct) / 100));
     if (num(sc.contingencyPct) > 0) svc(site, "contingency", "Contingency (" + num(sc.contingencyPct) + "%)", 1, "lump", round2(pmBase * num(sc.contingencyPct) / 100));
     var tG = sum(site);
-
-    var sections = [
-      { id: "A", title: "Bathroom fixtures", lines: fixtures, total: tA },
-      { id: "B", title: "Concealed & connection parts (matched to your fixtures)", lines: concealed, total: tB },
-      { id: "C", title: "Civil work: demolition, waterproofing, tiling", lines: civil, total: tC },
-      { id: "D", title: "Plumbing & fixing", lines: plumbing, total: tD },
-      { id: "E", title: "Add-ons", lines: addons, total: tE },
+    var projectSections = [
       { id: "F", title: "Additional items & services", lines: custom, total: tF },
       { id: "G", title: "Site & project charges", lines: site, total: tG },
     ];
 
-    var subtotal = round2(tA + tB + tC + tD + tE + tF + tG);
+    var subtotal = round2(tBaths + tF + tG);
     var d = st.discount || {};
     var discount = d.type === "amt" ? num(d.value) : round2(subtotal * num(d.value) / 100);
     discount = Math.min(Math.max(0, discount), subtotal);
@@ -407,12 +494,13 @@
     var raw = taxable + gst;
     var step = num(S.pricing.roundTo, 1) || 1;
     var grand = Math.round(raw / step) * step;
-
     if (flags.missing) warnings.push(flags.missing + " line(s) have no rate. Enter the rate before sending this quote.");
 
+    var cur = baths[active];
     return {
-      sections: sections, areas: a, waterPoints: waterPts, drainPoints: drainPts,
-      recommendations: recommend(st, catalog, cfg), warnings: warnings, flags: flags, removedLines: removed,
+      bathrooms: baths, activeBath: active, projectSections: projectSections,
+      sections: cur.sections.concat(projectSections), areas: cur.areas, waterPoints: cur.waterPoints, drainPoints: cur.drainPoints,
+      recommendations: cur.recommendations, warnings: warnings, flags: flags, removedLines: cur.removed.concat(removedG),
       totals: {
         subtotal: subtotal, discount: discount, taxable: taxable, gstPct: num(S.pricing.gstPct), gst: gst,
         roundOff: round2(grand - raw), grand: grand,
@@ -462,7 +550,7 @@
   CBQ.engine = {
     PKG_LABEL: PKG_LABEL, PKGS: PKGS,
     newState: newState, applyPackage: applyPackage, compute: compute, matchConcealed: matchConcealed,
-    recommend: recommend, areas: areas, brandMix: brandMix, mixLabel: mixLabel, textLines: textLines, loadCatalog: loadCatalog, priceOf: priceOf, pick: pick, unpriced: unpriced,
+    recommend: recommend, areas: areas, syncIn: syncIn, syncOut: syncOut, newBathroom: newBathroom, migrate: migrate, BATH_FIELDS: BATH_FIELDS, brandMix: brandMix, mixLabel: mixLabel, textLines: textLines, loadCatalog: loadCatalog, priceOf: priceOf, pick: pick, unpriced: unpriced,
     settings: settings, deepMerge: deepMerge, index: index, inr: inr, num: num,
   };
 })(typeof window !== "undefined" ? window : globalThis);

@@ -71,7 +71,8 @@ console.log("All engine tests passed");
 {
   const st = E.newState(catalog, cfg, { brand: "Jaquar", pkg: "signature" });
   const before = E.compute(st, catalog, cfg);
-  st.lineOverrides = { demolition: { rate: 50 }, waterproofing: { qty: 120, desc: "Waterproofing incl. full shower walls" }, cleaning: { off: true } };
+  st.lineOverrides = { demolition: { rate: 50 }, waterproofing: { qty: 120, desc: "Waterproofing incl. full shower walls" } };
+  st.projectOverrides = { cleaning: { off: true } };
   const q2 = E.compute(st, catalog, cfg);
   const demo = q2.sections[2].lines.find((l) => l.key === "demolition");
   assert.strictEqual(demo.rate, 50); assert.ok(demo.edited);
@@ -82,4 +83,48 @@ console.log("All engine tests passed");
   const cons = (q) => q.sections[6].lines.find((l) => l.key === "consumables").amount;
   assert.ok(cons(q2) > cons(before), "consumables % follows edited works");
   console.log("Line edit tests passed");
+}
+
+// several bathrooms in one quote
+{
+  const st = E.newState(catalog, cfg, { brand: "Jaquar", pkg: "signature" });
+  const one = E.compute(st, catalog, cfg);
+  assert.strictEqual(one.bathrooms.length, 1);
+  // add a second, smaller Kohler Luxe bathroom and a third copy of the first
+  E.syncOut(st);
+  const b2 = E.newBathroom(catalog, st, "Guest bathroom");
+  E.applyPackage(b2, catalog, "Kohler", "luxe");
+  b2.room.length = 6; b2.room.width = 4;
+  st.bathrooms.push(b2);
+  st.bathrooms.push(JSON.parse(JSON.stringify(st.bathrooms[0])));
+  st.bathrooms[2].name = "Kids bathroom";
+  const q = E.compute(st, catalog, cfg);
+  assert.strictEqual(q.bathrooms.length, 3);
+  assert.strictEqual(q.bathrooms[1].areas.floor, 24);
+  assert.ok(/Kohler/.test(q.bathrooms[1].mix));
+  // bathroom 3 is a copy of bathroom 1: same total
+  assert.strictEqual(q.bathrooms[2].total, q.bathrooms[0].total);
+  // site protection & transport once, cleaning per bathroom
+  const g = q.projectSections[1].lines;
+  assert.strictEqual(g.find((l) => l.key === "transport").qty, 1);
+  assert.strictEqual(g.find((l) => l.key === "cleaning").qty, 3);
+  // subtotal = all bathrooms + F + G
+  const sumB = q.bathrooms.reduce((t, b) => t + b.total, 0);
+  assert.ok(Math.abs(sumB + q.projectSections[0].total + q.projectSections[1].total - q.totals.subtotal) < 0.05);
+  assert.ok(q.totals.grand > 2.5 * one.totals.grand);
+  // switching keeps each bathroom's own data
+  E.syncOut(st); E.syncIn(st, 1);
+  assert.strictEqual(st.name, "Guest bathroom"); assert.strictEqual(st.basePkg, "luxe");
+  st.room.length = 7;
+  E.syncOut(st); E.syncIn(st, 0);
+  assert.strictEqual(st.bathrooms[1].room.length, 7);
+  assert.strictEqual(st.room.length, 8);
+  // saved/loaded through JSON keeps working
+  const re = E.migrate(JSON.parse(JSON.stringify(st)));
+  assert.strictEqual(E.compute(re, catalog, cfg).totals.grand, E.compute(st, catalog, cfg).totals.grand);
+  // an old single-bathroom quote migrates, site-charge edits move to the project
+  const old = { ...E.newState(catalog, cfg, {}) }; delete old.bathrooms; old.lineOverrides = { cleaning: { off: true } };
+  E.migrate(old);
+  assert.ok(old.projectOverrides.cleaning.off && !old.lineOverrides.cleaning && old.bathrooms.length === 1);
+  console.log("Multi-bathroom tests passed");
 }

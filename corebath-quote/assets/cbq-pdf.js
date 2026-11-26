@@ -80,7 +80,12 @@
     }
     block(M, "Prepared for", [c.name || "Client", c.phone, c.email, c.address]);
     var x = st.context;
-    block(M + colW + 16, "Bathroom", [
+    var baths = q.bathrooms || [], multi = baths.length > 1;
+    if (multi) block(M + colW + 16, baths.length + " bathrooms", [
+      baths.reduce(function (t, b) { return t + b.areas.floor; }, 0) + " sqft floor in all",
+    ].concat(baths.slice(0, 4).map(function (b) { return b.name + ": " + b.room.length + " x " + b.room.width + " ft, " + b.mix; }))
+      .concat(baths.length > 4 ? ["+ " + (baths.length - 4) + " more (details below)"] : []));
+    else block(M + colW + 16, "Bathroom", [
       r.length + " ft x " + r.width + " ft x " + r.height + " ft high",
       "Floor " + q.areas.floor + " sqft | Wall tiles " + q.areas.wall + " sqft (to " + r.tileHeight + " ft)",
       "Waterproofing " + q.areas.waterproof + " sqft | " + q.waterPoints + " water + " + q.drainPoints + " drain points",
@@ -92,7 +97,22 @@
     // ---- section tables ----
     var head = [["#", "Description", "Qty", "Unit", "Rate (Rs)", "Amount (Rs)"]];
     var anyEst = false;
-    q.sections.forEach(function (s) {
+    function bathBand(b, n) {
+      if (y > H - 160) { doc.addPage(); y = 50; }
+      doc.setFillColor.apply(doc, C.accent); doc.rect(M, y, W - 2 * M, 26, "F");
+      doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+      doc.text("Bathroom " + n + ": " + b.name, M + 8, y + 17);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(8.5);
+      var info = b.room.length + " x " + b.room.width + " ft | " + b.areas.floor + " sqft | " + b.mix + " | Rs " + money(b.total);
+      doc.text(doc.splitTextToSize(info, W - 2 * M - 200)[0], W - M - 8, y + 17, { align: "right" });
+      y += 34;
+    }
+    var groups = multi
+      ? baths.map(function (b, i) { return { band: b, n: i + 1, prefix: String(i + 1), sections: b.sections }; }).concat([{ prefix: "", sections: q.projectSections }])
+      : [{ prefix: "", sections: q.sections }];
+    groups.forEach(function (grp) {
+    if (grp.band) bathBand(grp.band, grp.n);
+    grp.sections.forEach(function (s) {
       if (!s.lines.length) return;
       var body = s.lines.map(function (l, i) {
         var sub = [];
@@ -103,12 +123,12 @@
         if (l.source === "estimate") { rate += " *"; anyEst = true; }
         if (l.source === "included") rate = "Included";
         if (l.source === "missing" || (l.source === "custom" && !l.rate)) rate = "TBC";
-        return [s.id + (i + 1), { content: (l.item ? l.item + ": " : "") + l.desc + (sub.length ? "\n" + sub.join("\n") : ""), est: l.source === "estimate" }, qtyStr(l.qty), l.unit || "nos", rate, money(l.amount)];
+        return [grp.prefix + s.id + (i + 1), { content: (l.item ? l.item + ": " : "") + l.desc + (sub.length ? "\n" + sub.join("\n") : ""), est: l.source === "estimate" }, qtyStr(l.qty), l.unit || "nos", rate, money(l.amount)];
       });
       if (y > H - 130) { doc.addPage(); y = 50; } // never leave a section heading alone at the foot of a page
       doc.autoTable({
         startY: y, margin: { left: M, right: M, top: 50, bottom: 50 },
-        head: [[{ content: s.id + ".  " + s.title, colSpan: 5 }, { content: money(s.total), styles: { halign: "right" } }]],
+        head: [[{ content: grp.prefix + s.id + ".  " + s.title, colSpan: 5 }, { content: money(s.total), styles: { halign: "right" } }]],
         body: [head[0]].concat(body),
         theme: "plain",
         styles: { font: "helvetica", fontSize: 8.4, textColor: C.ink, cellPadding: { top: 4, bottom: 4, left: 4, right: 4 }, lineColor: C.line, valign: "top" },
@@ -145,10 +165,14 @@
       });
       y = doc.lastAutoTable.finalY + 12;
     });
+    });
 
     // ---- totals ----
     var t = q.totals;
-    var totals = q.sections.filter(function (s) { return s.total > 0; }).map(function (s) { return [s.id + ". " + s.title.replace(/ \(.*\)$/, ""), money(s.total)]; });
+    var totals = (multi
+      ? baths.map(function (b, i) { return { title: "Bathroom " + (i + 1) + ": " + b.name, total: b.total }; }).concat(q.projectSections.map(function (x) { return { title: x.id + ". " + x.title, total: x.total }; }))
+      : q.sections.map(function (x) { return { title: x.id + ". " + x.title.replace(/ \(.*\)$/, ""), total: x.total }; }))
+      .filter(function (x) { return x.total > 0; }).map(function (x) { return [x.title, money(x.total)]; });
     totals.push(["Subtotal", money(t.subtotal)]);
     if (t.discount) totals.push(["Discount", "-" + money(t.discount)]);
     totals.push(["GST @ " + t.gstPct + "%", money(t.gst)]);
@@ -188,15 +212,20 @@
 
     // ---- recommended but not selected ----
     var pdfOpt = st.pdf || {}, hidden = pdfOpt.hiddenRecs || {};
-    var notTaken = pdfOpt.showRecs === false ? [] : q.recommendations.filter(function (rc) {
-      return rc.priority !== "optional" && !hidden[rc.key] && !(st.addons[rc.key] && st.addons[rc.key].on);
-    });
-    if (notTaken.length) {
-      heading("Recommended for your bathroom (not included above)");
-      bullets(notTaken.map(function (rc) {
-        var unit = rc.addon.unit === "each" ? "" : rc.addon.unit === "per_drain" ? " per drain" : " per sqft";
-        return rc.addon.name + " - Rs " + money(rc.addon.rate) + unit + ". " + rc.reason + (rc.priority === "essential" ? " (strongly advised)" : "");
-      }));
+    var recLines = [];
+    if (pdfOpt.showRecs !== false) {
+      (baths.length ? baths : [{ name: "", recommendations: q.recommendations, addonsOn: Object.keys(st.addons || {}).filter(function (k) { return st.addons[k].on; }) }]).forEach(function (b) {
+        b.recommendations.filter(function (rc) {
+          return rc.priority !== "optional" && !hidden[rc.key] && b.addonsOn.indexOf(rc.key) < 0;
+        }).forEach(function (rc) {
+          var unit = rc.addon.unit === "each" ? "" : rc.addon.unit === "per_drain" ? " per drain" : " per sqft";
+          recLines.push((multi ? b.name + ": " : "") + rc.addon.name + " - Rs " + money(rc.addon.rate) + unit + ". " + rc.reason + (rc.priority === "essential" ? " (strongly advised)" : ""));
+        });
+      });
+    }
+    if (recLines.length) {
+      heading(multi ? "Recommended for your bathrooms (not included above)" : "Recommended for your bathroom (not included above)");
+      bullets(recLines);
     }
 
     // ---- AI advisor ----

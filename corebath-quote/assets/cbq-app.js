@@ -58,6 +58,7 @@
     });
     this.state.rateOverrides = Object.assign({}, this.shopRates, this.state.rateOverrides || {}, book.rateOverrides || {});
     if (this.mode === "admin" && book.settings) this.state.settings = E.deepMerge(book.settings, this.state.settings || {});
+    E.migrate(this.state);
     if (!this.state.quoteNo) this.state.quoteNo = quoteNo(this.cfg);
     this.tab = "build";
     // Google Sheet link: URL from the page (Shopify setting) or, in admin, typed in Rates & settings
@@ -101,19 +102,26 @@
   };
 
   App.prototype.quotePayload = function () {
-    var st = this.state, q = E.compute(st, this.catalog, this.cfg), lines = [];
-    q.sections.forEach(function (sec) {
+    E.syncOut(this.state);
+    var st = this.state, q = E.compute(st, this.catalog, this.cfg), lines = [], multi = q.bathrooms.length > 1;
+    var push = function (prefix, sec) {
       sec.lines.forEach(function (l) {
-        lines.push({ section: sec.id + ". " + sec.title, item: l.item || "", desc: l.desc, brand: l.brand || "", sku: l.sku || "", qty: l.qty, unit: l.unit || "", rate: l.rate, amount: l.amount, source: l.source || "" });
+        lines.push({ section: prefix + sec.id + ". " + sec.title, item: l.item || "", desc: l.desc, brand: l.brand || "", sku: l.sku || "", qty: l.qty, unit: l.unit || "", rate: l.rate, amount: l.amount, source: l.source || "" });
       });
-    });
+    };
+    q.bathrooms.forEach(function (b) { b.sections.forEach(function (sec) { push(multi ? b.name + " / " : "", sec); }); });
+    q.projectSections.forEach(function (sec) { push("", sec); });
+    var allSecs = ["A", "B", "C", "D", "E"].map(function (id) {
+      return { id: id, title: q.sections.filter(function (x) { return x.id === id; })[0].title, total: q.bathrooms.reduce(function (t, b) { return t + b.sections.filter(function (x) { return x.id === id; })[0].total; }, 0) };
+    }).concat(q.projectSections.map(function (sec) { return { id: sec.id, title: sec.title, total: sec.total }; }));
     return {
       action: "saveQuote",
       quote: {
         quoteNo: st.quoteNo, date: st.date, mode: this.mode, client: st.client,
-        size: st.room.length + " x " + st.room.width + " x " + st.room.height + " ft",
-        package: E.mixLabel(st, this.catalog), brands: E.brandMix(st, this.catalog).map(function (m) { return m.brand + " x" + m.count; }).join(", "),
-        sections: q.sections.map(function (sec) { return { id: sec.id, title: sec.title, total: sec.total }; }),
+        size: q.bathrooms.map(function (b) { return (multi ? b.name + ": " : "") + b.room.length + " x " + b.room.width + " x " + b.room.height + " ft"; }).join("; "),
+        package: q.bathrooms.map(function (b) { return (multi ? b.name + ": " : "") + b.mix; }).join("; "),
+        brands: E.brandMix(st, this.catalog).map(function (m) { return m.brand + " x" + m.count; }).join(", ") + (multi ? " (" + q.bathrooms.length + " bathrooms)" : ""),
+        sections: allSecs,
         totals: q.totals, estimated: q.flags.estimated, lines: lines, state: st,
       },
     };
@@ -158,6 +166,7 @@
   };
 
   App.prototype.persist = function () {
+    E.syncOut(this.state);
     save(STATE_KEY + "-" + this.mode, this.state);
     if (this.mode === "admin") save(BOOK_KEY, { rateOverrides: this.state.rateOverrides, settings: this.state.settings, sheetUrl: this.sheet.url, sheetKey: this.sheet.key });
   };
@@ -290,8 +299,24 @@
       st.pdf = st.pdf || {}; st.pdf.hiddenRecs = st.pdf.hiddenRecs || {};
       st.pdf.hiddenRecs[arg] = !st.pdf.hiddenRecs[arg];
     } else if (act === "reset-line") {
-      var lo = (st.lineOverrides || {})[arg];
+      var parts = arg.split("|"), bag = parts[0] === "G" ? st.projectOverrides : st.lineOverrides;
+      var lo = (bag || {})[parts[1]];
       if (lo) { delete lo.qty; delete lo.rate; delete lo.desc; }
+    } else if (act === "bath-switch") {
+      E.syncOut(st); E.syncIn(st, +arg);
+    } else if (act === "bath-add" || act === "bath-copy") {
+      E.syncOut(st);
+      var n = st.bathrooms.length + 1;
+      var nb = act === "bath-copy" ? JSON.parse(JSON.stringify(st.bathrooms[st.activeBath])) : E.newBathroom(this.catalog, st, "");
+      nb.name = act === "bath-copy" ? (st.name + " (copy)") : "Bathroom " + n;
+      st.bathrooms.push(nb);
+      E.syncIn(st, st.bathrooms.length - 1);
+      this.tab = "build";
+    } else if (act === "bath-del") {
+      if (st.bathrooms.length < 2 || !this.confirmTwice(act)) return;
+      E.syncOut(st);
+      st.bathrooms.splice(st.activeBath, 1);
+      E.syncIn(st, Math.max(0, st.activeBath - 1));
     } else if (act === "reset-concealed") {
       delete st.concealed[arg];
     } else if (act === "pdf") {
@@ -332,7 +357,7 @@
         f.text().then(function (txt) {
           var json = txt.replace(/^[\s\S]*?=\s*/, function (m) { return /window\.CBQ_RATES/.test(m) ? "" : m; }).replace(/;\s*$/, "");
           var obj = JSON.parse(json);
-          if (obj.fixtures) self.state = obj; // a saved quote
+          if (obj.fixtures) self.state = E.migrate(obj); // a saved quote
           else {
             self.state.rateOverrides = Object.assign({}, self.state.rateOverrides, obj.rateOverrides || {});
             self.state.settings = E.deepMerge(self.state.settings || {}, obj.settings || {});
@@ -381,14 +406,20 @@
     var st = this.state, c = st.client;
     if (!form) return;
     if (!c.name || !c.email || !c.phone) { g.alert("Please fill in your name, email and phone first."); this.tab = "build"; this.render(); return; }
+    E.syncOut(st);
     var q = E.compute(st, this.catalog, this.cfg);
-    var lines = ["CoreBath quote " + st.quoteNo, "Package: " + E.mixLabel(st, this.catalog),
-      "Size: " + st.room.length + " x " + st.room.width + " ft", "Site: " + (c.address || "-"), ""];
-    q.sections.forEach(function (s) {
+    var lines = ["CoreBath quote " + st.quoteNo, "Site: " + (c.address || "-"), ""];
+    var add = function (s) {
       if (!s.lines.length) return;
       lines.push(s.id + ". " + s.title + " - Rs " + E.inr(s.total));
       s.lines.forEach(function (l) { lines.push("  - " + l.qty + " " + (l.unit || "") + " " + l.desc + (l.brand ? " [" + l.brand + "]" : "") + " = Rs " + E.inr(l.amount)); });
+    };
+    q.bathrooms.forEach(function (b) {
+      lines.push("== " + b.name + " (" + b.room.length + " x " + b.room.width + " ft, " + b.mix + ") - Rs " + E.inr(b.total));
+      b.sections.forEach(add);
+      lines.push("");
     });
+    q.projectSections.forEach(add);
     lines.push("", "Grand total incl. GST: Rs " + E.inr(q.totals.grand), "Notes: " + (c.notes || "-"));
     form.querySelector("[name='contact[name]']").value = c.name;
     form.querySelector("[name='contact[email]']").value = c.email;
@@ -411,7 +442,7 @@
     var html = '<div class="cbq">' +
       '<header class="cbq-head"><div><div class="cbq-logo">Core<b>Bath</b></div><div class="cbq-sub">Custom bathroom package quotation</div></div>' +
       '<div class="cbq-qno">Quote <b>' + esc(st.quoteNo) + '</b>' + (admin ? ' <span class="cbq-badge">Admin</span>' : "") + '</div></header>' +
-      '<nav class="cbq-tabs">' + tabs.map(function (t) { return '<button data-act="tab" data-arg="' + t[0] + '" class="' + (this.tab === t[0] ? "on" : "") + '">' + t[1] + "</button>"; }, this).join("") + "</nav>" +
+      this.bathBar(q) + '<nav class="cbq-tabs">' + tabs.map(function (t) { return '<button data-act="tab" data-arg="' + t[0] + '" class="' + (this.tab === t[0] ? "on" : "") + '">' + t[1] + "</button>"; }, this).join("") + "</nav>" +
       '<div class="cbq-body"><main class="cbq-main">' + this["tab_" + this.tab](q) + "</main>" + this.summary(q) + "</div></div>";
     this.root.innerHTML = html;
     if (focusKey) {
@@ -454,7 +485,8 @@
       field("Name", "client.name", c.name) + field("Phone", "client.phone", c.phone, { type: "tel" }) +
       field("Email", "client.email", c.email, { type: "email" }) + field("Site address", "client.address", c.address, { wide: true }) +
       "</div></section>" +
-      '<section class="cbq-card"><h3>Bathroom size</h3><div class="cbq-grid">' +
+      '<section class="cbq-card"><h3>This bathroom</h3><div class="cbq-grid">' +
+      field("Bathroom name", "name", st.name, { ph: "e.g. Master bathroom" }) +
       field("Length (ft)", "room.length", r.length, { type: "number", step: "0.25", min: 0 }) +
       field("Width (ft)", "room.width", r.width, { type: "number", step: "0.25", min: 0 }) +
       field("Ceiling height (ft)", "room.height", r.height, { type: "number", step: "0.25", min: 0 }) +
@@ -607,13 +639,14 @@
     var st = this.state, removed = q.removedLines || [];
     var groups = [["C", "Civil work: demolition, waterproofing, tiling", "Areas come from the room size on tab 1. Default rates: Rates & settings \u2192 Civil & plumbing rates."],
       ["D", "Plumbing & fixing", "Points and fixing count come from the selected fixtures. Default rates: Rates & settings."],
-      ["G", "Site & project charges", "Percent lines (consumables, project management) recalculate unless you type a rate."]];
+      ["G", "Site & project charges (whole job)", "These cover all bathrooms in this quote. Percent lines (consumables, project management) recalculate unless you type a rate."]];
     var sec = {}; q.sections.forEach(function (x) { sec[x.id] = x; });
     function row(l) {
-      var o = (st.lineOverrides || {})[l.key] || {}, off = !!o.off, f = "lineOverrides." + l.key + ".";
+      var bagName = l.section === "G" ? "projectOverrides" : "lineOverrides";
+      var o = (st[bagName] || {})[l.key] || {}, off = !!o.off, f = bagName + "." + l.key + ".";
       return '<tr class="' + (off ? "off" : "") + '"><td><label class="cbq-check" title="Untick to leave this line out of the quote"><input type="checkbox" data-f="' + f + 'off" data-invert="1"' + (off ? "" : " checked") + "></label></td>" +
         '<td><input data-t="str" data-f="' + f + 'desc" value="' + esc(o.desc || "") + '" placeholder="' + esc(l.auto.desc) + '" aria-label="Description">' +
-        (l.edited ? ' <a href="#" class="cbq-link" data-act="reset-line" data-arg="' + esc(l.key) + '">undo my changes</a>' : "") + "</td>" +
+        (l.edited ? ' <a href="#" class="cbq-link" data-act="reset-line" data-arg="' + (l.section === "G" ? "G|" : "B|") + esc(l.key) + '">undo my changes</a>' : "") + "</td>" +
         '<td><input class="cbq-qty" type="number" min="0" step="any" data-t="num" data-f="' + f + 'qty" value="' + esc(o.qty === undefined ? "" : o.qty) + '" placeholder="' + l.auto.qty + '" aria-label="Quantity"> <span class="cbq-small">' + esc(l.unit) + "</span></td>" +
         '<td class="r"><input class="cbq-rate" type="number" min="0" step="any" data-t="num" data-f="' + f + 'rate" value="' + esc(o.rate === undefined ? "" : o.rate) + '" placeholder="' + Math.round(l.auto.rate * 100) / 100 + '" aria-label="Rate"></td>' +
         '<td class="r b">' + (off ? "removed" : rs(l.amount)) + "</td></tr>";
@@ -693,10 +726,28 @@
       '<div class="cbq-row"><button class="cbq-btn ghost" data-act="reset-settings">' + this.label("reset-settings", "Reset rates to defaults", "Click again to reset all rates") + '</button></div></section>';
   };
 
+  // One chip per bathroom; the quote total covers all of them.
+  App.prototype.bathBar = function (q) {
+    var st = this.state, multi = q.bathrooms.length > 1;
+    return '<div class="cbq-baths" role="group" aria-label="Bathrooms in this quote">' +
+      q.bathrooms.map(function (b, i) {
+        var on = i === q.activeBath;
+        return '<button type="button" class="cbq-bath' + (on ? " on" : "") + '" data-act="bath-switch" data-arg="' + i + '" aria-pressed="' + on + '">' +
+          '<b>' + esc(b.name) + '</b><span>' + b.areas.floor + " sqft \u00B7 " + rs(b.total) + "</span></button>";
+      }).join("") +
+      '<button type="button" class="cbq-btn ghost" data-act="bath-add">+ Add bathroom</button>' +
+      '<button type="button" class="cbq-btn link" data-act="bath-copy">Copy this bathroom</button>' +
+      (multi ? '<button type="button" class="cbq-btn link" data-act="bath-del">' + this.label("bath-del", "Remove " + esc(st.name), "Click again to remove " + esc(st.name)) + "</button>" : "") +
+      "</div>";
+  };
+
   App.prototype.summary = function (q) {
     var admin = this.mode === "admin", t = q.totals;
-    var rows = q.sections.filter(function (s) { return s.total > 0; }).map(function (s) {
-      return "<tr><td>" + s.id + ". " + esc(s.title.replace(/ \(.*\)$/, "")) + '</td><td class="r">' + rs(s.total) + "</td></tr>";
+    var multi = q.bathrooms.length > 1;
+    var rowsFor = multi ? q.bathrooms.map(function (b) { return { id: "", title: b.name + " (" + b.areas.floor + " sqft)", total: b.total }; }).concat(q.projectSections)
+      : q.sections;
+    var rows = rowsFor.filter(function (s) { return s.total > 0; }).map(function (s) {
+      return "<tr><td>" + (s.id ? s.id + ". " : "") + esc(s.title.replace(/ \(matched.*\)$/, "")) + '</td><td class="r">' + rs(s.total) + "</td></tr>";
     }).join("");
     var warn = q.warnings.map(function (w) { return '<li>' + esc(w) + "</li>"; }).join("");
     if (q.flags.estimated) warn += "<li>" + q.flags.estimated + " product rate(s) are estimates (EST)" + (admin ? "; enter your rates to firm up the quote." : " and will be confirmed after site visit.") + "</li>";
@@ -706,7 +757,7 @@
       (t.discount ? '<tr><td>Discount</td><td class="r">−' + rs(t.discount) + "</td></tr>" : "") +
       "<tr><td>GST " + t.gstPct + '%</td><td class="r">' + rs(t.gst) + "</td></tr>" +
       '<tr class="grand"><td>Total</td><td class="r">' + rs(t.grand) + "</td></tr></table>" +
-      '<div class="cbq-small">' + q.areas.floor + " sqft floor \u00B7 " + esc(E.mixLabel(this.state, this.catalog)) + "</div>" +
+      '<div class="cbq-small">' + (multi ? q.bathrooms.length + " bathrooms \u00B7 " + q.bathrooms.reduce(function (t, b) { return t + b.areas.floor; }, 0) + " sqft floor in all" : q.areas.floor + " sqft floor \u00B7 " + esc(E.mixLabel(this.state, this.catalog))) + "</div>" +
       (warn ? '<ul class="cbq-warn">' + warn + "</ul>" : "") +
       '<button class="cbq-btn big" data-act="pdf">Download PDF quote</button>' +
       '<button class="cbq-btn ghost" data-act="pdf-preview">Preview PDF</button>' +
