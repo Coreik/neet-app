@@ -8,7 +8,7 @@
   g.CBQ.defaults = {
     company: {
       name: "CoreBath",
-      tagline: "Bathroom as a Product",
+      tagline: "",
       website: "corebath.in",
       email: "",
       phone: "",

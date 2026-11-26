@@ -52,7 +52,7 @@
     var cw = doc.getTextWidth("Core");
     doc.setFont("helvetica", "bold"); doc.text("Bath", M + cw, 46);
     doc.setFont("helvetica", "normal"); doc.setFontSize(9);
-    doc.text((co.tagline || "") + "  |  " + (co.website || ""), M, 64);
+    doc.text([co.tagline, co.website].filter(Boolean).join("  |  "), M, 64);
     var contact = [co.phone, co.email].filter(Boolean).join("  |  ");
     if (contact) doc.text(contact, M, 77);
     doc.setFont("helvetica", "bold"); doc.setFontSize(16); doc.text("QUOTATION", W - M, 42, { align: "right" });
